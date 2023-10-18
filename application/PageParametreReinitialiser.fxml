@@ -16,8 +16,8 @@
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints maxHeight="96.0" minHeight="10.0" prefHeight="96.0" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="88.0" minHeight="10.0" prefHeight="88.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints maxHeight="28.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
@@ -27,7 +27,7 @@
                   <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #354B85;" GridPane.columnIndex="1" />
                   <Pane prefHeight="48.0" prefWidth="200.0" style="-fx-background-color: #354B85;" GridPane.columnIndex="2" />
                   <Button fx:id="boutonNotes" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="48.0" prefWidth="346.0" style="-fx-background-color: #e6e9f0;" text="Mes notes" textFill="#354b85" GridPane.rowIndex="1" />
-                  <Button fx:id="boutonParametreImporter" alignment="CENTER" mnemonicParsing="false" prefHeight="39.0" prefWidth="343.0" style="-fx-background-color: #354B85;" text="Paramètres" textFill="#e6e9f0" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
+                  <Button fx:id="boutonParametreImporter" alignment="CENTER" mnemonicParsing="false" prefHeight="37.0" prefWidth="343.0" style="-fx-background-color: #354B85;" text="Paramètres" textFill="#e6e9f0" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
                   <Button fx:id="boutonNotes" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="48.0" prefWidth="346.0" style="-fx-background-color: #e6e9f0;" text="Les ressources" textFill="#354b85" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
                <columnConstraints>
@@ -52,9 +52,9 @@
               </rowConstraints>
                <children>
                   <Button mnemonicParsing="false" prefHeight="75.0" prefWidth="258.0" style="-fx-background-color: #e6e9f0;" text="Importer des paramètres" textFill="#354b85" />
-                  <Button mnemonicParsing="false" prefHeight="125.0" prefWidth="258.0" style="-fx-background-color: #e6e9f0;" text="Partager mes paramètres" textFill="#354b85" GridPane.columnIndex="1" />
-                  <Button mnemonicParsing="false" prefHeight="133.0" prefWidth="257.0" style="-fx-background-color: #e6e9f0;" text="Modifier mon identité" textFill="#354b85" GridPane.columnIndex="3" />
-                  <Button mnemonicParsing="false" prefHeight="97.0" prefWidth="257.0" style="-fx-background-color: #354B85;" text="Réinitialiser mes données" textFill="#e6e9f0" GridPane.columnIndex="2" />
+                  <Button fx:id="boutonParametrePartager" mnemonicParsing="false" prefHeight="125.0" prefWidth="258.0" style="-fx-background-color: #e6e9f0;" text="Partager mes paramètres" textFill="#354b85" GridPane.columnIndex="1" />
+                  <Button fx:id="boutonParametreModifier" mnemonicParsing="false" prefHeight="133.0" prefWidth="257.0" style="-fx-background-color: #e6e9f0;" text="Modifier mon identité" textFill="#354b85" GridPane.columnIndex="3" />
+                  <Button fx:id="boutonParametreReinitialiser" mnemonicParsing="false" prefHeight="97.0" prefWidth="257.0" style="-fx-background-color: #354B85;" text="Réinitialiser mes données" textFill="#e6e9f0" GridPane.columnIndex="2" />
                </children>
             </GridPane>
          </children>

@@ -32,25 +32,70 @@ public class Vue extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("PageNotes.fxml"));
 
-            BorderPane firstScene = loader.load();
+            BorderPane pageNotes = loader.load();
 
             loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("PageParametreImporter.fxml"));
-            BorderPane secondScene = loader.load();
+            BorderPane pageParametreImporter = loader.load();
+            
+            loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("PageParametreModifier.fxml"));
+            BorderPane pageParametreModifier = loader.load();
+            
+            loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("PageParametrePartager.fxml"));
+            BorderPane pageParametrePartager = loader.load();
+            
+            loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("PageParametreReinitialiser.fxml"));
+            BorderPane pageParametreReinitialiser = loader.load();
 
-            Scene firstSceneScene = new Scene(firstScene);
-            Scene secondSceneScene = new Scene(secondScene);
+            Scene firstSceneScene = new Scene(pageNotes);
+            Scene secondSceneScene = new Scene(pageParametreImporter);
+            Scene thirdSceneScene = new Scene(pageParametreModifier);
+            Scene fourthSceneScene = new Scene(pageParametrePartager);
+            Scene fifthSceneScene = new Scene(pageParametreReinitialiser);
 
             // Boutons pour la navigation
-            Button boutonParametre = (Button) firstScene.lookup("#boutonParametreImporter");
-            Button boutonNotes = (Button) secondScene.lookup("#boutonNotes");
+            Button boutonNotes = (Button) pageNotes.lookup("#boutonNotes");
+            
+            Button boutonParametreImporter = (Button) pageNotes.lookup("#boutonParametreImporter");
+            pageParametreModifier.lookup("#boutonParametreImporter");
+            pageParametrePartager.lookup("#boutonParametreImporter");
+            pageParametreReinitialiser.lookup("#boutonParametreImporter");
+            
+            Button boutonParametreModifier = (Button) pageParametreModifier.lookup("#boutonParametreModifier");
+            Button boutonParametrePartager = (Button) pageParametrePartager.lookup("#boutonParametrePartager");
+            Button boutonParametreReinitialiser = (Button) pageParametreReinitialiser.lookup("#boutonParametreReinitialiser");
 
-            boutonParametre.setOnAction(event -> {
-                primaryStage.setScene(secondSceneScene);
-            });
-
+            // Evenement déclanché lorsque boutonNotes est cliqué
+            // Redirige vers la page Notes
             boutonNotes.setOnAction(event -> {
                 primaryStage.setScene(firstSceneScene);
+            });
+            
+            // Evenement déclanché lorsque boutonParametre est cliqué
+            // Redirige vers la page Paramètres
+            boutonParametreImporter.setOnAction(event -> {
+                primaryStage.setScene(secondSceneScene);
+            });
+            
+            // Evenement déclanché lorsque boutonParametre est cliqué
+            // Redirige vers la page Paramètres
+            boutonParametreModifier.setOnAction(event -> {
+                primaryStage.setScene(thirdSceneScene);
+            });
+            
+            // Evenement déclanché lorsque boutonParametre est cliqué
+            // Redirige vers la page Paramètres
+            boutonParametrePartager.setOnAction(event -> {
+                primaryStage.setScene(fourthSceneScene);
+            });
+            
+            // Evenement déclanché lorsque boutonParametre est cliqué
+            // Redirige vers la page Paramètres
+            boutonParametreReinitialiser.setOnAction(event -> {
+                primaryStage.setScene(fifthSceneScene);
             });
 
             primaryStage.setScene(firstSceneScene);

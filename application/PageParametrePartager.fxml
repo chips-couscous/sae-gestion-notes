@@ -48,11 +48,11 @@
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button fx:id="boutonParametreImporter" mnemonicParsing="false" prefHeight="75.0" prefWidth="258.0" style="-fx-background-color: #354B85;" text="Importer des paramètres" textFill="#e6e9f0" />
-                  <Button fx:id="boutonParametrePartager" mnemonicParsing="false" prefHeight="125.0" prefWidth="258.0" style="-fx-background-color: #e6e9f0;" text="Partager mes paramètres" textFill="#354b85" GridPane.columnIndex="1" />
+                  <Button fx:id="boutonParametreImporter" mnemonicParsing="false" prefHeight="75.0" prefWidth="258.0" style="-fx-background-color: #E6E9F0;" text="Importer des paramètres" textFill="#354b85" />
+                  <Button fx:id="boutonParametrePartager" mnemonicParsing="false" prefHeight="125.0" prefWidth="258.0" style="-fx-background-color: #354B85;" text="Partager mes paramètres" textFill="#e6e9f0" GridPane.columnIndex="1" />
                   <Button fx:id="boutonParametreModifier" mnemonicParsing="false" prefHeight="133.0" prefWidth="257.0" style="-fx-background-color: #e6e9f0;" text="Modifier mon identité" textFill="#354b85" GridPane.columnIndex="3" />
                   <Button fx:id="boutonParametreReinitialiser" mnemonicParsing="false" prefHeight="97.0" prefWidth="257.0" style="-fx-background-color: #e6e9f0;" text="Réinitialiser mes données" textFill="#354b85" GridPane.columnIndex="2" />
                </children>

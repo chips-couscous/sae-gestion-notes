@@ -1,6 +1,6 @@
 /* 
  * GestionNotes.java                                                  19.10.2023
- * © copyright Chips-Couscous, But Informatique 2, IUT de Rodez (12)
+ * IUT de Rodez, But Informatique 2, Chips-Couscous pas de copyright
  */
 
 package application.model;
@@ -9,7 +9,11 @@ import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
-
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -29,19 +33,47 @@ public class GestionNotes {
             return false;
         }
         
-        analyserFichier(cheminFichier);
+        List<String[]> contenuFichier = lireFichier(cheminFichier);
         
-        return true; // Bouchon
+        if (contenuFichier == null) {
+            return false;
+        }
+        
+        return true;
     }
     
     /**
-     * TODO comment method role
-     * @param chemin
+     * Permet à partir d'un chemin donné de lire un fichier CSV et d'en soustraire
+     * ligne par ligne les cellules.
+     * @param chemin , chemin du fichier à lire
      * @return true
      */
-    private static boolean analyserFichier(String chemin) {
-        // TODO Coder la méthode
-        return true; // Bouchon
+    private static List<String[]> lireFichier(String chemin) {
+        
+        // Délimiteur utilisé par le fichier csv pour séparer les cellules
+        final String DELIMITEUR_CELLULE = ";";
+        
+        // Contenu du fichier ligne par ligne
+        List<String[]> contenuFichier = new ArrayList<>();
+
+        // Lecture du fichier
+        try 
+        (BufferedReader lecteur = new BufferedReader(new FileReader(chemin))) {
+            
+            // Délimitation des rangées
+            String ligne;
+            while ((ligne = lecteur.readLine()) != null) {
+                // Délimitation des cellules dans les rangées
+                String[] rangee = ligne.split(DELIMITEUR_CELLULE);
+                contenuFichier.add(rangee);
+            }
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return contenuFichier;
     }
     
     /**

@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class Controlleur {
@@ -166,6 +167,61 @@ public class Controlleur {
 	    }
 	}
 
+	@FXML
+    private void ouvrirModifierNote() {
+        try {
+            Stage stageActuel = (Stage) rootPane.getScene().getWindow();
+            
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/vue/PageModifierNote.fxml"));
+            Parent root = loader.load();
+
+            // Créez une nouvelle scène pour la page FXML
+            Scene nouvelleScene = new Scene(root);
+
+            // Créez une nouvelle fenêtre
+            Stage nouveauStage = new Stage();
+            nouveauStage.setTitle("Modifier une Note");
+
+            // Associez la scène à la nouvelle fenêtre
+            nouveauStage.setScene(nouvelleScene);
+
+            // Montrez la nouvelle fenêtre sans bloquer la fenêtre principale
+            nouveauStage.initOwner(stageActuel);
+            nouveauStage.initModality(Modality.WINDOW_MODAL);
+            nouveauStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+	
+	@FXML
+    private void supprimerNote() {
+        try {
+            Stage stageActuel = (Stage) rootPane.getScene().getWindow();
+            
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/vue/PageSupprimerNote.fxml"));
+            Parent root = loader.load();
+
+            // Créez une nouvelle scène pour la page FXML
+            Scene nouvelleScene = new Scene(root);
+
+            // Créez une nouvelle fenêtre
+            Stage nouveauStage = new Stage();
+            nouveauStage.setTitle("Supprimer une Note");
+
+            // Associez la scène à la nouvelle fenêtre
+            nouveauStage.setScene(nouvelleScene);
+
+            // Montrez la nouvelle fenêtre sans bloquer la fenêtre principale
+            nouveauStage.initOwner(stageActuel);
+            nouveauStage.initModality(Modality.WINDOW_MODAL);
+            nouveauStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 	
 }
 

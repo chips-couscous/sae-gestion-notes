@@ -27,7 +27,7 @@ public class Vue extends Application {
 
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(getClass().getResource("PageModifierNote.fxml"));
+			loader.setLocation(getClass().getResource("PageNotes.fxml"));
 			BorderPane PageNotes = loader.load();
 			Scene PageNoteScene = new Scene(PageNotes);
 			

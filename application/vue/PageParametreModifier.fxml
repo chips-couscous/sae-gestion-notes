@@ -26,9 +26,9 @@
                   <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #354B85;" />
                   <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #354B85;" GridPane.columnIndex="1" />
                   <Pane prefHeight="48.0" prefWidth="200.0" style="-fx-background-color: #354B85;" GridPane.columnIndex="2" />
-                  <Button fx:id="boutonNotes" onAction="#changerSceneNotes" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="48.0" prefWidth="346.0" style="-fx-background-color: #e6e9f0;" text="Mes notes" textFill="#354b85" GridPane.rowIndex="1" />
-                  <Button fx:id="boutonParametreImporter" onAction="#changerSceneParametre" alignment="CENTER" mnemonicParsing="false" prefHeight="37.0" prefWidth="343.0" style="-fx-background-color: #354B85;" text="Paramètres" textFill="#e6e9f0" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
-                  <Button fx:id="boutonRessources" onAction="#changerSceneRessources" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="48.0" prefWidth="346.0" style="-fx-background-color: #e6e9f0;" text="Les ressources" textFill="#354b85" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Button fx:id="boutonNotes" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" mnemonicParsing="false" onAction="#changerSceneNotes" prefHeight="48.0" prefWidth="346.0" style="-fx-background-color: #e6e9f0;" text="Mes notes" textFill="#354b85" GridPane.rowIndex="1" />
+                  <Button fx:id="boutonParametreImporter" alignment="CENTER" mnemonicParsing="false" onAction="#changerSceneParametre" prefHeight="37.0" prefWidth="343.0" style="-fx-background-color: #354B85;" text="Paramètres" textFill="#e6e9f0" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
+                  <Button fx:id="boutonRessources" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" mnemonicParsing="false" onAction="#changerSceneRessources" prefHeight="48.0" prefWidth="346.0" style="-fx-background-color: #e6e9f0;" text="Les ressources" textFill="#354b85" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -51,10 +51,10 @@
                 <RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button fx:id="boutonParametreImporter2" onAction="#changerSceneParametre" mnemonicParsing="false" prefHeight="75.0" prefWidth="258.0" style="-fx-background-color: #E6E9F0;" text="Importer des paramètres" textFill="#354b85" />
-                  <Button fx:id="boutonParametrePartager" onAction="#changerSceneParametrePartager" mnemonicParsing="false" prefHeight="125.0" prefWidth="258.0" style="-fx-background-color: #E6E9F0;" text="Partager mes paramètres" textFill="#354b85" GridPane.columnIndex="1" />
-                  <Button fx:id="boutonParametreModifier" onAction="#changerSceneModifier" mnemonicParsing="false" prefHeight="133.0" prefWidth="257.0" style="-fx-background-color: #354B85;" text="Modifier mon identité" textFill="#e6e9f0" GridPane.columnIndex="3" />
-                  <Button fx:id="boutonParametreReinitialiser" onAction="#changerSceneParametreReiniti" mnemonicParsing="false" prefHeight="97.0" prefWidth="257.0" style="-fx-background-color: #e6e9f0;" text="Réinitialiser mes données" textFill="#354b85" GridPane.columnIndex="2" />
+                  <Button fx:id="boutonParametreImporter2" mnemonicParsing="false" onAction="#changerSceneParametre" prefHeight="75.0" prefWidth="258.0" style="-fx-background-color: #E6E9F0;" text="Importer des paramètres" textFill="#354b85" />
+                  <Button fx:id="boutonParametrePartager" mnemonicParsing="false" onAction="#changerSceneParametrePartager" prefHeight="125.0" prefWidth="258.0" style="-fx-background-color: #E6E9F0;" text="Partager mes paramètres" textFill="#354b85" GridPane.columnIndex="1" />
+                  <Button fx:id="boutonParametreModifier" mnemonicParsing="false" onAction="#changerSceneModifier" prefHeight="133.0" prefWidth="257.0" style="-fx-background-color: #354B85;" text="Modifier mon identité" textFill="#e6e9f0" GridPane.columnIndex="3" />
+                  <Button fx:id="boutonParametreReinitialiser" mnemonicParsing="false" onAction="#changerSceneParametreReiniti" prefHeight="97.0" prefWidth="257.0" style="-fx-background-color: #e6e9f0;" text="Réinitialiser mes données" textFill="#354b85" GridPane.columnIndex="2" />
                </children>
             </GridPane>
          </children>

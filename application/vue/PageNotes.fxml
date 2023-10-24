@@ -2,10 +2,6 @@
 
 <!-- grid.fxml -->
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -14,7 +10,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1030.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controlleur.Controlleur">
+<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1030.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controlleur.Controlleur">
    <top>
       <GridPane style="-fx-background-color: #e6e9f0;" BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -32,15 +28,23 @@
             <Pane prefHeight="48.0" prefWidth="200.0" style="-fx-background-color: #354B85;" GridPane.columnIndex="2" />
          </children>
          <children>
-            <Button fx:id="boutonRessources" onAction="#changerSceneRessources" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="48.0" prefWidth="494.0" style="-fx-background-color: #e6e9f0;" text="Les ressources" textFill="#354b85" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Button fx:id="boutonNotes" onAction="#changerSceneNotes" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="37.0" prefWidth="344.0" style="-fx-background-color: #354b85;" text="Mes notes" textFill="#e6e9f0" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+            <Button fx:id="boutonRessources" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" mnemonicParsing="false" onAction="#changerSceneRessources" prefHeight="48.0" prefWidth="494.0" style="-fx-background-color: #e6e9f0;" text="Les ressources" textFill="#354b85" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Button fx:id="boutonNotes" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#changerSceneNotes" prefHeight="37.0" prefWidth="344.0" style="-fx-background-color: #354b85;" text="Mes notes" textFill="#e6e9f0" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
                <font>
                   <Font name="Roboto" size="12.0" />
                </font>
             </Button>
-            <Button fx:id="boutonParametreImporter" onAction="#changerSceneParametre" mnemonicParsing="false"  prefHeight="102.0" prefWidth="343.0" style="-fx-background-color: #e6e9f0;" text="Paramètres" textFill="#354b85" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <Button fx:id="boutonParametreImporter" mnemonicParsing="false" onAction="#changerSceneParametre" prefHeight="102.0" prefWidth="343.0" style="-fx-background-color: #e6e9f0;" text="Paramètres" textFill="#354b85" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <Pane prefHeight="200.0" prefWidth="200.0" />
          </children>
       </GridPane>
    </top>
+   <center>
+      <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="boutonSupprimerNote" layoutX="465.0" layoutY="266.0" mnemonicParsing="false" onAction="#supprimerNote" text="Supprimer Note" />
+            <Button fx:id="boutonModifierNote" layoutX="458.0" layoutY="204.0" mnemonicParsing="false" onAction="#ouvrirModifierNote" text="Modifier une Note" />
+         </children>
+      </Pane>
+   </center>
 </BorderPane>

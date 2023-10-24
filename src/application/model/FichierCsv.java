@@ -205,6 +205,8 @@ public class FichierCsv {
             return false;
         }
         
+        setFichier(destinationFichier);
+        setCheminFichier(cheminFichierDuplique);
         return true;
     }
     
@@ -237,6 +239,16 @@ public class FichierCsv {
         return nouveauNomFichier.toString();
     }
     
+    /** @return valeur de fichier */
+    public File getFichier() {
+        return fichier;
+    }
+
+    /** @param fichier nouvelle valeur de fichier */
+    public void setFichier(File fichier) {
+        this.fichier = fichier;
+    }
+
     /** @return valeur de cheminFichier */
     public static String getCheminFichier() {
         return cheminFichier;
@@ -254,7 +266,7 @@ public class FichierCsv {
      */
     public static void main(String args[]) throws ExtensionFichierException {
         FichierCsv fichier = new FichierCsv(trouverCheminFichier());
-        fichier.lireFichier();
         fichier.sauvegarderFichier();
+        fichier.lireFichier();
     }
 }

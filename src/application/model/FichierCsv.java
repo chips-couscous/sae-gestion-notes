@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import java.util.Random;
@@ -120,7 +121,7 @@ public class FichierCsv {
             String ligne;
             while ((ligne = lecteur.readLine()) != null) {
                 // Délimitation des cellules dans les rangées
-                String[] rangee = ligne.split(DELIMITEUR_DEFAUT);
+                String[] rangee = ligne.split(delimiteurFichier);
                 contenuFichier.add(rangee);
             }
             
@@ -130,6 +131,19 @@ public class FichierCsv {
         }
         
         return contenuFichier;
+    }
+    
+    /**
+     * TODO comment method role
+     * @param contenuFichier
+     */
+    private void analyserFichier(List<String[]> contenuFichier) {
+        for (int i = 0; i < contenuFichier.size() ; i++) {
+            for (int j = 0; j < contenuFichier.get(i).length; j++) {
+                System.out.print(contenuFichier.get(i)[j]);
+            }
+            System.out.println();
+        }
     }
     
     /**
@@ -259,6 +273,11 @@ public class FichierCsv {
         FichierCsv.cheminFichier = cheminFichier;
     }
     
+    /** @param delimiteurFichier nouvelle valeur de delimiteurFichier */
+    public void setDelimiteurFichier(String delimiteurFichier) {
+        this.delimiteurFichier = delimiteurFichier;
+    }
+
     /**
      * TODO comment method role
      * @param args
@@ -267,6 +286,7 @@ public class FichierCsv {
     public static void main(String args[]) throws ExtensionFichierException {
         FichierCsv fichier = new FichierCsv(trouverCheminFichier());
         fichier.sauvegarderFichier();
-        fichier.lireFichier();
+        fichier.setDelimiteurFichier(";");
+        fichier.analyserFichier(fichier.lireFichier());
     }
 }

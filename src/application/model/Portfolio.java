@@ -10,8 +10,11 @@ package application.model;
  */
 public class Portfolio extends Enseignement {
 
+	/** TODO comment intial state
+	 * @param intitule
+	 * @param idEnseignement
+	 */
 	public Portfolio(String intitule, String idEnseignement) {
 		super(intitule, idEnseignement);
 	}
-
 }

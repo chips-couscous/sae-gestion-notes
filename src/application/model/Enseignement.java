@@ -13,6 +13,10 @@ public abstract class Enseignement {
 	
 	private String idEnseignement;
 	
+	/** TODO comment intial state
+	 * @param intitule
+	 * @param idEnseignement
+	 */
 	public Enseignement(String intitule, String idEnseignement) {
 		super();
 		this.idEnseignement = idEnseignement;

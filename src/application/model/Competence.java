@@ -22,6 +22,11 @@ public class Competence {
 	
 	private ArrayList<Enseignement> listeEnseignement;
 	
+	/** TODO comment intial state
+	 * @param intitule
+	 * @param poidsEnseignement
+	 * @param listeEnseignement
+	 */
 	public Competence(String intitule, int poidsEnseignement, ArrayList<Enseignement> listeEnseignement) {
 		this.intitule = intitule;
 		this.poidsEnseignement = poidsEnseignement;

@@ -10,6 +10,10 @@ package application.model;
  */
 public class Sae extends Enseignement{
 	
+	/** TODO comment intial state
+	 * @param intitule
+	 * @param idEnseignement
+	 */
 	public Sae(String intitule, String idEnseignement) {
 		super(intitule, idEnseignement);
 	}

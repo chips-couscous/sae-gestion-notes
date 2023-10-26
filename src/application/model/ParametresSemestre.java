@@ -28,8 +28,7 @@ public class ParametresSemestre {
            throw new ParametresSemestreException("Le semestre est invalide");
        }
        numero = numeroSemestre;
-       parcours = parcoursSemestre.toLowerCase().equals("tous") ? 
-                  't' : parcoursSemestre.charAt(0);
+       parcours = parcoursSemestre.toLowerCase().charAt(0);
     }
     
     
@@ -44,8 +43,8 @@ public class ParametresSemestre {
     private boolean semestreEstValide(int numero, String parcours) {
         parcours = parcours.toLowerCase();
         return     numero > 0 && numero < 7
-               && (parcours.equals("tous") || parcours.equals("a") ||
-                   parcours.equals("b")    || parcours.equals("c") ||
-                   parcours.equals("d")); 
+               && (parcours.equals("tous") || parcours.equals("néant") ||
+                   parcours.equals("a")    || parcours.equals("b")     ||
+                   parcours.equals("c")    || parcours.equals("d")); 
     }
 }

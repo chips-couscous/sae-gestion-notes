@@ -8,6 +8,10 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/** TODO comment class responsibility (SRP)
+ * @author tom
+ *
+ */
 public class Controlleur {
 	
 	@FXML
@@ -151,6 +155,9 @@ public class Controlleur {
 	}
 	
 	
+	/** TODO comment method role
+	 * 
+	 */
 	@FXML
 	public void sceneModifierNote() {
 	    try {

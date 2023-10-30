@@ -7,10 +7,17 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
+/** TODO comment class responsibility (SRP)
+ * @author tom
+ *
+ */
 public class Vue extends Application {
 
 	private Stage primaryStage;
 
+	/** TODO comment method role
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -23,6 +30,9 @@ public class Vue extends Application {
 		initRootLayout();
 	}
 
+	/** TODO comment method role
+	 * 
+	 */
 	public void initRootLayout() {
 
 		try {

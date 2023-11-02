@@ -17,4 +17,10 @@ public class Ressource extends Enseignement{
 	public Ressource(String intitule, String idEnseignement) {
 		super(intitule, idEnseignement);
 	}
+	
+	/* non javadoc - @see application.model.Enseignement#getIntitule() */
+	@Override
+	public String getIntitule() {
+	    return this.intitule;
+	}
 }

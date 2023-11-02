@@ -9,18 +9,24 @@ package application.model;
  * @author tony.lapeyre
  */
 public abstract class Enseignement {
-	private String intitule;
 	
-	private String idEnseignement;
+   String intitule;
 	
-	/** TODO comment intial state
-	 * @param intitule
-	 * @param idEnseignement
-	 */
-	public Enseignement(String intitule, String idEnseignement) {
-		super();
-		this.idEnseignement = idEnseignement;
+   String idEnseignement;
+	
+   /** TODO comment intial state
+    * @param intitule
+    * @param idEnseignement
+    */
+   public Enseignement(String intitule, String idEnseignement) {
+	super();
+	this.idEnseignement = idEnseignement;
 		
-	}
+   }
+
+    /**
+     * @return l'intitule de l'enseignement
+     */
+    public abstract String getIntitule();
 
 }

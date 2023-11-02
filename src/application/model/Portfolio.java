@@ -17,4 +17,10 @@ public class Portfolio extends Enseignement {
 	public Portfolio(String intitule, String idEnseignement) {
 		super(intitule, idEnseignement);
 	}
+
+    /* non javadoc - @see application.model.Enseignement#getIntitule() */
+    @Override
+    public String getIntitule() {
+        return this.intitule;
+    }
 }

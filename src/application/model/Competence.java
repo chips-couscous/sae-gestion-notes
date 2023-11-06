@@ -32,4 +32,11 @@ public class Competence {
 		this.poidsEnseignement = poidsEnseignement;
 		this.listeEnseignement = new ArrayList<>(listeEnseignement);
 	}
+
+	/**
+	 *
+	 */
+	private boolean estValide() {
+		// TODO Regex ...
+	}
 }

@@ -66,7 +66,7 @@ public class Note {
      * @return la note converti sur 20 points
      */
     public double surVingt() {
-        return 0;
+        return valeur / denominateur * 20;
     }
 
     /** @return valeur de valeur */

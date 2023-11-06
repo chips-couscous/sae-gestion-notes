@@ -1,6 +1,6 @@
-<<<<<<< HEAD
+
 # sae-developpement-application
-=======
+
 # Gestion de Notes - Application Java
 
 Ce projet est une application Java appelée "Gestion de Notes", conçue pour aider les étudiants en BUT Informatique à stocker et gérer leurs notes tout au long du semestre de manière simple et personnalisable.
@@ -67,4 +67,3 @@ N'hésitez pas à explorer le code source de l'application pour en savoir plus s
 - Lapeyre Tony
 - Lemaire Thomas
 - Nguyen Constant
->>>>>>> 66dcf977ebdd61f0d298ab8eace8ad2cae2af452

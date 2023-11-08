@@ -5,6 +5,7 @@
 
 package application.model;
 
+import application.model.exception.CopieFichierException;
 import application.model.exception.ExtensionFichierException;
 
 import java.io.BufferedReader;
@@ -15,14 +16,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import java.util.Random;
-
-import javax.swing.JFileChooser;
-import javax.swing.UIManager;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 /** 
  * Class permettant de réaliser des actions sur un fichier CSV (.csv)
@@ -40,6 +36,11 @@ public class FichierCsv {
     
     // Délimiteur de fichier CSV (.csv) par défaut
     private final static String DELIMITEUR_DEFAUT = ",";
+    
+    // Chemin par défaut du répertoire des sauvergardes
+    private final static String REPERTOIRE_SAUVEGARDE = "./csv/";
+    
+    private final static String EXTENSION_FICHIER = ".csv";
         
     private static String cheminFichier;
    
@@ -49,58 +50,27 @@ public class FichierCsv {
     
     /**
      * Constructeur d'un fichier CSV (.csv) en ayant le chemin connu.
+     * @param type
      * @param chemin , le chemin du fichier
      * @throws ExtensionFichierException 
      */
-    public FichierCsv(String chemin) throws ExtensionFichierException {
+    public FichierCsv(char type, String chemin) throws ExtensionFichierException {
         if (!fichierEstValide(chemin)) {
             throw new ExtensionFichierException("Fichier non valide.");
         }
-        cheminFichier = chemin;
+        
         fichier = new File(chemin);
-        delimiteurFichier = DELIMITEUR_DEFAUT;
-    }
-    
-    /**
-     * Cette fonction permet de créer une frame d'explorateur de fichier Windows
-     * qui permet à l'utilisateur de sélectionner un fichier CSV qui contient
-     * les paramètres du semestre qu'il souhaite importer.
-     * @return Le chemin du fichier selectionné
-     */
-    public static String trouverCheminFichier() {
+        
+        // copie du fichier
         try {
-            // Choix de l'apparence de la fenêtre Windows
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
+            fichier = copierFichier(type);
+        } catch (CopieFichierException e) {
             e.printStackTrace();
         }
-
-        // Créez un objet JFileChooser
-        JFileChooser fileChooser = new JFileChooser();
-
-        // Personnalisez le titre de la boîte de dialogue
-        fileChooser.setDialogTitle("Sélectionner un fichier CSV");
-
-        // Créez un filtre pour les fichiers .csv
-        FileNameExtensionFilter filter =
-                new FileNameExtensionFilter("Fichiers CSV (*.csv)", "csv");
-        fileChooser.setFileFilter(filter);
-
-        // Désactivez la possibilité de sélectionner tous les fichiers
-        fileChooser.setAcceptAllFileFilterUsed(false);
-
-        // Affichez la boîte de dialogue de sélection de fichier
-        int returnValue = fileChooser.showOpenDialog(null);
-
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-            // L'utilisateur a sélectionné un fichier
-            File selectedFile = fileChooser.getSelectedFile();
-            String chemin = selectedFile.getAbsolutePath();
-            setCheminFichier(chemin);
-            return chemin;
-        }
         
-        return null;
+        cheminFichier = fichier.getAbsolutePath();
+        System.out.println(cheminFichier);
+        delimiteurFichier = DELIMITEUR_DEFAUT;
     }
     
     /**
@@ -137,7 +107,7 @@ public class FichierCsv {
      * TODO comment method role
      * @param contenuFichier
      */
-    private void analyserFichier(List<String[]> contenuFichier) {
+    private static void analyserFichier(List<String[]> contenuFichier) {
         for (int i = 0; i < contenuFichier.size() ; i++) {
             for (int j = 0; j < contenuFichier.get(i).length; j++) {
                 System.out.print(contenuFichier.get(i)[j]);
@@ -152,9 +122,9 @@ public class FichierCsv {
      * @param chemin , le chemin du fichier
      * @return true si le chemin du fichier est valide, false sinon.
      */
-    private boolean fichierEstValide(String chemin) {
+    private static boolean fichierEstValide(String chemin) {
         
-        File fichier = new File(cheminFichier);
+        File fichier = new File(chemin);
 
         // Vérifie si le fichier existe
         if (fichier.exists()) {
@@ -175,33 +145,29 @@ public class FichierCsv {
     /**
      * Sauvegarder le fichier importé pour l'avoir dans les fichiers de l'application
      * @return true si le fichier s'est bien sauvegardé, false sinon
+     * @throws CopieFichierException 
      */
-    private boolean sauvegarderFichier() {
+    private File copierFichier(char typeDeFichier) throws CopieFichierException {
 
         String nomNouveauFichier;
         String cheminFichierDuplique;
         
         File fichierDuplique;
         File repertoireFichier;
-        File destinationFichier;
                 
         do {
             // génération d'un nouveau nom aléatoire
-            nomNouveauFichier = NomFichierDuplique();
-            cheminFichierDuplique = "./csv/" + nomNouveauFichier + ".csv";
+            nomNouveauFichier = typeDeFichier + "-" + NomFichierDuplique() + EXTENSION_FICHIER;
+            cheminFichierDuplique = REPERTOIRE_SAUVEGARDE + nomNouveauFichier;
             fichierDuplique = new File(cheminFichierDuplique);
             // continue si le fichier existe déjà dans le répertoire
         } while (fichierDuplique.exists());     
 
-        // ajout de l'extension CSV (.csv) dans le nom du fichier
-        nomNouveauFichier += ".csv";
         // création de l'instance du répertoire "./csv/" dans lequel le fichier
         // sera sauvegardé
-        repertoireFichier = new File("./csv/");
+        repertoireFichier = new File(REPERTOIRE_SAUVEGARDE);
         // création du répertoire si celui ci n'existe pas
         repertoireFichier.mkdirs();
-        // création de la destination du fichier à sauvegardé
-        destinationFichier = new File(repertoireFichier, nomNouveauFichier);
 
         // sauvegarde du fichier dans sa nouvelle destination
         // impression du contenu du fichier source pour le sauvegarder
@@ -210,18 +176,16 @@ public class FichierCsv {
              // écoute du fichier de sauvegarde pour la duplication du contenu
              // du fichier source
              FileChannel destinationSource
-                 = new FileOutputStream(destinationFichier).getChannel()) {
+                 = new FileOutputStream(fichierDuplique).getChannel()) {
             // transfert du contenu du fichier source vers la sauvegarde
             destinationSource.transferFrom(fichierSource, 0,
                                            fichierSource.size());
+            
+            return new File(cheminFichierDuplique);
+    
         } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+            throw new CopieFichierException("Le fichier n'a pas pu être sauvegardé");
         }
-        
-        setFichier(destinationFichier);
-        setCheminFichier(cheminFichierDuplique);
-        return true;
     }
     
     /**
@@ -229,7 +193,7 @@ public class FichierCsv {
      * nouveau nom de fichier lors de la sauvegarde
      * @return le nouveau nom du fichier sauvegarde
      */
-    private String NomFichierDuplique() {
+    private static String NomFichierDuplique() {
         // taille de la chaine de caractère généré
         final int TAILLE_NOM = 12;
         // nom du fichier sauvegardé
@@ -258,19 +222,9 @@ public class FichierCsv {
         return fichier;
     }
 
-    /** @param fichier nouvelle valeur de fichier */
-    public void setFichier(File fichier) {
-        this.fichier = fichier;
-    }
-
     /** @return valeur de cheminFichier */
     public static String getCheminFichier() {
         return cheminFichier;
-    }
-
-    /** @param cheminFichier nouvelle valeur de cheminFichier */
-    public static void setCheminFichier(String cheminFichier) {
-        FichierCsv.cheminFichier = cheminFichier;
     }
     
     /** @param delimiteurFichier nouvelle valeur de delimiteurFichier */
@@ -284,9 +238,9 @@ public class FichierCsv {
      * @throws ExtensionFichierException 
      */
     public static void main(String args[]) throws ExtensionFichierException {
-        FichierCsv fichier = new FichierCsv(trouverCheminFichier());
-        fichier.sauvegarderFichier();
+        FichierCsv fichier = new FichierCsv('p', "Z:\\Eclipse\\workspace\\SaeGestionNotes\\csv\\jdlezvzfrluv.csv");
+        FichierCsv fichier1 = new FichierCsv('r', "Z:\\Eclipse\\workspace\\SaeGestionNotes\\csv\\jdlezvzfrluv.csv");
         fichier.setDelimiteurFichier(";");
-        fichier.analyserFichier(fichier.lireFichier());
+        analyserFichier(fichier.lireFichier());
     }
 }

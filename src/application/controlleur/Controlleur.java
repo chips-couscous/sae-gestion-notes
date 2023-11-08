@@ -257,7 +257,6 @@ public class Controlleur {
 	public void validerModifierNote(TextField note, ComboBox<String> ressource, ComboBox<String> type, TextArea description, TextField date) {
 		Stage stage = (Stage) rootPane.getScene().getWindow();
         stage.close();
-        System.out.print("Jy suis");
         creerNote(note, ressource, type, description, date);
 	}
 	
@@ -326,6 +325,8 @@ public class Controlleur {
 
         return grilleNote;
     }
+    
+    
     
     private void selectionnerFichier() {
     	FileChooser explorateurFichier = new FileChooser();

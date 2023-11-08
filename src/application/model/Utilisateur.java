@@ -1,4 +1,4 @@
-package application.modele;
+package application.model;
 
 public class Utilisateur {
     private String nom;

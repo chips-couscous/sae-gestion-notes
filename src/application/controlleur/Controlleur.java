@@ -4,7 +4,8 @@ import javafx.scene.control.TextFormatter;
 import java.io.IOException;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
-import application.modele.GestionNote;
+
+import application.model.GestionNotes;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.fxml.FXML;
@@ -101,12 +102,12 @@ public class Controlleur {
 	
 
     public void afficherNom() {
-    	labelNomEtudiant.setText(GestionNote.afficherIdentite());
+    	labelNomEtudiant.setText(GestionNotes.afficherIdentite());
     }
     
 	public void modifierNom(TextField nom, TextField prenom) {
 		
-		GestionNote.changerIdentite(nom.getText(), prenom.getText());
+		GestionNotes.changerIdentite(nom.getText(), prenom.getText());
 		afficherNom();
 		
 	}

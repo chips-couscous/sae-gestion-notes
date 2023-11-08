@@ -62,48 +62,6 @@ public class FichierCsv {
     }
     
     /**
-     * Cette fonction permet de créer une frame d'explorateur de fichier Windows
-     * qui permet à l'utilisateur de sélectionner un fichier CSV qui contient
-     * les paramètres du semestre qu'il souhaite importer.
-     * @return Le chemin du fichier selectionné
-     */
-    public static String trouverCheminFichier() {
-        try {
-            // Choix de l'apparence de la fenêtre Windows
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Créez un objet JFileChooser
-        JFileChooser fileChooser = new JFileChooser();
-
-        // Personnalisez le titre de la boîte de dialogue
-        fileChooser.setDialogTitle("Sélectionner un fichier CSV");
-
-        // Créez un filtre pour les fichiers .csv
-        FileNameExtensionFilter filter =
-                new FileNameExtensionFilter("Fichiers CSV (*.csv)", "csv");
-        fileChooser.setFileFilter(filter);
-
-        // Désactivez la possibilité de sélectionner tous les fichiers
-        fileChooser.setAcceptAllFileFilterUsed(false);
-
-        // Affichez la boîte de dialogue de sélection de fichier
-        int returnValue = fileChooser.showOpenDialog(null);
-
-        if (returnValue == JFileChooser.APPROVE_OPTION) {
-            // L'utilisateur a sélectionné un fichier
-            File selectedFile = fileChooser.getSelectedFile();
-            String chemin = selectedFile.getAbsolutePath();
-            setCheminFichier(chemin);
-            return chemin;
-        }
-        
-        return null;
-    }
-    
-    /**
      * Permet à partir d'un chemin donné de lire un fichier CSV et d'en soustraire
      * ligne par ligne les cellules.
      * @return true

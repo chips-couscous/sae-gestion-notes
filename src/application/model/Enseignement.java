@@ -37,7 +37,7 @@ public abstract class Enseignement {
      *                 false si la regex ne correspond pas à l'identifiant de l'enseignement
      */
     public static boolean estValide(String regex, String idEnseignement) {       
-        boolean correct = true;       // vrai si le jeuDeTest correspond à la regex
+        boolean correct = true;       // vrai si l'identifiant correspond à la regex
         Pattern motif = Pattern.compile(regex);       // on compile la regex
             
         // on vérifie si l'identifiant d'enseignement correspond à la regex

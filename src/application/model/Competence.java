@@ -4,7 +4,8 @@
  */
 package application.model;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.TreeSet;
 
 import application.model.Enseignement;
 
@@ -18,10 +19,10 @@ public class Competence {
     private String intitule;
         
     /** poids de l'enseignement  */
-    private int poidsEnseignement;
+    private int[] poidsEnseignement;
         
     /** liste contenant les enseignements englobés par la compétence */
-    private ArrayList<Enseignement> listeEnseignements;
+    private HashMap<String,Enseignement> enseignementsCompetence;
         
     /** 
      * Crée une compétence contenant son intitule, son poids ainsi que 
@@ -30,9 +31,9 @@ public class Competence {
      * @param poidsEnseignement
      * @param listeEnseignements 
      */
-    public Competence(String intitule, int poidsEnseignement, ArrayList<Enseignement> listeEnseignements) {
+    public Competence(HashMap<String, Enseignement> listeEnseignements, String intitule, int[] poidsEnseignement) {
         this.intitule = intitule;
         this.poidsEnseignement = poidsEnseignement;
-        this.listeEnseignements = new ArrayList<>(listeEnseignements);
+        this.enseignementsCompetence = new HashMap<>(listeEnseignements);
     }
 }

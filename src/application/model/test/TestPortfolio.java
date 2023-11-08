@@ -2,7 +2,7 @@
  * TestPortfolio.java                                      3 nov. 2023
  * IUT Rodez, info2 2022-2023, pas de copyright ni "copyleft" 
  */
-package application.model.tests;
+package application.model.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 

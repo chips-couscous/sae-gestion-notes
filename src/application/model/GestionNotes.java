@@ -19,6 +19,8 @@ public class GestionNotes {
     public static ArrayList<Note> getNotes() {
         return notes;
     }
+    
+    static Utilisateur identite = new Utilisateur("Nom", "Prenom");
 
     /** 
      * Crée une note à partir des données reçu par le contrôleur et l'ajoute 
@@ -45,4 +47,13 @@ public class GestionNotes {
             return false;
         }
     }
+    
+    public static void changerIdentite(String nom, String prenom) {
+		identite.setNom(nom);
+		identite.setPrenom(prenom);
+	}
+	
+	public static String afficherIdentite() {
+		return identite.getNom() + " " + identite.getPrenom();
+	}
 }

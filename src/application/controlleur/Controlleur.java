@@ -43,6 +43,9 @@ public class Controlleur {
 	Button valider;
 	
 	@FXML
+	GridPane grilleNotes;
+	
+	@FXML
 	Button validerNom;
 	
 	@FXML
@@ -97,6 +100,42 @@ public class Controlleur {
 		}
 
 	}
+	
+	private void creerNotes2() {       
+        grilleNotes.getChildren().clear();
+        //grilleNotes.add();
+        //GestionNotes.ajouterNote();
+        
+
+    }
+	
+	public void validerModifierNote(TextField note, ComboBox<String> ressource, ComboBox<String> type, TextArea description, TextField date) {
+		Stage stage = (Stage) rootPane.getScene().getWindow();
+        stage.close();
+        creerNote(note.getText(), ressource, type, description.getText(), date.getText());
+      //GestionNotes.ajouterNote();
+	}
+	
+	
+	private GridPane creerNote(String note, ComboBox<String> ressource, ComboBox<String> type, String description, String date) {
+    	GridPane grilleNote = new GridPane();
+    	
+    	grilleNote.setPrefWidth(640);
+    	grilleNote.setPrefHeight(40);
+    	
+    	// Créer des labels pour chaque colonne
+        Label labelNote = new Label(note);
+        Label labelType = new Label(type.getValue());
+        Label labelRessource = new Label(ressource.getValue());  
+
+        // Ajouter les labels à la GridPane
+        grilleNote.add(labelNote, 0, 0); // Colonne 1, Ligne 1
+        grilleNote.add(labelType, 1, 0); // Colonne 2, Ligne 1
+        grilleNote.add(labelRessource, 2, 0); // Colonne 4, Ligne 1
+
+        return grilleNote;
+    }
+      
 	
 	
 
@@ -253,12 +292,7 @@ public class Controlleur {
 		}
 	}
 	
-	
-	public void validerModifierNote(TextField note, ComboBox<String> ressource, ComboBox<String> type, TextArea description, TextField date) {
-		Stage stage = (Stage) rootPane.getScene().getWindow();
-        stage.close();
-        creerNote(note, ressource, type, description, date);
-	}
+
 	
 	
 	private TextFormatter<String> createFormatter(Pattern pattern) {

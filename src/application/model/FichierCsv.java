@@ -149,25 +149,32 @@ public class FichierCsv {
      */
     private File copierFichier(char typeDeFichier) throws CopieFichierException {
 
-        String nomNouveauFichier;
-        String cheminFichierDuplique;
+        String nomFichierCopie;
+        String cheminFichierCopie;
         
-        File fichierDuplique;
-        File repertoireFichier;
-                
-        do {
-            // génération d'un nouveau nom aléatoire
-            nomNouveauFichier = typeDeFichier + "-" + NomFichierDuplique() + EXTENSION_FICHIER;
-            cheminFichierDuplique = REPERTOIRE_SAUVEGARDE + nomNouveauFichier;
-            fichierDuplique = new File(cheminFichierDuplique);
-            // continue si le fichier existe déjà dans le répertoire
-        } while (fichierDuplique.exists());     
-
+        File copieFichier;
+        File repertoireCopieFichier;
+        
+        switch (typeDeFichier) {
+        case 's':
+            nomFichierCopie = "parametresSemestre" + EXTENSION_FICHIER;
+            break;
+        case 'r':
+            nomFichierCopie = "parametresRessource" + EXTENSION_FICHIER;
+            break;
+        default:
+            throw new CopieFichierException("Le type du fichier importé ne "
+                            + "correspond pas à fichier ressource ou semestre");
+        }
+        
+        cheminFichierCopie = REPERTOIRE_SAUVEGARDE + nomFichierCopie;
+        copieFichier = new File(cheminFichierCopie);
+        
         // création de l'instance du répertoire "./csv/" dans lequel le fichier
         // sera sauvegardé
-        repertoireFichier = new File(REPERTOIRE_SAUVEGARDE);
+        repertoireCopieFichier = new File(REPERTOIRE_SAUVEGARDE);
         // création du répertoire si celui ci n'existe pas
-        repertoireFichier.mkdirs();
+        repertoireCopieFichier.mkdirs();
 
         // sauvegarde du fichier dans sa nouvelle destination
         // impression du contenu du fichier source pour le sauvegarder
@@ -176,45 +183,16 @@ public class FichierCsv {
              // écoute du fichier de sauvegarde pour la duplication du contenu
              // du fichier source
              FileChannel destinationSource
-                 = new FileOutputStream(fichierDuplique).getChannel()) {
+                 = new FileOutputStream(copieFichier).getChannel()) {
             // transfert du contenu du fichier source vers la sauvegarde
             destinationSource.transferFrom(fichierSource, 0,
                                            fichierSource.size());
             
-            return new File(cheminFichierDuplique);
-    
+            return new File(cheminFichierCopie);
+            
         } catch (IOException e) {
             throw new CopieFichierException("Le fichier n'a pas pu être sauvegardé");
         }
-    }
-    
-    /**
-     * Génère une chaine de 12 caractères aléatoire pour la création d'un
-     * nouveau nom de fichier lors de la sauvegarde
-     * @return le nouveau nom du fichier sauvegarde
-     */
-    private static String NomFichierDuplique() {
-        // taille de la chaine de caractère généré
-        final int TAILLE_NOM = 12;
-        // nom du fichier sauvegardé
-        StringBuilder nouveauNomFichier = new StringBuilder();
-
-        // instance d'objet pour tirer un entier aléatoire
-        Random aleatoire = new Random();
-        // caractères utilisés pour la génération du nouveau nom de fichier
-        String ensembleLettres = "abcdefghijklmnopqrstuvwxyz";
-        
-        // génération du nom de fichier
-        for (int i = 0; i < TAILLE_NOM; i++) {
-            // entier aléatoire dans la dimension des caractères utilisés
-            int indexAleatoire = aleatoire.nextInt(ensembleLettres.length());
-            // caractère pris aléatoirement dans son ensemble
-            char charAleatoire = ensembleLettres.charAt(indexAleatoire);
-            // ajout du caractère choisi dans le nom du fichier
-            nouveauNomFichier.append(charAleatoire);
-        }
-
-        return nouveauNomFichier.toString();
     }
     
     /** @return valeur de fichier */
@@ -239,7 +217,6 @@ public class FichierCsv {
      */
     public static void main(String args[]) throws ExtensionFichierException {
         FichierCsv fichier = new FichierCsv('p', "Z:\\Eclipse\\workspace\\SaeGestionNotes\\csv\\jdlezvzfrluv.csv");
-        FichierCsv fichier1 = new FichierCsv('r', "Z:\\Eclipse\\workspace\\SaeGestionNotes\\csv\\jdlezvzfrluv.csv");
         fichier.setDelimiteurFichier(";");
         analyserFichier(fichier.lireFichier());
     }

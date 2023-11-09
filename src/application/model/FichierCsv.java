@@ -157,10 +157,10 @@ public class FichierCsv {
         
         switch (typeDeFichier) {
         case 's':
-            nomFichierCopie = "parametresSemestre" + EXTENSION_FICHIER;
+            nomFichierCopie = "ParametresSemestre" + EXTENSION_FICHIER;
             break;
         case 'r':
-            nomFichierCopie = "parametresRessource" + EXTENSION_FICHIER;
+            nomFichierCopie = "ParametresRessource" + EXTENSION_FICHIER;
             break;
         default:
             throw new CopieFichierException("Le type du fichier importé ne "
@@ -187,11 +187,10 @@ public class FichierCsv {
             // transfert du contenu du fichier source vers la sauvegarde
             destinationSource.transferFrom(fichierSource, 0,
                                            fichierSource.size());
-            
-            return new File(cheminFichierCopie);
-            
+            return new File(cheminFichierCopie);    
         } catch (IOException e) {
-            throw new CopieFichierException("Le fichier n'a pas pu être sauvegardé");
+            throw new CopieFichierException
+                      ("Le fichier n'a pas pu être sauvegardé");
         }
     }
     
@@ -216,7 +215,7 @@ public class FichierCsv {
      * @throws ExtensionFichierException 
      */
     public static void main(String args[]) throws ExtensionFichierException {
-        FichierCsv fichier = new FichierCsv('p', "Z:\\Eclipse\\workspace\\SaeGestionNotes\\csv\\jdlezvzfrluv.csv");
+        FichierCsv fichier = new FichierCsv('s', "Z:\\Eclipse\\workspace\\SaeGestionNotes\\csv\\parametrage-sae.csv");
         fichier.setDelimiteurFichier(";");
         analyserFichier(fichier.lireFichier());
     }

@@ -47,4 +47,10 @@ public class Semestre {
                    parcours.equals("a")    || parcours.equals("b")     ||
                    parcours.equals("c")    || parcours.equals("d")); 
     }
+    
+    /** TODO comment method role
+     */
+    public String toString() {
+        return "Semetre : " + numero + " / Parcours : " + parcours;
+    }
 }

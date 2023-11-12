@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import application.model.exception.ExtensionFichierException;
+import application.model.exception.ParametresSemestreException;
 
 /**
  * TODO comment class responsibility (SRP)
@@ -35,12 +36,21 @@ public class FichierSemestre extends FichierCsv {
 
     /**
      * TODO comment method role
+     * @throws ParametresSemestreException 
      *
      */
-    private void decomposerFichier() {
+    private void decomposerFichier() throws ParametresSemestreException {
         for (int i = 0; i < contenuFichier.size(); i++) {
             if (contenuFichier.get(i).length > 0) {
                 switch (contenuFichier.get(i)[0]) {
+                case "Semestre": {
+                    int numeroSemestre = Integer.parseInt(contenuFichier.get(i)[1]);
+                    Semestre smestre = new Semestre(numeroSemestre, contenuFichier.get(i+1)[1]);
+                    
+                    System.out.println(smestre.toString());
+                    
+                    break; 
+                }
                 case "Compétence": {
                     i = decomposerCompetence(i);
                     break;
@@ -134,8 +144,9 @@ public class FichierSemestre extends FichierCsv {
      * 
      * @param args
      * @throws ExtensionFichierException
+     * @throws ParametresSemestreException 
      */
-    public static void main(String args[]) throws ExtensionFichierException {
+    public static void main(String args[]) throws ExtensionFichierException, ParametresSemestreException {
         FichierSemestre fichier = new FichierSemestre("G:\\java\\workspace\\SAEGestionDeNotes\\csv\\qlnjtnqezjgt.csv");
         fichier.setDelimiteurFichier(";");
         fichier.lireFichier();

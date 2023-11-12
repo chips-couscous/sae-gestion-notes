@@ -4,7 +4,10 @@
  */
 package application.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 
 import application.model.Enseignement;
@@ -17,12 +20,12 @@ public class Competence {
         
     /** intitulé de la compétence */
     private String intitule;
-        
-    /** poids de l'enseignement  */
-    private int[] poidsEnseignement;
+    
+    /** identifiant de la compétence */
+    private String idCompetence;
         
     /** liste contenant les enseignements englobés par la compétence */
-    private HashMap<String,Enseignement> enseignementsCompetence;
+    private List<Enseignement> enseignementsCompetence = new ArrayList<Enseignement>();
         
     /** 
      * Crée une compétence contenant son intitule, son poids ainsi que 
@@ -30,10 +33,23 @@ public class Competence {
      * @param intitule
      * @param poidsEnseignement
      * @param listeEnseignements 
+     * @param idCompetence 
      */
-    public Competence(HashMap<String, Enseignement> listeEnseignements, String intitule, int[] poidsEnseignement) {
+    public Competence(List<Enseignement> listeEnseignements, String intitule, String idCompetence) {
         this.intitule = intitule;
-        this.poidsEnseignement = poidsEnseignement;
-        this.enseignementsCompetence = new HashMap<>(listeEnseignements);
+        this.idCompetence = idCompetence;
+        this.enseignementsCompetence = listeEnseignements;
+    }
+    
+    /**
+     * TODO comment method role
+     * @return 0
+     */
+    public String toString() {
+        String competence = intitule + " " + idCompetence + "\n";
+        for (int i = 0; i < enseignementsCompetence.size(); i++) {
+            competence += enseignementsCompetence.get(i).toString() + "\n";
+        }
+        return competence;
     }
 }

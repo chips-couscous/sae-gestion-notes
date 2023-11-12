@@ -5,6 +5,7 @@
 package application.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Modèle de l'application GestionNotes
@@ -14,6 +15,9 @@ import java.util.ArrayList;
 public class GestionNotes {
 
     private static ArrayList<Note> notes = new ArrayList<>();
+    
+    /** TODO comment field role (attribute, association) */
+    public static List<Competence> competenceSemestre = new ArrayList<>();
 
     /** @return valeur de notes */
     public static ArrayList<Note> getNotes() {
@@ -51,6 +55,21 @@ public class GestionNotes {
             return false;
         }
     }
+    
+    /**
+     * TODO comment method role
+     * @param competenceAAjouter
+     * @return 0 
+     */
+    public static boolean ajouterCompetence(Competence competenceAAjouter) {
+       try {
+           competenceSemestre.add(competenceAAjouter);
+           return true;
+       } catch (Exception e) {
+        // TODO: handle exception
+           return false;
+       }
+    }
 
     /**
      * TODO comment method role
@@ -69,5 +88,16 @@ public class GestionNotes {
      */
     public static String afficherIdentite() {
         return identite.getNom() + " " + identite.getPrenom();
+    }
+    
+    /**
+     * TODO comment method role
+     *
+     */
+    public static void afficherCompetence() {
+        System.out.println("Compétence : ");
+        for (int i = 0; i < competenceSemestre.size(); i++) {
+            System.out.println(competenceSemestre.get(i).toString());
+        }
     }
 }

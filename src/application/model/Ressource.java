@@ -11,14 +11,15 @@ package application.model;
 public class Ressource extends Enseignement{
         
     /** Expression régulière de l'identifiant de la ressource */
-    private static final String regexRessource = "R[1-6]\\.\\d[1-9]";
+    private static final String regexRessource = "R[1-6]\\.[0-9]{2}";
     
     /** Crée un enseignement ressource
      * @param intitule
      * @param idRessource 
+     * @param poids 
      */
-    public Ressource(String intitule, String idRessource) {
-            super(intitule, idRessource);
+    public Ressource(String intitule, String idRessource, int poids) {
+            super(intitule, idRessource, poids);
             //Vérifie la validité de l'identifiant de la ressource
             if (!super.estValide(regexRessource, idRessource)) {
                 throw new IllegalArgumentException();

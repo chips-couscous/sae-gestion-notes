@@ -18,8 +18,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.Random;
-
 /** 
  * Class permettant de réaliser des actions sur un fichier CSV (.csv)
  * <h3> Actions réalisables </h3>
@@ -47,6 +45,9 @@ public class FichierCsv {
     private String delimiteurFichier;
     
     private File fichier;
+    
+    /** TODO comment field role (attribute, association) */
+    protected static List<String[]> contenuFichier = new ArrayList<String[]>();
     
     /**
      * Constructeur d'un fichier CSV (.csv) en ayant le chemin connu.
@@ -76,9 +77,8 @@ public class FichierCsv {
     /**
      * Permet à partir d'un chemin donné de lire un fichier CSV et d'en soustraire
      * ligne par ligne les cellules.
-     * @return true
      */
-    private List<String[]> lireFichier() {
+    protected void lireFichier() {
                 
         // Contenu du fichier ligne par ligne
         List<String[]> contenuFichier = new ArrayList<>();
@@ -97,17 +97,16 @@ public class FichierCsv {
             
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
         }
         
-        return contenuFichier;
+        this.contenuFichier = contenuFichier;
     }
     
     /**
      * TODO comment method role
      * @param contenuFichier
      */
-    private static void analyserFichier(List<String[]> contenuFichier) {
+    protected static void analyserFichier() {
         for (int i = 0; i < contenuFichier.size() ; i++) {
             for (int j = 0; j < contenuFichier.get(i).length; j++) {
                 System.out.print(contenuFichier.get(i)[j]);
@@ -115,7 +114,7 @@ public class FichierCsv {
             System.out.println();
         }
     }
-    
+        
     /**
      * Vérifie la validité d'un fichier, on vérifie si il existe et si
      * ce fichier est bien un fichier au format CSV (.csv).
@@ -207,16 +206,5 @@ public class FichierCsv {
     /** @param delimiteurFichier nouvelle valeur de delimiteurFichier */
     public void setDelimiteurFichier(String delimiteurFichier) {
         this.delimiteurFichier = delimiteurFichier;
-    }
-
-    /**
-     * TODO comment method role
-     * @param args
-     * @throws ExtensionFichierException 
-     */
-    public static void main(String args[]) throws ExtensionFichierException {
-        FichierCsv fichier = new FichierCsv('s', "Z:\\Eclipse\\workspace\\SaeGestionNotes\\csv\\parametrage-sae.csv");
-        fichier.setDelimiteurFichier(";");
-        analyserFichier(fichier.lireFichier());
     }
 }

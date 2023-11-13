@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import application.model.Enseignement;
 import application.model.GestionNotes;
-import application.model.Note;
+import application.model.Controle;
 import application.model.Ressource;
 import application.model.Sae;
 
@@ -54,7 +54,7 @@ public class TestGestionNotes {
         for (int i = 0; i < valeur.length; i++) {
                
             System.out.println("Ajout d'une note ...");
-            if (GestionNotes.ajouterNote(valeur[i],denominateur[i],matiere[i],
+            if (GestionNotes.ajouterControle(valeur[i],denominateur[i],matiere[i],
                     poids[i],forme[i],description[i],date[i])) {
                 nbTestOk++;
                 
@@ -90,7 +90,7 @@ public class TestGestionNotes {
         for (int i = 0; i < valeur.length; i++) {
                
             System.out.println("Ajout d'une note ...");
-            if (!GestionNotes.ajouterNote(valeur[i],denominateur[i],matiere[i],
+            if (!GestionNotes.ajouterControle(valeur[i],denominateur[i],matiere[i],
                     poids[i],forme[i],description[i],date[i])) {
                 nbTestOk++;
                 
@@ -109,7 +109,7 @@ public class TestGestionNotes {
      *
      */
     private static void testGetNotes() {
-        ArrayList<Note> notes = GestionNotes.getNotes();
+        ArrayList<Controle> notes = GestionNotes.getNotes();
         
         System.out.println("\n------ Test de getNotes");
         if (notes.size() == 3) {

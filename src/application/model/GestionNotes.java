@@ -5,6 +5,7 @@
 package application.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -14,15 +15,10 @@ import java.util.List;
  */
 public class GestionNotes {
 
-    private static ArrayList<Note> notes = new ArrayList<>();
+    private static HashMap<Enseignement,ArrayList<Controle>> enseignements = new HashMap<>();
     
     /** TODO comment field role (attribute, association) */
     public static List<Competence> competenceSemestre = new ArrayList<>();
-
-    /** @return valeur de notes */
-    public static ArrayList<Note> getNotes() {
-        return notes;
-    }
 
     static Utilisateur identite = new Utilisateur("Nom", "Prenom");
 
@@ -34,7 +30,7 @@ public class GestionNotes {
      * @param denominateur valeur sur la quelle la note est évalué, exemple: x/y
      *                     avec x la note y le dénominateur,0 <= x, x <= y et y !=
      *                     0...
-     * @param matiere      enseignement dans le quel la note a été obtenue
+     * @param nom          nom du controle dans le quel la note a été obtenue
      * @param poids        poids de la note dans l'enseignement auquel elle
      *                     appartient
      * @param forme        type du contrôle, exemple: devoir sur table, tp noté,
@@ -42,20 +38,42 @@ public class GestionNotes {
      * @param description  description du contrôle donné par l'élève
      * @param date         date du contrôle. Peut être approximative, exemple début
      *                     janvier
-     * @return true si la note a pu être ajouté
+     * @return true si le contrôle a pu être ajouté
      */
-    public static boolean ajouterNote(double valeur, int denominateur, Enseignement matiere, int poids, String forme,
-            String description, String date) {
+    public static boolean ajouterControle(double valeur, int denominateur, 
+            String nom, int poids, String forme,String description, String date) {
 
         try {
-            Note note = new Note(valeur, denominateur, matiere, poids, forme, description, date);
-            notes.add(note);
+            String idEnseignement = nom.substring(0, 4);
+            Controle note = new Controle(valeur, denominateur, poids, forme, description, date);
+            Enseignement matiereControle = verifierEnseignement(idEnseignement);
+            
+            if (!enseignements.containsKey(matiereControle)) {
+                return false;
+            }
+            
+            ArrayList<Controle> listeControle = enseignements.get(matiereControle);
+            listeControle.add(note);
+            
+            enseignements.put(matiereControle,listeControle);
+            
             return true;
         } catch (IllegalArgumentException erreur) {
             return false;
         }
     }
+    /* TODO Ajouter une méthode pour ajouter tous les enseignements dans la hashmap */
+    /* TODO ajouter une méthode qui renvoie le nombre de notes */
     
+    /** TODO comment method role
+     * @param idEnseignement
+     * @return
+     */
+    private static Enseignement verifierEnseignement(String idEnseignement) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     /**
      * TODO comment method role
      * @param competenceAAjouter

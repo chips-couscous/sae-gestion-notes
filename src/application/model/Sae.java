@@ -16,10 +16,9 @@ public class Sae extends Enseignement{
     /** Crée un enseignement SAÉ
      * @param intitule
      * @param idSae 
-     * @param poids 
      */
-    public Sae(String intitule, String idSae, int poids) {
-        super(intitule, idSae, poids);
+    public Sae(String intitule, String idSae) {
+        super(intitule, idSae);
         //Vérifie la validité de l'identifiant de la Sae
         if (!super.estValide(regexSae, idSae)) {
             throw new IllegalArgumentException();

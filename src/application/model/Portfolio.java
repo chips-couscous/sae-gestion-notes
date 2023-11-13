@@ -17,10 +17,9 @@ public class Portfolio extends Enseignement {
      * Crée un constructeur Portfolio
      * @param intitule
      * @param idPortfolio 
-     * @param poids 
      */
-    public Portfolio(String intitule, String idPortfolio, int poids) {
-            super(intitule,idPortfolio, poids);
+    public Portfolio(String intitule, String idPortfolio) {
+            super(intitule,idPortfolio);
             this.intitule = "Portfolio";
             //Vérifie la validité de l'identifiant du portfolio
             if (!super.estValide(regexPortfolio, idPortfolio)) {

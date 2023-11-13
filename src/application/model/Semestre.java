@@ -80,20 +80,30 @@ public class Semestre {
     
     /**
      * TODO comment method role
+     * @param idEnseignement 
+     * @return true si l'enseignement est déjà présent, false sinon 
+     */
+    public Enseignement verifierEnseignementPresent(String idEnseignement) {
+        for (Enseignement enseignement : listeEnseignement.keySet()) {
+            if(enseignement.getIdEnseignement().equals(idEnseignement)) {
+                return enseignement;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * TODO comment method role
      * @param enseignement
      * @return 2
      */
     public boolean ajouterEnseignement(Enseignement enseignement) {
-        
         if(!listeEnseignement.containsKey(enseignement)) {
-            
             List<Object[]> listeCompetence = new ArrayList<Object[]>();
             listeEnseignement.put(enseignement, listeCompetence);
-            return true;
-            
+            return true; 
         }
         return false;
-        
     }
     
     /** TODO comment method role

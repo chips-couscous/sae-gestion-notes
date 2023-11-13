@@ -10,17 +10,22 @@ import java.util.List;
 
 import application.model.exception.ParametresSemestreException;
 
-/** TODO comment class responsibility (SRP)
+/** 
+ * Classe Semestre qui gère tous les enseignements, toutes les compétences et 
+ * les différents controles qui composent un semestre.
  * @author thomas.lemaire
- *
  */
 public class Semestre {
 
+    // Numéro du semestre actif
     private int numero;
+    // Parcours du semestre actif
     private char parcours;
     
-    private HashMap<Enseignement, List<Controle>> listeControle = new HashMap<Enseignement, List<Controle>>();
-    private HashMap<Enseignement, List<Object[]>> listeEnseignement = new HashMap<Enseignement, List<Object[]>>(); 
+    private HashMap<Enseignement, List<Controle>> listeControle 
+                                  = new HashMap<Enseignement, List<Controle>>();
+    private HashMap<Enseignement, List<Object[]>> listeEnseignement 
+                                  = new HashMap<Enseignement, List<Object[]>>();
     
     /**
      * Constructeur du semestre
@@ -56,13 +61,17 @@ public class Semestre {
     }
     
     /**
-     * TODO comment method role
-     * @param enseignement 
-     * @param competence 
-     * @param poids 
+     * Cette méthode permet d'ajouter une compétence à un enseignement dans la
+     * HashMap listeEnseignement pour ensuite récupérer une liste de compétences
+     * pour chaque enseignement.
+     * @param enseignement , l'enseignement pour lequel on veut associer la competence
+     * @param competence , la competence à associer à l'enseignement
+     * @param poids , le poids de l'enseignement dans la competence
      * @return true si l'enseignement a bien été ajouté, false sinon
      */
-    public boolean ajouterCompetenceAEnseignement(Enseignement enseignement, Competence competence, int poids) {
+    public boolean ajouterCompetenceAEnseignement(Enseignement enseignement,
+                                                  Competence competence,
+                                                  int poids) {
         List<Object[]> listeCompetence;
         
         Object[] valeurCompetence = {competence, poids};
@@ -80,12 +89,15 @@ public class Semestre {
     }
     
     /**
-     * TODO comment method role
-     * @param enseignement
-     * @param controle
-     * @return 2
+     * Cette méthode permet d'ajouter un control à un enseignement dans la HashMap
+     * listeControle pour ensuite récupérer une liste de controles pour chaque
+     * enseignement.
+     * @param enseignement , l'enseignement pour lequel on veut associer le controle
+     * @param controle , le controle à associer à l'enseignement
+     * @return true si le controle a bien été associé, false sinon
      */
-    public boolean ajouterControleAEnseignement(Enseignement enseignement, Controle controle) {
+    public boolean ajouterControleAEnseignement(Enseignement enseignement,
+                                                Controle controle) {
         List<Controle> controleEnseignement;
         
         controleEnseignement = listeControle.get(enseignement);
@@ -100,11 +112,15 @@ public class Semestre {
     }
     
     /**
-     * TODO comment method role
-     * @param idEnseignement 
-     * @return true si l'enseignement est déjà présent, false sinon 
+     * Cette méthode permet de vérifier si un enseignement est déjà renseigné ou
+     * non dans chaque HashMap
+     * @param idEnseignement , est l'identifiant qui permet de connaître 
+     *        l'enseignement dont on veut connaître sa présence 
+     * @return l'enseignement dont on connaît sa présence, null si l'identifiant
+     *         ne correspond à aucun enseignement dans la HashMap
      */
     public Enseignement verifierEnseignementPresent(String idEnseignement) {
+        // parcours de tous les enseignement dans la HashMap listeEnseignement
         for (Enseignement enseignement : listeEnseignement.keySet()) {
             if(enseignement.getIdEnseignement().equals(idEnseignement)) {
                 return enseignement;
@@ -114,9 +130,12 @@ public class Semestre {
     }
     
     /**
-     * TODO comment method role
-     * @param enseignement
-     * @return 2
+     * Cette méthode consiste à renseigner un enseignement en tant que nouvelle
+     * clé pour chaque HashMap : listeEnseignement, listeControle
+     * @param enseignement , est l'enseignement qui servira de clé pour les
+     *        différentes HashMap
+     * @return true si l'enseignement à pu être renseigner dans les HashMap,
+     *         false sinon.
      */
     public boolean ajouterEnseignement(Enseignement enseignement) {
         if(!listeEnseignement.containsKey(enseignement)) {
@@ -131,27 +150,34 @@ public class Semestre {
     
     /** TODO comment method role
      */
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Semestre : ").append(numero).append(" / Parcours : ").append(parcours).append("\n");
+        sb.append("Semestre : ").append(numero).append(" / Parcours : ")
+        .append(parcours).append("\n");
 
         for (Enseignement enseignement : listeEnseignement.keySet()) {
-            sb.append("Enseignement: ").append(enseignement.getIntitule()).append(" (").append(enseignement.getIdEnseignement()).append(")\n");
+            sb.append("Enseignement: ").append(enseignement.getIntitule())
+            .append(" (").append(enseignement.getIdEnseignement()).append(")\n");
             List<Object[]> listeCompetence = listeEnseignement.get(enseignement);
             for (Object[] competencePoids : listeCompetence) {
                 Competence competence = (Competence) competencePoids[0];
                 int poids = (int) competencePoids[1];
-                sb.append("  - Competence: ").append(competence.getIntitule()).append(", Poids: ").append(poids).append("\n");
+                sb.append("  - Competence: ").append(competence.getIntitule())
+                .append(", Poids: ").append(poids).append("\n");
             }
         }
         
         sb.append("\n\nControles: \n");
         
         for (Enseignement enseignement : listeControle.keySet()) {
-            sb.append("Enseignement: ").append(enseignement.getIntitule()).append(" (").append(enseignement.getIdEnseignement()).append(")\n");
+            sb.append("Enseignement: ").append(enseignement.getIntitule())
+            .append(" (").append(enseignement.getIdEnseignement()).append(")\n");
             List<Controle> listeControleEnseignement = listeControle.get(enseignement);
             for (Controle controle : listeControleEnseignement) {
-                sb.append("  - Controle Forme: ").append(controle.getForme()).append(", Date: ").append(controle.getDate()).append(", Poids: ").append(controle.getPoids()).append("\n");
+                sb.append("  - Controle Forme: ").append(controle.getForme())
+                .append(", Date: ").append(controle.getDate()).append(", Poids: ")
+                .append(controle.getPoids()).append("\n");
             }
         }
 

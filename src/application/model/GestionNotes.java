@@ -14,11 +14,9 @@ import java.util.List;
  * @author tom.jammes
  */
 public class GestionNotes {
-
-    private static HashMap<Enseignement,ArrayList<Controle>> enseignements = new HashMap<>();
     
-    /** TODO comment field role (attribute, association) */
-    public static List<Competence> competenceSemestre = new ArrayList<>();
+    /* Contient les enseignements et les contrôles de cet enseignement */
+    private static HashMap<Enseignement,ArrayList<Controle>> enseignements = new HashMap<>();
 
     static Utilisateur identite = new Utilisateur("Nom", "Prenom");
 
@@ -45,7 +43,7 @@ public class GestionNotes {
 
         try {
             String idEnseignement = nom.substring(0, 4);
-            Controle note = new Controle(valeur, denominateur, poids, forme, description, date);
+            Controle note = new Controle(poids, forme,date);
             Enseignement matiereControle = verifierEnseignement(idEnseignement);
             
             if (!enseignements.containsKey(matiereControle)) {
@@ -57,6 +55,8 @@ public class GestionNotes {
             
             enseignements.put(matiereControle,listeControle);
             
+            // Controle note = new Controle(valeur, denominateur, matiere, poids, forme, description, date);
+            // notes.add(note);
             return true;
         } catch (IllegalArgumentException erreur) {
             return false;
@@ -76,21 +76,6 @@ public class GestionNotes {
 
     /**
      * TODO comment method role
-     * @param competenceAAjouter
-     * @return 0 
-     */
-    public static boolean ajouterCompetence(Competence competenceAAjouter) {
-       try {
-           competenceSemestre.add(competenceAAjouter);
-           return true;
-       } catch (Exception e) {
-        // TODO: handle exception
-           return false;
-       }
-    }
-
-    /**
-     * TODO comment method role
      * 
      * @param nom
      * @param prenom
@@ -106,16 +91,5 @@ public class GestionNotes {
      */
     public static String afficherIdentite() {
         return identite.getNom() + " " + identite.getPrenom();
-    }
-    
-    /**
-     * TODO comment method role
-     *
-     */
-    public static void afficherCompetence() {
-        System.out.println("Compétence : ");
-        for (int i = 0; i < competenceSemestre.size(); i++) {
-            System.out.println(competenceSemestre.get(i).toString());
-        }
     }
 }

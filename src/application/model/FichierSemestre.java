@@ -20,6 +20,17 @@ import application.model.exception.ParametresSemestreException;
 public class FichierSemestre extends FichierCsv {
     
     private Semestre semestre;
+    
+    /** @return valeur de semestre */
+    public Semestre getSemestre() {
+        return semestre;
+    }
+
+
+    /** @param semestre nouvelle valeur de semestre */
+    public void setSemestre(Semestre semestre) {
+        this.semestre = semestre;
+    }
 
     /**
      * TODO comment intial state
@@ -33,7 +44,6 @@ public class FichierSemestre extends FichierCsv {
 
     protected void lireFichier() {
         super.lireFichier();
-        // super.analyserFichier();
     }
 
     /**
@@ -83,19 +93,19 @@ public class FichierSemestre extends FichierCsv {
             enseignementADecomposer = contenuFichier.get(ligneEnseignement);
 
             if (enseignementADecomposer.length > 0 && contenuFichier.size() > ligneEnseignement+1) {
-                
-                
-                Object[] compositionEnseignement;
+               
                 Enseignement enseignementAAjouter;
                 int poidsEnseignement;
-
-                compositionEnseignement = decomposerEnseignement(enseignementADecomposer[0], enseignementADecomposer[1],
-                        enseignementADecomposer[2], enseignementADecomposer[3]);
-
-                enseignementAAjouter = (Enseignement) compositionEnseignement[0];
-                poidsEnseignement = (int) compositionEnseignement[1];
                 
-                semestre.ajouterEnseignement(enseignementAAjouter);
+                enseignementAAjouter = semestre.verifierEnseignementPresent(enseignementADecomposer[1]);
+                
+                if(enseignementAAjouter == null) {
+                    enseignementAAjouter = decomposerEnseignement(enseignementADecomposer[0], enseignementADecomposer[1],
+                            enseignementADecomposer[2]);
+                    semestre.ajouterEnseignement(enseignementAAjouter);
+                }
+                
+                poidsEnseignement = (int) Integer.parseInt(enseignementADecomposer[3]);
                 semestre.ajouterCompetenceAEnseignement(enseignementAAjouter, competenceAAjouter, poidsEnseignement);
             } else {
                 finCompetence = true;
@@ -112,14 +122,9 @@ public class FichierSemestre extends FichierCsv {
      * @param typeEvaluation
      * @param identifiant
      * @param libelle
-     * @param poids
      * @return 0
      */
-    private Object[] decomposerEnseignement(String typeEvaluation, String identifiant, String libelle,
-            String poids) {
-
-        int poidsValeur = Integer.parseInt(poids);
-        Object[] compositionEnseignement = new Object[2];
+    private Enseignement decomposerEnseignement(String typeEvaluation, String identifiant, String libelle) {
         Enseignement enseignement;
 
         switch (typeEvaluation) {
@@ -138,11 +143,8 @@ public class FichierSemestre extends FichierCsv {
         default:
             throw new IllegalArgumentException("Unexpected value: " + typeEvaluation);
         }
-
-        compositionEnseignement[0] = enseignement;
-        compositionEnseignement[1] = poidsValeur;
         
-        return compositionEnseignement;
+        return enseignement;
     }
 
     /**
@@ -157,7 +159,13 @@ public class FichierSemestre extends FichierCsv {
         fichier.setDelimiteurFichier(";");
         fichier.lireFichier();
         fichier.decomposerFichier();
-
-        GestionNotes.afficherCompetence();
+        
+        FichierEnseignement fichier2 = new FichierEnseignement("Z:\\Eclipse\\workspace\\SaeGestionNotes\\csv\\ressources-sae.csv");
+        
+        fichier2.setSemestre(fichier.getSemestre());
+        
+        fichier2.setDelimiteurFichier(";");
+        fichier2.lireFichier();
+        fichier2.decomposerFichier();
     }
 }

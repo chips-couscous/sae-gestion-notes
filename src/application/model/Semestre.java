@@ -19,6 +19,7 @@ public class Semestre {
     private int numero;
     private char parcours;
     
+    private HashMap<Enseignement, List<Controle>> listeControle = new HashMap<Enseignement, List<Controle>>();
     private HashMap<Enseignement, List<Object[]>> listeEnseignement = new HashMap<Enseignement, List<Object[]>>(); 
     
     /**
@@ -81,24 +82,79 @@ public class Semestre {
     /**
      * TODO comment method role
      * @param enseignement
+     * @param controle
+     * @return 2
+     */
+    public boolean ajouterControleAEnseignement(Enseignement enseignement, Controle controle) {
+        List<Controle> controleEnseignement;
+        
+        controleEnseignement = listeControle.get(enseignement);
+        controleEnseignement.add(controle);
+        
+        try {
+            listeControle.put(enseignement, controleEnseignement);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * TODO comment method role
+     * @param idEnseignement 
+     * @return true si l'enseignement est déjà présent, false sinon 
+     */
+    public Enseignement verifierEnseignementPresent(String idEnseignement) {
+        for (Enseignement enseignement : listeEnseignement.keySet()) {
+            if(enseignement.getIdEnseignement().equals(idEnseignement)) {
+                return enseignement;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * TODO comment method role
+     * @param enseignement
      * @return 2
      */
     public boolean ajouterEnseignement(Enseignement enseignement) {
-        
         if(!listeEnseignement.containsKey(enseignement)) {
-            
             List<Object[]> listeCompetence = new ArrayList<Object[]>();
+            List<Controle> controles = new ArrayList<Controle>();
             listeEnseignement.put(enseignement, listeCompetence);
-            return true;
-            
+            listeControle.put(enseignement, controles);
+            return true; 
         }
         return false;
-        
     }
     
     /** TODO comment method role
      */
     public String toString() {
-        return "Semetre : " + numero + " / Parcours : " + parcours;
+        StringBuilder sb = new StringBuilder();
+        sb.append("Semestre : ").append(numero).append(" / Parcours : ").append(parcours).append("\n");
+
+        for (Enseignement enseignement : listeEnseignement.keySet()) {
+            sb.append("Enseignement: ").append(enseignement.getIntitule()).append(" (").append(enseignement.getIdEnseignement()).append(")\n");
+            List<Object[]> listeCompetence = listeEnseignement.get(enseignement);
+            for (Object[] competencePoids : listeCompetence) {
+                Competence competence = (Competence) competencePoids[0];
+                int poids = (int) competencePoids[1];
+                sb.append("  - Competence: ").append(competence.getIntitule()).append(", Poids: ").append(poids).append("\n");
+            }
+        }
+        
+        sb.append("\n\nControles: \n");
+        
+        for (Enseignement enseignement : listeControle.keySet()) {
+            sb.append("Enseignement: ").append(enseignement.getIntitule()).append(" (").append(enseignement.getIdEnseignement()).append(")\n");
+            List<Controle> listeControleEnseignement = listeControle.get(enseignement);
+            for (Controle controle : listeControleEnseignement) {
+                sb.append("  - Controle Forme: ").append(controle.getForme()).append(", Date: ").append(controle.getDate()).append(", Poids: ").append(controle.getPoids()).append("\n");
+            }
+        }
+
+        return sb.toString();
     }
 }

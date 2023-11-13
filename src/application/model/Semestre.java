@@ -99,6 +99,19 @@ public class Semestre {
     /** TODO comment method role
      */
     public String toString() {
-        return "Semetre : " + numero + " / Parcours : " + parcours;
+        StringBuilder sb = new StringBuilder();
+        sb.append("Semestre : ").append(numero).append(" / Parcours : ").append(parcours).append("\n");
+
+        for (Enseignement enseignement : listeEnseignement.keySet()) {
+            sb.append("Enseignement: ").append(enseignement.getIntitule()).append(" (").append(enseignement.getIdEnseignement()).append(")\n");
+            List<Object[]> listeCompetence = listeEnseignement.get(enseignement);
+            for (Object[] competencePoids : listeCompetence) {
+                Competence competence = (Competence) competencePoids[0];
+                int poids = (int) competencePoids[1];
+                sb.append("  - Competence: ").append(competence.getIntitule()).append(", Poids: ").append(poids).append("\n");
+            }
+        }
+
+        return sb.toString();
     }
 }

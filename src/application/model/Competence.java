@@ -34,4 +34,9 @@ public class Competence {
         this.intitule = intitule;
         this.idCompetence = idCompetence;
     }
+
+    /** @return valeur de intitule */
+    public String getIntitule() {
+        return intitule;
+    }
 }

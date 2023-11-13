@@ -61,6 +61,8 @@ public class FichierSemestre extends FichierCsv {
                 }
             }
         }
+        
+        System.out.println(semestre.toString());
     }
 
     /**
@@ -157,7 +159,7 @@ public class FichierSemestre extends FichierCsv {
         fichier.setDelimiteurFichier(";");
         fichier.lireFichier();
         fichier.decomposerFichier();
-
-        GestionNotes.afficherCompetence();
     }
+    
+    // verifierEnseignement dans Semestre, renvoie true or false (params : R0.22 ...) si existe ne pas créer objet, sinon en créer
 }

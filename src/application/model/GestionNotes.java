@@ -89,15 +89,4 @@ public class GestionNotes {
     public static String afficherIdentite() {
         return identite.getNom() + " " + identite.getPrenom();
     }
-    
-    /**
-     * TODO comment method role
-     *
-     */
-    public static void afficherCompetence() {
-        System.out.println("Compétence : ");
-        for (int i = 0; i < competenceSemestre.size(); i++) {
-            System.out.println(competenceSemestre.get(i).toString());
-        }
-    }
 }

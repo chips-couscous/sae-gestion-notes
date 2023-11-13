@@ -15,6 +15,18 @@ public class FichierEnseignement extends FichierCsv {
     
     private Semestre semestre;
 
+    /** @return valeur de semestre */
+    public Semestre getSemestre() {
+        return semestre;
+    }
+
+
+    /** @param semestre nouvelle valeur de semestre */
+    public void setSemestre(Semestre semestre) {
+        this.semestre = semestre;
+    }
+
+
     /**
      * TODO comment intial state
      * @param chemin
@@ -30,16 +42,17 @@ public class FichierEnseignement extends FichierCsv {
      * @throws ParametresSemestreException 
      *
      */
-    private void decomposerFichier() throws ParametresSemestreException {
+    public void decomposerFichier() throws ParametresSemestreException {
         for (int i = 0; i < contenuFichier.size(); i++) {
             if (contenuFichier.get(i).length > 0) {
                 String cellule = contenuFichier.get(i)[0];
                 if(cellule.equals("Ressource")) {
                     i = decomposerEnseignement(i);
-                    break;
                 }
             }
         }
+        
+        System.out.println(semestre.toString());
     }
     
     /**
@@ -60,23 +73,36 @@ public class FichierEnseignement extends FichierCsv {
         }
        
         if(enseignementValide) {
-            // TODO : ajouterControl (class Semestre) 
+            
+            int ligneControle = numeroDeLigne;
+            ligneControle++;
+            String[] controleADecomposer;
+            
+            boolean finEnseignement = false;
+            
+            
+            do {
+                ligneControle++;
+                controleADecomposer = contenuFichier.get(ligneControle);
+                
+                if (controleADecomposer.length > 0 && contenuFichier.size() > ligneControle+1) {
+                    Controle controleAAjouter;
+                    
+                    String formeControle = controleADecomposer[0];
+                    String dateControle  = controleADecomposer[1];
+                    int poidsControle = (int) Integer.parseInt(controleADecomposer[2]);
+                                        
+                    controleAAjouter = new Controle(poidsControle, formeControle, dateControle);
+                    semestre.ajouterControleAEnseignement(enseignement, controleAAjouter);
+                } else {
+                    finEnseignement = true;
+                }
+                
+            } while (!finEnseignement);
+            
+            return ligneControle;
         }
         
-        return 0;
-    }
-    
-    /**
-     * TODO comment method role
-     * 
-     * @param args
-     * @throws ExtensionFichierException
-     * @throws ParametresSemestreException 
-     */
-    public static void main(String args[]) throws ExtensionFichierException, ParametresSemestreException {
-        FichierEnseignement fichier = new FichierEnseignement("Z:\\Eclipse\\workspace\\SaeGestionNotes\\csv\\ressources-sae.csv");
-        fichier.setDelimiteurFichier(";");
-        fichier.lireFichier();
-        fichier.decomposerFichier();
+        return numeroDeLigne;
     }
 }

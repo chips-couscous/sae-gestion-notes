@@ -14,13 +14,13 @@ import java.util.List;
  */
 public class GestionNotes {
 
-    private static ArrayList<Note> notes = new ArrayList<>();
+    private static ArrayList<Controle> notes = new ArrayList<>();
     
     /** TODO comment field role (attribute, association) */
     public static List<Competence> competenceSemestre = new ArrayList<>();
 
     /** @return valeur de notes */
-    public static ArrayList<Note> getNotes() {
+    public static ArrayList<Controle> getNotes() {
         return notes;
     }
 
@@ -48,8 +48,8 @@ public class GestionNotes {
             String description, String date) {
 
         try {
-            Note note = new Note(valeur, denominateur, matiere, poids, forme, description, date);
-            notes.add(note);
+            // Controle note = new Controle(valeur, denominateur, matiere, poids, forme, description, date);
+            // notes.add(note);
             return true;
         } catch (IllegalArgumentException erreur) {
             return false;

@@ -20,6 +20,17 @@ import application.model.exception.ParametresSemestreException;
 public class FichierSemestre extends FichierCsv {
     
     private Semestre semestre;
+    
+    /** @return valeur de semestre */
+    public Semestre getSemestre() {
+        return semestre;
+    }
+
+
+    /** @param semestre nouvelle valeur de semestre */
+    public void setSemestre(Semestre semestre) {
+        this.semestre = semestre;
+    }
 
     /**
      * TODO comment intial state
@@ -60,8 +71,6 @@ public class FichierSemestre extends FichierCsv {
                 }
             }
         }
-        
-        System.out.println(semestre.toString());
     }
 
     /**
@@ -84,9 +93,7 @@ public class FichierSemestre extends FichierCsv {
             enseignementADecomposer = contenuFichier.get(ligneEnseignement);
 
             if (enseignementADecomposer.length > 0 && contenuFichier.size() > ligneEnseignement+1) {
-                
-                
-                Enseignement compositionEnseignement;
+               
                 Enseignement enseignementAAjouter;
                 int poidsEnseignement;
                 
@@ -152,5 +159,13 @@ public class FichierSemestre extends FichierCsv {
         fichier.setDelimiteurFichier(";");
         fichier.lireFichier();
         fichier.decomposerFichier();
+        
+        FichierEnseignement fichier2 = new FichierEnseignement("Z:\\Eclipse\\workspace\\SaeGestionNotes\\csv\\ressources-sae.csv");
+        
+        fichier2.setSemestre(fichier.getSemestre());
+        
+        fichier2.setDelimiteurFichier(";");
+        fichier2.lireFichier();
+        fichier2.decomposerFichier();
     }
 }

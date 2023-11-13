@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import application.model.Enseignement;
 import application.model.GestionNotes;
-import application.model.Note;
+import application.model.Controle;
 import application.model.Ressource;
 import application.model.Sae;
 
@@ -109,7 +109,7 @@ public class TestGestionNotes {
      *
      */
     private static void testGetNotes() {
-        ArrayList<Note> notes = GestionNotes.getNotes();
+        ArrayList<Controle> notes = GestionNotes.getNotes();
         
         System.out.println("\n------ Test de getNotes");
         if (notes.size() == 3) {

@@ -7,7 +7,7 @@ package application.model;
 /** TODO comment class responsibility (SRP)
  * @author tom.jammes
  */
-public class Note {
+public class Controle {
     
     private double valeur;
     
@@ -34,32 +34,28 @@ public class Note {
      * @param description description du contrôle donné par l'élève
      * @param date date du contrôle. Peut être approximative, exemple "début janvier"
      */
-    public Note(double valeur, int denominateur, Enseignement matiere, 
-            int poids, String forme, String description, String date) {
-        if (!estValide(valeur,denominateur,poids)) {
+    public Controle(int poids, String forme, String date) {
+        if (!estValide(poids)) {
             throw new IllegalArgumentException("Arguments invalide");
         }
-        this.valeur = valeur;
-        this.denominateur = denominateur;
-        this.matiere = matiere;
+        //this.valeur = valeur;
+        //this.denominateur = denominateur;
+        //this.matiere = matiere;
         this.poids = poids;
         this.forme = forme;
-        this.description = description;
         this.date = date;
     }
 
     /** 
      * Vérifie que les paramètres rentrés dans le constructeur sont correct
      * test seulement les valeurs numérique
-     * @param valeur valeur valeur de la note 
      * @param dénominateur valeur sur la quelle la note est évalué, exemple:
      *        x/y avec x la note y le dénominateur,0 <= x, x <= y et y != 0... 
      * @param poids poids de la note dans l'enseignement auquel elle appartient
      * @return true si les paramètres sont corrects
      */
-    private static boolean estValide(double valeur, int denominateur, int poids) {
-        return 0 <= valeur && valeur <= denominateur && 1 <= denominateur 
-                && denominateur <= 1000 && 0 < poids && poids <= 100;
+    private static boolean estValide(int poids) {
+        return 0 < poids && poids <= 100;
     }
     
     /** 

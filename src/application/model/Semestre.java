@@ -19,7 +19,7 @@ public class Semestre {
     private int numero;
     private char parcours;
     
-    private HashMap<Enseignement, List<Note>> listeControle = new HashMap<Enseignement, List<Note>>();
+    private HashMap<Enseignement, List<Controle>> listeControle = new HashMap<Enseignement, List<Controle>>();
     private HashMap<Enseignement, List<Object[]>> listeEnseignement = new HashMap<Enseignement, List<Object[]>>(); 
     
     /**
@@ -85,7 +85,17 @@ public class Semestre {
      * @param controle
      * @return 2
      */
-    public boolean ajouterControleAEnseignement(Enseignement enseignement, Note controle) {
+    public boolean ajouterControleAEnseignement(Enseignement enseignement, Controle controle) {
+        List<Controle> controleEnseignement;
+        
+        controleEnseignement = listeControle.get(enseignement);
+        controleEnseignement.add(controle);
+        
+        try {
+            listeControle.put(enseignement, controleEnseignement);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
         return true;
     }
     
@@ -111,9 +121,9 @@ public class Semestre {
     public boolean ajouterEnseignement(Enseignement enseignement) {
         if(!listeEnseignement.containsKey(enseignement)) {
             List<Object[]> listeCompetence = new ArrayList<Object[]>();
-            List<Note> listeControleXXX = new ArrayList<Note>();
+            List<Controle> controles = new ArrayList<Controle>();
             listeEnseignement.put(enseignement, listeCompetence);
-            listeControle.put(enseignement, listeControleXXX);
+            listeControle.put(enseignement, controles);
             return true; 
         }
         return false;
@@ -132,6 +142,16 @@ public class Semestre {
                 Competence competence = (Competence) competencePoids[0];
                 int poids = (int) competencePoids[1];
                 sb.append("  - Competence: ").append(competence.getIntitule()).append(", Poids: ").append(poids).append("\n");
+            }
+        }
+        
+        sb.append("\n\nControles: \n");
+        
+        for (Enseignement enseignement : listeControle.keySet()) {
+            sb.append("Enseignement: ").append(enseignement.getIntitule()).append(" (").append(enseignement.getIdEnseignement()).append(")\n");
+            List<Controle> listeControleEnseignement = listeControle.get(enseignement);
+            for (Controle controle : listeControleEnseignement) {
+                sb.append("  - Controle Forme: ").append(controle.getForme()).append(", Date: ").append(controle.getDate()).append(", Poids: ").append(controle.getPoids()).append("\n");
             }
         }
 

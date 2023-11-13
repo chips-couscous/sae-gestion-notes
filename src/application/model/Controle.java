@@ -1,58 +1,53 @@
 /*
  * Note.java                                      26 oct. 2023
- * IUT Rodez, info2 2022-2023, pas de copyright ni "copyleft" 
+ * IUT Rodez, info2 2023-2024, pas de copyright ni "copyleft" 
  */
 package application.model;
 
-/** TODO comment class responsibility (SRP)
+/** 
+ * Classe définissant un contrôle avec ses getters et setters
  * @author tom.jammes
  */
 public class Controle {
     
+    /** Contient la valeur de la note  */
     private double valeur;
     
+    /** Contient le dénominateur du contrôle, son barème */
     private int denominateur; 
     
-    private Enseignement matiere;
-    
-    private int poids;
-    
-    private String forme;
-    
+    /** Contient la description du contrôle */
     private String description;
     
-    private String date;
+    /** Contient le poids de la note dans l'enseignement */
+    private int poids;
     
+    /** Contient le type de controle effectué */
+    private String forme;
+    
+    /** Contient la date du contrôle */
+    private String date;
+
     /**
      * Constructeur de l'objet Note
-     * @param valeur valeur de la note 
-     * @param denominateur valeur sur la quelle la note est évalué, exemple:
-     *        x/y avec x la note y le dénominateur,0 <= x, x <= y et y != 0... 
-     * @param matiere enseignement dans le quel la note a été obtenue
      * @param poids poids de la note dans l'enseignement auquel elle appartient
      * @param forme type du contrôle, exemple: devoir sur table, tp noté, qcm, ...
-     * @param description description du contrôle donné par l'élève
      * @param date date du contrôle. Peut être approximative, exemple "début janvier"
      */
     public Controle(int poids, String forme, String date) {
         if (!estValide(poids)) {
-            throw new IllegalArgumentException("Arguments invalide");
+            throw new IllegalArgumentException("Poids invalide");
         }
-        //this.valeur = valeur;
-        //this.denominateur = denominateur;
-        //this.matiere = matiere;
         this.poids = poids;
         this.forme = forme;
         this.date = date;
     }
 
     /** 
-     * Vérifie que les paramètres rentrés dans le constructeur sont correct
-     * test seulement les valeurs numérique
-     * @param dénominateur valeur sur la quelle la note est évalué, exemple:
-     *        x/y avec x la note y le dénominateur,0 <= x, x <= y et y != 0... 
+     * Vérifie que les paramètres rentrés dans le constructeur sont corrects
+     * Teste seulement les valeurs numériques
      * @param poids poids de la note dans l'enseignement auquel elle appartient
-     * @return true si les paramètres sont corrects
+     * @return true si le poids du contrôle est correct
      */
     private static boolean estValide(int poids) {
         return 0 < poids && poids <= 100;
@@ -83,16 +78,6 @@ public class Controle {
     /** @param denominateur nouvelle valeur de dénominateur */
     public void setDenominateur(int denominateur) {
         this.denominateur = denominateur;
-    }
-
-    /** @return valeur de matière */
-    public Enseignement getMatiere() {
-        return matiere;
-    }
-
-    /** @param matiere nouvelle valeur de matière */
-    public void setMatiere(Enseignement matiere) {
-        this.matiere = matiere;
     }
 
     /** @return valeur de poids */

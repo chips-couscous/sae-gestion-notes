@@ -85,7 +85,7 @@ public class FichierEnseignement extends FichierCsv {
                 ligneControle++;
                 controleADecomposer = contenuFichier.get(ligneControle);
                 
-                if (controleADecomposer.length > 0 && contenuFichier.size() > ligneControle+1) {
+                if (controleADecomposer.length > 0) {
                     Controle controleAAjouter;
                     
                     String formeControle = controleADecomposer[0];
@@ -95,6 +95,9 @@ public class FichierEnseignement extends FichierCsv {
                     controleAAjouter = new Controle(poidsControle, formeControle, dateControle);
                     semestre.ajouterControleAEnseignement(enseignement, controleAAjouter);
                 } else {
+                    finEnseignement = true;
+                }
+                if(!(contenuFichier.size() > ligneControle+1)) {
                     finEnseignement = true;
                 }
                 

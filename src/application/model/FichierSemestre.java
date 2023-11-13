@@ -42,10 +42,6 @@ public class FichierSemestre extends FichierCsv {
         super('s', chemin);
     }
 
-    protected void lireFichier() {
-        super.lireFichier();
-    }
-
     /**
      * TODO comment method role
      * @throws ParametresSemestreException 
@@ -92,7 +88,7 @@ public class FichierSemestre extends FichierCsv {
             ligneEnseignement++;
             enseignementADecomposer = contenuFichier.get(ligneEnseignement);
 
-            if (enseignementADecomposer.length > 0 && contenuFichier.size() > ligneEnseignement+1) {
+            if (enseignementADecomposer.length > 0) {
                
                 Enseignement enseignementAAjouter;
                 int poidsEnseignement;
@@ -108,6 +104,9 @@ public class FichierSemestre extends FichierCsv {
                 poidsEnseignement = (int) Integer.parseInt(enseignementADecomposer[3]);
                 semestre.ajouterCompetenceAEnseignement(enseignementAAjouter, competenceAAjouter, poidsEnseignement);
             } else {
+                finCompetence = true;
+            }
+            if (!(contenuFichier.size() > ligneEnseignement+1)) {
                 finCompetence = true;
             }
             

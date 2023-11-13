@@ -10,6 +10,10 @@ package application.model;
  */
 public class Ressource extends Enseignement{
 	
+	/** TODO comment intial state
+	 * @param intitule
+	 * @param idEnseignement
+	 */
 	public Ressource(String intitule, String idEnseignement) {
 		super(intitule, idEnseignement);
 	}

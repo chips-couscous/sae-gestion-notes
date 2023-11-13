@@ -16,10 +16,9 @@ public class Ressource extends Enseignement{
     /** Crée un enseignement ressource
      * @param intitule
      * @param idRessource 
-     * @param poids 
      */
-    public Ressource(String intitule, String idRessource, int poids) {
-            super(intitule, idRessource, poids);
+    public Ressource(String intitule, String idRessource) {
+            super(intitule, idRessource);
             //Vérifie la validité de l'identifiant de la ressource
             if (!super.estValide(regexRessource, idRessource)) {
                 throw new IllegalArgumentException();

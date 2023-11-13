@@ -17,21 +17,15 @@ public abstract class Enseignement {
         
     /** Contient l'identifiant de l'enseignement */
     protected String idEnseignement;
-    
-    /** Contient le poids de l'enseignement */
-    protected int poidsEnseignement;
-        
+            
     /** 
      * Crée un enseignement 
      * @param intitule
      * @param idEnseignement
-     * @param poidsEnseignement 
      */
-    public Enseignement(String intitule, String idEnseignement, int poidsEnseignement) {
+    public Enseignement(String intitule, String idEnseignement) {
         this.intitule = intitule;
-        this.idEnseignement = idEnseignement;
-        this.poidsEnseignement = poidsEnseignement;
-        
+        this.idEnseignement = idEnseignement;       
     }
     
     /**
@@ -60,6 +54,6 @@ public abstract class Enseignement {
     }
     
     public String toString() {
-        return intitule + " " + idEnseignement + " " + String.valueOf(poidsEnseignement);
+        return intitule + " " + idEnseignement;
     }
 }

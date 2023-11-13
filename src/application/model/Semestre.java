@@ -4,6 +4,10 @@
  */
 package application.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import application.model.exception.ParametresSemestreException;
 
 /** TODO comment class responsibility (SRP)
@@ -14,6 +18,9 @@ public class Semestre {
 
     private int numero;
     private char parcours;
+    
+    private HashMap<Enseignement, List<Controle>> listeControle = new HashMap<Enseignement, List<Controle>>();
+    private HashMap<Enseignement, List<Object[]>> listeEnseignement = new HashMap<Enseignement, List<Object[]>>(); 
     
     /**
      * Constructeur du semestre
@@ -28,8 +35,7 @@ public class Semestre {
            throw new ParametresSemestreException("Le semestre est invalide");
        }
        numero = numeroSemestre;
-       parcours = parcoursSemestre.toLowerCase().equals("tous") ? 
-                  't' : parcoursSemestre.charAt(0);
+       parcours = parcoursSemestre.toLowerCase().charAt(0);
     }
     
     
@@ -44,8 +50,111 @@ public class Semestre {
     private boolean semestreEstValide(int numero, String parcours) {
         parcours = parcours.toLowerCase();
         return     numero > 0 && numero < 7
-               && (parcours.equals("tous") || parcours.equals("a") ||
-                   parcours.equals("b")    || parcours.equals("c") ||
-                   parcours.equals("d")); 
+               && (parcours.equals("tous") || parcours.equals("néant") ||
+                   parcours.equals("a")    || parcours.equals("b")     ||
+                   parcours.equals("c")    || parcours.equals("d")); 
+    }
+    
+    /**
+     * TODO comment method role
+     * @param enseignement 
+     * @param competence 
+     * @param poids 
+     * @return true si l'enseignement a bien été ajouté, false sinon
+     */
+    public boolean ajouterCompetenceAEnseignement(Enseignement enseignement, Competence competence, int poids) {
+        List<Object[]> listeCompetence;
+        
+        Object[] valeurCompetence = {competence, poids};
+        
+        listeCompetence = listeEnseignement.get(enseignement);
+        listeCompetence.add(valeurCompetence);
+        
+        try {
+            listeEnseignement.put(enseignement, listeCompetence);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * TODO comment method role
+     * @param enseignement
+     * @param controle
+     * @return 2
+     */
+    public boolean ajouterControleAEnseignement(Enseignement enseignement, Controle controle) {
+        List<Controle> controleEnseignement;
+        
+        controleEnseignement = listeControle.get(enseignement);
+        controleEnseignement.add(controle);
+        
+        try {
+            listeControle.put(enseignement, controleEnseignement);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * TODO comment method role
+     * @param idEnseignement 
+     * @return true si l'enseignement est déjà présent, false sinon 
+     */
+    public Enseignement verifierEnseignementPresent(String idEnseignement) {
+        for (Enseignement enseignement : listeEnseignement.keySet()) {
+            if(enseignement.getIdEnseignement().equals(idEnseignement)) {
+                return enseignement;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * TODO comment method role
+     * @param enseignement
+     * @return 2
+     */
+    public boolean ajouterEnseignement(Enseignement enseignement) {
+        if(!listeEnseignement.containsKey(enseignement)) {
+            List<Object[]> listeCompetence = new ArrayList<Object[]>();
+            List<Controle> controles = new ArrayList<Controle>();
+            listeEnseignement.put(enseignement, listeCompetence);
+            listeControle.put(enseignement, controles);
+            return true; 
+        }
+        return false;
+    }
+    
+    /** TODO comment method role
+     */
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Semestre : ").append(numero).append(" / Parcours : ").append(parcours).append("\n");
+
+        for (Enseignement enseignement : listeEnseignement.keySet()) {
+            sb.append("Enseignement: ").append(enseignement.getIntitule()).append(" (").append(enseignement.getIdEnseignement()).append(")\n");
+            List<Object[]> listeCompetence = listeEnseignement.get(enseignement);
+            for (Object[] competencePoids : listeCompetence) {
+                Competence competence = (Competence) competencePoids[0];
+                int poids = (int) competencePoids[1];
+                sb.append("  - Competence: ").append(competence.getIntitule()).append(", Poids: ").append(poids).append("\n");
+            }
+        }
+        
+        sb.append("\n\nControles: \n");
+        
+        for (Enseignement enseignement : listeControle.keySet()) {
+            sb.append("Enseignement: ").append(enseignement.getIntitule()).append(" (").append(enseignement.getIdEnseignement()).append(")\n");
+            List<Controle> listeControleEnseignement = listeControle.get(enseignement);
+            for (Controle controle : listeControleEnseignement) {
+                sb.append("  - Controle Forme: ").append(controle.getForme()).append(", Date: ").append(controle.getDate()).append(", Poids: ").append(controle.getPoids()).append("\n");
+            }
+        }
+
+        return sb.toString();
     }
 }

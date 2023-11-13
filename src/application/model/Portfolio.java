@@ -1,57 +1,29 @@
 /*
- * Portfolio.java                                                    25/10/2023
+ * Portfolio.java                                                    03/11/2023
  * INFO2 2023-2024, pas de copyright ni droits d'auteurs
  */
 package application.model;
 
 /**
- * Classe définissant un Portfolio affilié à la classe Compétence
+ * Classe définissant un Portfolio 
  * @author tony.lapeyre
  */
 public class Portfolio extends Enseignement {
-	
-	
-	/** TODO comment intial state
-	 * @param intitule
-	 * @param idEnseignement
-	 */
-	public Portfolio(String intitule, String idEnseignement) {
-	    super(intitule, idEnseignement);
-	    if(!estValide()) {
-	        throw new IllegalArgumentException();
-	    }
-	}
-	
-	/**
-	 * Prédicat sur la validité des arguments 
-	 * @return true si l'intitule et l'identifiant sont valides
-	 *         false si l'intitule ou l'identifiant est invalide
-	 */
-	private boolean estValide() {
-	    if(!intituleEstValide(this.getIntitule()) || !idEnseignementEstValide(this.getIdEnseignement())) {
-	        return false;
-	    }
-	    return true;
-	}
-
-    /** TODO comment method role
-     * @return
-     */
-    private boolean idEnseignementEstValide(String idEnseignement) {
-        if(idEnseignement.toUpperCase().charAt(0) != ('R')) {
-            return false;
-        }
-        return true;
-    }
-
-    /** TODO comment method role
+    
+    /** Expression régulière de l'identifiant du Portfolio */
+    private static final String regexPortfolio = "P[1-6]\\.[0-9]{2}";
+    
+    /** 
+     * Crée un constructeur Portfolio
      * @param intitule
-     * @return
+     * @param idPortfolio 
      */
-    private boolean intituleEstValide(String intitule) {
-        if(intitule.isEmpty()) {
-            return false;
-        }
-        return false;
+    public Portfolio(String intitule, String idPortfolio) {
+            super(intitule,idPortfolio);
+            this.intitule = "Portfolio";
+            //Vérifie la validité de l'identifiant du portfolio
+            if (!super.estValide(regexPortfolio, idPortfolio)) {
+                throw new IllegalArgumentException();
+            }
     }
 }

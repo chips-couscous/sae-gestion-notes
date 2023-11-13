@@ -33,7 +33,6 @@ public class FichierSemestre extends FichierCsv {
 
     protected void lireFichier() {
         super.lireFichier();
-        // super.analyserFichier();
     }
 
     /**

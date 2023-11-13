@@ -19,6 +19,7 @@ public class Semestre {
     private int numero;
     private char parcours;
     
+    private HashMap<Enseignement, List<Note>> listeControle = new HashMap<Enseignement, List<Note>>();
     private HashMap<Enseignement, List<Object[]>> listeEnseignement = new HashMap<Enseignement, List<Object[]>>(); 
     
     /**
@@ -80,6 +81,16 @@ public class Semestre {
     
     /**
      * TODO comment method role
+     * @param enseignement
+     * @param controle
+     * @return 2
+     */
+    public boolean ajouterControleAEnseignement(Enseignement enseignement, Note controle) {
+        return true;
+    }
+    
+    /**
+     * TODO comment method role
      * @param idEnseignement 
      * @return true si l'enseignement est déjà présent, false sinon 
      */
@@ -100,7 +111,9 @@ public class Semestre {
     public boolean ajouterEnseignement(Enseignement enseignement) {
         if(!listeEnseignement.containsKey(enseignement)) {
             List<Object[]> listeCompetence = new ArrayList<Object[]>();
+            List<Note> listeControleXXX = new ArrayList<Note>();
             listeEnseignement.put(enseignement, listeCompetence);
+            listeControle.put(enseignement, listeControleXXX);
             return true; 
         }
         return false;

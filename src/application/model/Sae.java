@@ -11,14 +11,15 @@ package application.model;
 public class Sae extends Enseignement{
     
     /** Expression régulière de l'identifiant de la Saé */
-    private static final String regexSae = "S[1-6]\\.\\d[1-9]";
+    private static final String regexSae = "S[1-6]\\.[0-9]{2}";
     
     /** Crée un enseignement SAÉ
      * @param intitule
      * @param idSae 
+     * @param poids 
      */
-    public Sae(String intitule, String idSae) {
-        super(intitule, idSae);
+    public Sae(String intitule, String idSae, int poids) {
+        super(intitule, idSae, poids);
         //Vérifie la validité de l'identifiant de la Sae
         if (!super.estValide(regexSae, idSae)) {
             throw new IllegalArgumentException();

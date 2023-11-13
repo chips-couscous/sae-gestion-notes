@@ -1,13 +1,11 @@
-<<<<<<< HEAD
 .settings/
 .project
 .classpath
 bin/
-=======
 .settings/
 .project
 .classpath
 bin/
 csv/
->>>>>>> f459a526eab60b2d9fbba77b4fb06b4c000fc014
 src/module-info.java
+README.md

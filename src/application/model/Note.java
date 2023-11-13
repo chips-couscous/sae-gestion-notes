@@ -26,13 +26,13 @@ public class Note {
     /**
      * Constructeur de l'objet Note
      * @param valeur valeur de la note 
-     * @param denominateur valeur sur la quelle la note est évalué. Ex: 10/20 ou
-     *          23/50 ...
+     * @param denominateur valeur sur la quelle la note est évalué, exemple:
+     *        x/y avec x la note y le dénominateur,0 <= x, x <= y et y != 0... 
      * @param matiere enseignement dans le quel la note a été obtenue
      * @param poids poids de la note dans l'enseignement auquel elle appartient
-     * @param forme type du contrôle. Ex: devoir sur table, tp noté, qcm, ...
+     * @param forme type du contrôle, exemple: devoir sur table, tp noté, qcm, ...
      * @param description description du contrôle donné par l'élève
-     * @param date date du contrôle. Peut être approximative, ex début janvier
+     * @param date date du contrôle. Peut être approximative, exemple "début janvier"
      */
     public Note(double valeur, int denominateur, Enseignement matiere, 
             int poids, String forme, String description, String date) {
@@ -52,8 +52,8 @@ public class Note {
      * Vérifie que les paramètres rentrés dans le constructeur sont correct
      * test seulement les valeurs numérique
      * @param valeur valeur valeur de la note 
-     * @param denominateur valeur sur la quelle la note est évalué. Ex: 10/20 ou
-     *          23/50 ... 
+     * @param dénominateur valeur sur la quelle la note est évalué, exemple:
+     *        x/y avec x la note y le dénominateur,0 <= x, x <= y et y != 0... 
      * @param poids poids de la note dans l'enseignement auquel elle appartient
      * @return true si les paramètres sont corrects
      */
@@ -79,22 +79,22 @@ public class Note {
         this.valeur = valeur;
     }
 
-    /** @return valeur de denominateur */
+    /** @return valeur de dénominateur */
     public int getDenominateur() {
         return denominateur;
     }
 
-    /** @param denominateur nouvelle valeur de denominateur */
+    /** @param denominateur nouvelle valeur de dénominateur */
     public void setDenominateur(int denominateur) {
         this.denominateur = denominateur;
     }
 
-    /** @return valeur de matiere */
+    /** @return valeur de matière */
     public Enseignement getMatiere() {
         return matiere;
     }
 
-    /** @param matiere nouvelle valeur de matiere */
+    /** @param matiere nouvelle valeur de matière */
     public void setMatiere(Enseignement matiere) {
         this.matiere = matiere;
     }

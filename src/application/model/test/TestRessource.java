@@ -22,11 +22,11 @@ class TestRessource {
      */
     @Test
     void idOk() {
-        String regexSae = "R[1-6]\\.\\d[1-9]";
-        assertTrue(Ressource.estValide(regexSae, "R2.02"));
-        assertTrue(Ressource.estValide(regexSae, "R6.99"));
-        assertTrue(Ressource.estValide(regexSae, "R1.01"));
-        assertTrue(Ressource.estValide(regexSae, "R4.55"));
+        String regexRessource = "R[1-6]\\.\\d[1-9]";
+        assertTrue(Ressource.estValide(regexRessource, "R2.02"));
+        assertTrue(Ressource.estValide(regexRessource, "R6.99"));
+        assertTrue(Ressource.estValide(regexRessource, "R1.01"));
+        assertTrue(Ressource.estValide(regexRessource, "R4.55"));
     }
     
     /**

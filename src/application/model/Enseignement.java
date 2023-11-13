@@ -17,15 +17,20 @@ public abstract class Enseignement {
         
     /** Contient l'identifiant de l'enseignement */
     protected String idEnseignement;
+    
+    /** Contient le poids de l'enseignement */
+    protected int poidsEnseignement;
         
     /** 
      * Crée un enseignement 
      * @param intitule
      * @param idEnseignement
+     * @param poidsEnseignement 
      */
-    public Enseignement(String intitule, String idEnseignement) {
+    public Enseignement(String intitule, String idEnseignement, int poidsEnseignement) {
         this.intitule = intitule;
         this.idEnseignement = idEnseignement;
+        this.poidsEnseignement = poidsEnseignement;
         
     }
     
@@ -37,17 +42,11 @@ public abstract class Enseignement {
      *                 false si la regex ne correspond pas à l'identifiant de l'enseignement
      */
     public static boolean estValide(String regex, String idEnseignement) {       
-        boolean correct = true;       // vrai si l'identifiant correspond à la regex
-        Pattern motif = Pattern.compile(regex);       // on compile la regex
-            
-        // on vérifie si l'identifiant d'enseignement correspond à la regex
-        if (! motif.matcher(idEnseignement).matches()) {
-            System.out.println("Erreur la chaîne " + idEnseignement 
-                               + " est considérée comme invalide pour "
-                               + motif);
-            correct = false;
-        }
-        return correct;
+        // on compile la regex
+        Pattern motif = Pattern.compile(regex);       
+        
+        // vrai si l'identifiant correspond à la regex
+        return motif.matcher(idEnseignement).matches();
     }
 
     /** @return valeur de intitule */
@@ -58,5 +57,9 @@ public abstract class Enseignement {
     /** @return valeur de idEnseignement */
     public String getIdEnseignement() {
         return idEnseignement;
+    }
+    
+    public String toString() {
+        return intitule + " " + idEnseignement + " " + String.valueOf(poidsEnseignement);
     }
 }

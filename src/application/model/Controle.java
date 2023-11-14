@@ -14,8 +14,6 @@ public class Controle {
     
     private int denominateur; 
     
-    private Enseignement matiere;
-    
     private int poids;
     
     private String forme;

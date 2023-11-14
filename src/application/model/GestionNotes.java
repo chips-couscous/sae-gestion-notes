@@ -1,6 +1,6 @@
 /*
  * GestionNotes.java                                      26 oct. 2023
- * IUT Rodez, info2 2022-2023, pas de copyright ni "copyleft" 
+ * IUT Rodez, info2 2023-2024, pas de copyright ni "copyleft" 
  */
 package application.model;
 
@@ -14,9 +14,6 @@ import java.util.List;
  * @author tom.jammes
  */
 public class GestionNotes {
-    
-    /* Contient les enseignements et les contrôles de cet enseignement */
-    private static HashMap<Enseignement,ArrayList<Controle>> enseignements = new HashMap<>();
 
     static Utilisateur identite = new Utilisateur("Nom", "Prenom");
 
@@ -41,44 +38,16 @@ public class GestionNotes {
     public static boolean ajouterControle(double valeur, int denominateur, 
             String nom, int poids, String forme,String description, String date) {
 
-        try {
-            String idEnseignement = nom.substring(0, 4);
-            Controle note = new Controle(poids, forme,date);
-            Enseignement matiereControle = verifierEnseignement(idEnseignement);
-            
-            if (!enseignements.containsKey(matiereControle)) {
-                return false;
-            }
-            
-            ArrayList<Controle> listeControle = enseignements.get(matiereControle);
-            listeControle.add(note);
-            
-            enseignements.put(matiereControle,listeControle);
-            
-            // Controle note = new Controle(valeur, denominateur, matiere, poids, forme, description, date);
-            // notes.add(note);
-            return true;
-        } catch (IllegalArgumentException erreur) {
-            return false;
-        }
+        
     }
     /* TODO Ajouter une méthode pour ajouter tous les enseignements dans la hashmap */
     /* TODO ajouter une méthode qui renvoie le nombre de notes */
     
-    /** TODO comment method role
-     * @param idEnseignement
-     * @return
-     */
-    private static Enseignement verifierEnseignement(String idEnseignement) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     /**
-     * TODO comment method role
+     * Change l'identité de l'utilisateur
      * 
-     * @param nom
-     * @param prenom
+     * @param nom nouveau nom de l'utilisateur
+     * @param prenom nouveau prénom de l'utilisateur
      */
     public static void changerIdentite(String nom, String prenom) {
         identite.setNom(nom);
@@ -86,8 +55,7 @@ public class GestionNotes {
     }
 
     /**
-     * TODO comment method role
-     * @return 0
+     * @return une chaîne contenant le nom et le prénom de l'utilisateur
      */
     public static String afficherIdentite() {
         return identite.getNom() + " " + identite.getPrenom();

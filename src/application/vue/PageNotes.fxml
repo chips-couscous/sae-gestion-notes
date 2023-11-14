@@ -52,7 +52,7 @@
 	<center>
 		<Pane fx:id="paneCentre" prefHeight="200.0" prefWidth="1030.0" BorderPane.alignment="CENTER">
 			<children>
-				<Button layoutX="50.0" layoutY="550.0" mnemonicParsing="false" onAction="#sceneModifierNote" prefHeight="40.0" prefWidth="40.0" rotate="1.0" style="-fx-background-radius: 100%; -fx-background-color: #354b85; -fx-rotate: 45;" text="✖" textFill="#e6e9f0">
+				<Button fx:id="boutonAjouterNote" layoutX="50.0" layoutY="550.0" mnemonicParsing="false" onAction="#sceneModifierNote" prefHeight="40.0" prefWidth="40.0" rotate="1.0" style="-fx-background-radius: 100%; -fx-background-color: #354b85; -fx-rotate: 45;" text="✖" textFill="#e6e9f0">
 					<font>
 						<Font size="16.0" />
 					</font>
@@ -62,7 +62,7 @@
 						<Font size="14.0" />
 					</font>
 				</Button>
-				<ScrollPane layoutX="195.0" layoutY="128.0" prefHeight="377.0" prefWidth="700.0">
+				<ScrollPane fx:id="listeNotes" layoutX="195.0" layoutY="128.0" prefHeight="377.0" prefWidth="722.0">
 					<content>
 						<GridPane fx:id="grilleNotes">
 							<columnConstraints>
@@ -70,8 +70,8 @@
 								<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="130.0" />
 								<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="130.0" />
 								<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
-								<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="29.0" />
-								<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="29.0" />
+								<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" />
+								<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" />
 							</columnConstraints>
 							<rowConstraints>
 								<RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />

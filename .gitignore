@@ -2,4 +2,8 @@
 .project
 .settings/
 bin/
+<<<<<<< HEAD
 build.fxbuild
+=======
+build.fxbuild
+>>>>>>> 8b5741c98c8d1a0cf54230fc41c25bbe473b8c5e

@@ -8,13 +8,14 @@ import javafx.scene.image.ImageView;
 import java.io.IOException;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
-//import application.model.GestionNotes;
+import application.modele.GestionNote;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -80,76 +81,80 @@ public class Controlleur {
 	 * directement au lancement de l'application
 	 */
 	public void initialize() {
-		/*
+		
 		if (labelNomEtudiant != null && validerNom != null && texteNom != null && textePrenom != null) {
 			validerNom.setOnAction(event -> modifierNom(texteNom, textePrenom));
 		}
-		*/
+		 
 		if (boutonImporterFichierProgramme != null && boutonImporterFichierRessource != null) {
 			boutonImporterFichierProgramme.setOnAction(event -> selectionnerFichier());
 			boutonImporterFichierRessource.setOnAction(event -> selectionnerFichier());
 		} else if (boutonPartagerFichier != null) {
 			boutonPartagerFichier.setOnAction(event -> selectionnerFichier());
 		}
-		/*
+		
 		if (labelNomEtudiant != null) {
 			afficherNom();
 		}
-		*/
+		 
 	}
 
 
 	private void ajouterNote(String note, String description, String date) {
-	    Label labelNote = new Label(note);
-	    Label labelDescription = new Label(description);
-	    Label labelDate = new Label(date);    
-	    Image imageModifier = new Image(getClass().getResourceAsStream("/application/controlleur/modifier.png"));
-	    Image imageSupprimer = new Image(getClass().getResourceAsStream("/application/controlleur/supprimer.png"));
+		Label labelNote = new Label(note);
+		Label labelDescription = new Label(description);
+		Label labelDate = new Label(date);    
+		Image imageModifier = new Image(getClass().getResourceAsStream("/application/controlleur/modifier.png"));
+		Image imageSupprimer = new Image(getClass().getResourceAsStream("/application/controlleur/supprimer.png"));
 
-	    ImageView imageViewModifier = new ImageView(imageModifier);
-	    ImageView imageViewSupprimer = new ImageView(imageSupprimer);
-	    
-	    Button modifier = new Button();
-	    modifier.setGraphic(imageViewModifier);
-	    modifier.getStyleClass().add("hover-button");
-	    Button supprimer = new Button();
-	    supprimer.setGraphic(imageViewSupprimer);
-	    supprimer.getStyleClass().add("hover-button");
-	    GridPane mainGridPane = (GridPane) ((ScrollPane) ((Pane) ((BorderPane) listeNotes.getScene().getRoot()).getChildren().get(1)).getChildren().get(2)).getContent();
-	    mainGridPane.add(labelNote, 0, 0);
-	    mainGridPane.add(labelDescription, 1, 0);
-	    mainGridPane.add(labelDate, 2, 0);
-	    mainGridPane.add(modifier, 4, 0);
-	    mainGridPane.add(supprimer, 5, 0);
-	    GridPane.setHalignment(labelNote, javafx.geometry.HPos.CENTER);
-	    GridPane.setHalignment(labelDescription, javafx.geometry.HPos.CENTER);
-	    GridPane.setHalignment(labelDate, javafx.geometry.HPos.CENTER);
-	    GridPane.setHalignment(modifier, javafx.geometry.HPos.CENTER);
-	    GridPane.setHalignment(supprimer, javafx.geometry.HPos.CENTER);
-	    labelNote.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #354B85;");
+		ImageView imageViewModifier = new ImageView(imageModifier);
+		ImageView imageViewSupprimer = new ImageView(imageSupprimer);
+
+		Button modifier = new Button();
+		modifier.setGraphic(imageViewModifier);
+		modifier.getStyleClass().add("hover-button");
+		Button supprimer = new Button();
+		supprimer.setGraphic(imageViewSupprimer);
+		supprimer.getStyleClass().add("hover-button");
+		GridPane mainGridPane = (GridPane) ((ScrollPane) ((Pane) ((BorderPane) listeNotes.getScene().getRoot()).getChildren().get(1)).getChildren().get(2)).getContent();
+		mainGridPane.add(labelNote, 0, 0);
+		mainGridPane.add(labelDescription, 1, 0);
+		mainGridPane.add(labelDate, 2, 0);
+		mainGridPane.add(modifier, 4, 0);
+		mainGridPane.add(supprimer, 5, 0);
+		GridPane.setHalignment(modifier, javafx.geometry.HPos.CENTER);
+		GridPane.setHalignment(supprimer, javafx.geometry.HPos.CENTER);
+		mainGridPane.setStyle("-fx-border-color: #E6E9F0; -fx-border-width: 2px; -fx-border-radius: 2px;");
+		labelNote.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #354B85; -fx-background-color: #E6E9F0;");
 		labelDescription.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #354B85;");
 		labelDate.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #354B85;");
+		labelNote.setMaxSize(130, 40);
+		labelDescription.setMaxSize(130, 40);
+		labelDate.setMaxSize(130, 40);
+		labelNote.setAlignment(Pos.CENTER);
+		labelDescription.setAlignment(Pos.CENTER);
+		labelDate.setAlignment(Pos.CENTER);
 		modifier.setMaxSize(30, 30);
 		supprimer.setMaxSize(30, 30);
-		
+
 		modifier.setStyle("-fx-background-color: #e6e9f0; -fx-text-fill: #354B85; -fx-background-radius: 100%;");
 		supprimer.setStyle("-fx-background-color: #e6e9f0; -fx-text-fill: #354B85; -fx-background-radius: 100%;");
 	}
 
 
+
+
 	
-	
-	/*
 	public void afficherNom() {
-		labelNomEtudiant.setText(GestionNotes.afficherIdentite());
+		labelNomEtudiant.setText(GestionNote.afficherIdentite());
 	}
 
 
 	public void modifierNom(TextField nom, TextField prenom) {
-		GestionNotes.changerIdentite(nom.getText(), prenom.getText());
+		GestionNote.changerIdentite(nom.getText(), prenom.getText());
 		afficherNom();
 	}
-	*/
+	 
 
 
 	/**
@@ -259,36 +264,36 @@ public class Controlleur {
 	}
 
 
-	
+
 	@FXML
 	public void sceneModifierNote() {
-	    try {
-	        FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/vue/PageModifierNote.fxml"));
-	        Parent root = loader.load();
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/vue/PageModifierNote.fxml"));
+			Parent root = loader.load();
 
 
-	        Stage popupStage = new Stage();
-	        popupStage.initModality(Modality.APPLICATION_MODAL);
-	        popupStage.setTitle("Popup");
-	        Scene popupScene = new Scene(root);
-	        popupStage.setScene(popupScene);
-	        Button boutonValider = (Button) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(5)).getChildren().get(0));
-	        TextField note = (TextField)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(0);
-	        TextArea description = (TextArea)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(3)).getChildren().get(0);
-	        TextField date = (TextField) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(4)).getChildren().get(0));
+			Stage popupStage = new Stage();
+			popupStage.initModality(Modality.APPLICATION_MODAL);
+			popupStage.setTitle("Popup");
+			Scene popupScene = new Scene(root);
+			popupStage.setScene(popupScene);
+			Button boutonValider = (Button) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(5)).getChildren().get(0));
+			TextField note = (TextField)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(0);
+			TextArea description = (TextArea)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(3)).getChildren().get(0);
+			TextField date = (TextField) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(4)).getChildren().get(0));
 
 
-	        boutonValider.setOnAction(e -> {
-	            // Add logic to update the main gridPane with entered information
-	            ajouterNote(note.getText(), description.getText(), date.getText());
-	            popupStage.close();
-	        });
+			boutonValider.setOnAction(e -> {
+				// Add logic to update the main gridPane with entered information
+				ajouterNote(note.getText(), description.getText(), date.getText());
+				popupStage.close();
+			});
 
 
-	        popupStage.showAndWait();
-	    } catch(IOException e) {
-	        e.printStackTrace();
-	    }
+			popupStage.showAndWait();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 
@@ -305,7 +310,7 @@ public class Controlleur {
 		};
 		return new TextFormatter<>(filter);
 	}
-	
+
 	private void supprimerNote() {
 		try {
 			Stage stageActuel = (Stage) rootPane.getScene().getWindow();
@@ -352,6 +357,6 @@ public class Controlleur {
 			System.out.println("Aucun fichier sélectionné.");
 		}
 	}
-	
+
 }
 

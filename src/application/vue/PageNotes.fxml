@@ -65,7 +65,7 @@
 						<Font size="14.0" />
 					</font>
 				</Button>
-				<ScrollPane fx:id="listeNotes" layoutX="195.0" layoutY="128.0" prefHeight="377.0" prefWidth="722.0">
+				<ScrollPane fx:id="listeNotes" layoutX="193.0" layoutY="128.0" prefHeight="377.0" prefWidth="726.0">
 					<content>
 						<GridPane fx:id="grilleNotes">
 							<columnConstraints>

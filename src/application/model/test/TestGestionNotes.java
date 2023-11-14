@@ -54,7 +54,7 @@ public class TestGestionNotes {
         for (int i = 0; i < valeur.length; i++) {
                
             System.out.println("Ajout d'une note ...");
-            if (GestionNotes.ajouterNote(valeur[i],denominateur[i],matiere[i],
+            if (GestionNotes.ajouterControle(valeur[i],denominateur[i],matiere[i],
                     poids[i],forme[i],description[i],date[i])) {
                 nbTestOk++;
                 
@@ -90,7 +90,7 @@ public class TestGestionNotes {
         for (int i = 0; i < valeur.length; i++) {
                
             System.out.println("Ajout d'une note ...");
-            if (!GestionNotes.ajouterNote(valeur[i],denominateur[i],matiere[i],
+            if (!GestionNotes.ajouterControle(valeur[i],denominateur[i],matiere[i],
                     poids[i],forme[i],description[i],date[i])) {
                 nbTestOk++;
                 

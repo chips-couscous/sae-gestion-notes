@@ -5,7 +5,11 @@
 package application.model;
 
 /** 
+<<<<<<< HEAD
  * Classe définissant un contrôle avec ses getters et setters
+=======
+ * Représentation d'un controle
+>>>>>>> 34cf8bcaae6883b484c2e9287007d1adeab60ac1
  * @author tom.jammes
  */
 public class Controle {

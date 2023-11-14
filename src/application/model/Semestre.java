@@ -25,12 +25,7 @@ public class Semestre {
     /* Contient les enseignements et les contrôles de cet enseignement */
     private HashMap<Enseignement, List<Controle>> listeControle = new HashMap<Enseignement, List<Controle>>();
     /* Lie aux enseignements, les compétences et les poids aux quels ils sont associés */
-    private HashMap<Enseignement, List<Object[]>> listeEnseignement = new HashMap<Enseignement, List<Object[]>>(); 
-
-    private HashMap<Enseignement, List<Controle>> listeControle 
-                                  = new HashMap<Enseignement, List<Controle>>();
-    private HashMap<Enseignement, List<Object[]>> listeEnseignement 
-                                  = new HashMap<Enseignement, List<Object[]>>();
+    private HashMap<Enseignement, List<Object[]>> listeEnseignement = new HashMap<Enseignement, List<Object[]>>();
     
     /**
      * Constructeur du semestre
@@ -184,7 +179,6 @@ public class Semestre {
     /**
      * TODO comment method role
      * @param enseignement
-     * @return 2
      * Cette méthode consiste à renseigner un enseignement en tant que nouvelle
      * clé pour chaque HashMap : listeEnseignement, listeControle
      * @param enseignement , est l'enseignement qui servira de clé pour les

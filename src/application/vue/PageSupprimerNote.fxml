@@ -9,51 +9,31 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="rootPane" maxHeight="-Infinity"
-	maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-	prefHeight="114.0" prefWidth="400.0"
-	xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="application.controlleur.Controlleur">
+<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="114.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controlleur.Controlleur">
 	<center>
 		<GridPane BorderPane.alignment="CENTER">
 			<columnConstraints>
-				<ColumnConstraints hgrow="SOMETIMES"
-					maxWidth="-Infinity" minWidth="10.0" prefWidth="200.0" />
-				<ColumnConstraints hgrow="SOMETIMES"
-					maxWidth="-Infinity" minWidth="10.0" prefWidth="200.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="200.0" />
+				<ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="200.0" />
 			</columnConstraints>
 			<rowConstraints>
-				<RowConstraints maxHeight="-Infinity"
-					minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
-				<RowConstraints maxHeight="-Infinity"
-					minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
+				<RowConstraints maxHeight="-Infinity" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
 			</rowConstraints>
 			<children>
-				<Pane prefHeight="200.0" prefWidth="200.0"
-					GridPane.columnSpan="2" />
-				<Button fx:id="boutonConfirmer" mnemonicParsing="false"
-					prefHeight="57.0" prefWidth="200.0"
-					style="-fx-background-color: #E6E9F0;" text="OUI"
-					textFill="#354b85" GridPane.rowIndex="1">
+				<Button fx:id="boutonConfirmer" mnemonicParsing="false" prefHeight="57.0" prefWidth="200.0" style="-fx-background-color: #E6E9F0;" text="OUI" textFill="#354b85" GridPane.rowIndex="1">
 					<font>
 						<Font name="System Bold" size="14.0" />
 					</font>
 				</Button>
-				<Button fx:id="boutonAnnuler" mnemonicParsing="false"
-					prefHeight="57.0" prefWidth="200.0"
-					style="-fx-background-color: #E6E9F0;" text="NON"
-					textFill="#354b85" GridPane.columnIndex="1" GridPane.rowIndex="1">
+				<Button fx:id="boutonAnnuler" mnemonicParsing="false" prefHeight="57.0" prefWidth="200.0" style="-fx-background-color: #E6E9F0;" text="NON" textFill="#354b85" GridPane.columnIndex="1" GridPane.rowIndex="1">
 					<font>
 						<Font name="System Bold" size="14.0" />
 					</font>
 				</Button>
-				<Pane prefHeight="200.0" prefWidth="200.0"
-					style="-fx-background-color: #354b85;" GridPane.columnSpan="2">
+				<Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #354b85;" GridPane.columnSpan="2">
 					<children>
-						<Label alignment="CENTER" layoutX="53.0" layoutY="20.0"
-							prefHeight="16.0" prefWidth="295.0"
-							text="Êtes vous sur de vouloir supprimer cette note ?"
-							textFill="#e6e9f0">
+						<Label alignment="CENTER" layoutX="53.0" layoutY="20.0" prefHeight="16.0" prefWidth="295.0" text="Êtes vous sur de vouloir supprimer cette note ?" textFill="#e6e9f0">
 							<font>
 								<Font size="14.0" />
 							</font>

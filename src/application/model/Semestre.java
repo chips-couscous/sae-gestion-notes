@@ -137,21 +137,18 @@ public class Semestre {
      *                     avec x la note y le dénominateur,0 <= x, x <= y et y !=
      *                     0...
      * @param nom          nom du controle dans le quel la note a été obtenue
-     * @param poids        poids de la note dans l'enseignement auquel elle
-     *                     appartient
-     * @param forme        type du contrôle, exemple: devoir sur table, tp noté,
-     *                     qcm, ...
      * @param description  description du contrôle donné par l'élève
      * @param date         date du contrôle. Peut être approximative, exemple début
      *                     janvier
+     * @param id           identifiant du contrôle                
      * @return true si la note a pu être ajouté
      */
     public boolean ajouterNoteAControle(double valeur, int denominateur, 
-            String nom, String description, String date) {
+            String nom, String description, String date, int id) {
 
         try {
+            // Récupère l'enseignement dans la liste
             String idEnseignement = nom.substring(0, 4);
-            String formeControle = nom.substring(4);
             Enseignement matiereControle = verifierEnseignementPresent(idEnseignement);
             
             if (!listeControle.containsKey(matiereControle)) {
@@ -159,12 +156,13 @@ public class Semestre {
             }
             
             List<Controle> controles = listeControle.get(matiereControle);
-            /* TODO Comparer les controles avec la note puis set les valeurs du controle 
-             * Il faut un identifiant de note  
-             */
             for (Controle controle : controles) {
-                if (controle.getForme() == formeControle) {
-                    
+                if (controle.getIdControle() == id) {
+                    controle.setValeur(valeur);
+                    controle.setDenominateur(denominateur);
+                    controle.setDescription(description);
+                    controle.setDate(date);
+                    controle.setNoteRemplie(true);
                 }
             }
             
@@ -230,5 +228,23 @@ public class Semestre {
         }
 
         return sb.toString();
+    }
+
+
+    /**
+     * @return le nombre de notes renseigné par l'utilisateur
+     */
+    public int nbNotes() {
+        int nbControle = 0;
+        
+        for (Enseignement matiere : listeControle.keySet()) {
+            for (Controle controle : listeControle.get(matiere)) {
+                if (controle.isNoteRemplie() == true) {
+                    nbControle++;
+                }
+            }
+        }
+        
+        return nbControle;
     }
 }

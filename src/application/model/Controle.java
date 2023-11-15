@@ -5,11 +5,8 @@
 package application.model;
 
 /** 
-<<<<<<< HEAD
  * Classe définissant un contrôle avec ses getters et setters
-=======
  * Représentation d'un controle
->>>>>>> 34cf8bcaae6883b484c2e9287007d1adeab60ac1
  * @author tom.jammes
  */
 public class Controle {
@@ -31,20 +28,28 @@ public class Controle {
     
     /** Contient la date du contrôle */
     private String date;
+    
+    /** Définit si la note a été renseigné ou pas */
+    private boolean noteRemplie = false;
+    
+    /** Id du contrôle  */
+    private int idControle;
 
     /**
      * Constructeur de l'objet Note
      * @param poids poids de la note dans l'enseignement auquel elle appartient
      * @param forme type du contrôle, exemple: devoir sur table, tp noté, qcm, ...
      * @param date date du contrôle. Peut être approximative, exemple "début janvier"
+     * @param id id du contrôle
      */
-    public Controle(int poids, String forme, String date) {
+    public Controle(int poids, String forme, String date, int id) {
         if (!estValide(poids)) {
             throw new IllegalArgumentException("Poids invalide");
         }
         this.poids = poids;
         this.forme = forme;
         this.date = date;
+        this.idControle = id;
     }
 
     /** 
@@ -122,5 +127,20 @@ public class Controle {
     /** @param date nouvelle valeur de date */
     public void setDate(String date) {
         this.date = date;
+    }
+
+    /** @return valeur de noteRemplie */
+    public boolean isNoteRemplie() {
+        return noteRemplie;
+    }
+
+    /** @param noteRemplie nouvelle valeur de noteRemplie */
+    public void setNoteRemplie(boolean noteRemplie) {
+        this.noteRemplie = noteRemplie;
+    }
+
+    /** @return valeur de idControle */
+    public int getIdControle() {
+        return idControle;
     }
 }

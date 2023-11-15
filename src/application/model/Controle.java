@@ -28,14 +28,18 @@ public class Controle {
     /** Contient la date du contrôle */
     private String date;
     
-    private int id;
+    /** Définit si la note a été renseigné ou pas */
+    private boolean noteRemplie = false;
+    
+    /** Id du contrôle  */
+    private int idControle;
 
     /**
      * Constructeur de l'objet Note
      * @param poids poids de la note dans l'enseignement auquel elle appartient
      * @param forme type du contrôle, exemple: devoir sur table, tp noté, qcm, ...
      * @param date date du contrôle. Peut être approximative, exemple "début janvier"
-     * @param id 
+     * @param id id du contrôle
      */
     public Controle(int poids, String forme, String date, int id) {
         if (!estValide(poids)) {
@@ -44,7 +48,7 @@ public class Controle {
         this.poids = poids;
         this.forme = forme;
         this.date = date;
-        this.id = id;
+        this.idControle = id;
     }
 
     /** 
@@ -122,5 +126,20 @@ public class Controle {
     /** @param date nouvelle valeur de date */
     public void setDate(String date) {
         this.date = date;
+    }
+
+    /** @return valeur de noteRemplie */
+    public boolean isNoteRemplie() {
+        return noteRemplie;
+    }
+
+    /** @param noteRemplie nouvelle valeur de noteRemplie */
+    public void setNoteRemplie(boolean noteRemplie) {
+        this.noteRemplie = noteRemplie;
+    }
+
+    /** @return valeur de idControle */
+    public int getIdControle() {
+        return idControle;
     }
 }

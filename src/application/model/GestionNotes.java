@@ -35,8 +35,7 @@ public class GestionNotes {
      *                     janvier
      * @return true si le contrôle a pu être ajouté
      */
-    public static boolean ajouterControle(double valeur, int denominateur, 
-            String nom, int poids, String forme,String description, String date) {
+    public static boolean ajouterControle(int poids, String forme, String date) {
 
         
     }

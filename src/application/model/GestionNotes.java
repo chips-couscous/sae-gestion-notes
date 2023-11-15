@@ -37,8 +37,7 @@ public class GestionNotes {
      */
     public static boolean ajouterControle(double valeur, int denominateur, 
             String nom, int poids, String forme,String description, String date) {
-
-        
+                return false;
     }
     /* TODO Ajouter une méthode pour ajouter tous les enseignements dans la hashmap */
     /* TODO ajouter une méthode qui renvoie le nombre de notes */

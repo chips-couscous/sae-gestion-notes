@@ -81,16 +81,6 @@ public class Controle {
         this.denominateur = denominateur;
     }
 
-    /** @return valeur de matière */
-    public Enseignement getMatiere() {
-        return matiere;
-    }
-
-    /** @param matiere nouvelle valeur de matière */
-    public void setMatiere(Enseignement matiere) {
-        this.matiere = matiere;
-    }
-
     /** @return valeur de poids */
     public int getPoids() {
         return poids;

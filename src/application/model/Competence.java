@@ -4,6 +4,7 @@
  */
 package application.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
@@ -19,7 +20,7 @@ import application.model.exception.NoteInvalideException;
  * @author thomas.lemaire
  * @version 2.0
  */
-public class Competence {
+public class Competence implements Serializable {
 
     /* Expression régulière de l'identifiant d'une compétence */
     private static final String REGEX_COMPETENCE = "U[1-3]\\.[1-6]";

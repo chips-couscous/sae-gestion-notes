@@ -4,6 +4,7 @@
  */
 package application.model;
 
+import java.io.Serializable;
 import java.util.regex.Pattern;
 
 import application.model.exception.MoyenneRessourceException;
@@ -16,7 +17,7 @@ import application.model.exception.NoteInvalideException;
  * @author thomas.lemaire
  * @version 2.0
  */
-public abstract class Enseignement {
+public abstract class Enseignement implements Serializable {
 
     /** intitulé de l'enseignement est le nom de l'enseignement */
     protected String intituleEnseignement;

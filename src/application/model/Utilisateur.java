@@ -4,6 +4,8 @@
  */
 package application.model;
 
+import java.io.Serializable;
+
 import application.model.exception.UtilisateurInvalideException;
 
 /**
@@ -11,7 +13,7 @@ import application.model.exception.UtilisateurInvalideException;
  * @author thomas.lemaire
  * @version 1.0
  */
-public class Utilisateur {
+public class Utilisateur implements Serializable {
     
     /* Nom de l'utilisateur */
     private String nomUtilisateur;

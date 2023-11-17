@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
@@ -31,7 +32,7 @@ import java.util.List;
  * @author thomas.lemaire
  * @version 1.0
  */
-public class FichierCsv {
+public class FichierCsv implements Serializable {
     
     // Délimiteur de fichier CSV (.csv) par défaut
     private final static String DELIMITEUR_DEFAUT = ",";

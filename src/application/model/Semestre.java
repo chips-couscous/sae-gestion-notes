@@ -4,6 +4,7 @@
  */
 package application.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,7 +20,7 @@ import application.model.exception.SemestreInvalideExecption;
  * @author thomas.lemaire
  * @version 2.0
  */
-public class Semestre {
+public class Semestre implements Serializable {
     
     /* Numéro du semestre en cours (exemple: 1, 2, 3 ...) */
     private int numeroSemestre;

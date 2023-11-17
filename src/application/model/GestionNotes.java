@@ -4,6 +4,13 @@
  */
 package application.model;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,9 +38,13 @@ public class GestionNotes {
     /* Propriétaire de l'application */
     private Utilisateur utilisateurGestionNotes;
     
+    /* */
+    private File fichierSerialize;
+    
     /** Constructeur de la gestion des notes */
     public GestionNotes() {
         setSemestreGestionNotes(new Semestre());
+        fichierSerialize = new File(".\\tmp\\gestion-notes.ser");
         
         try {
             setUtilisateurGestionNotes(new Utilisateur());
@@ -313,16 +324,67 @@ public class GestionNotes {
     }
 
     /** 
+     * Réinitialise l'application de gestion de notes
+     * @throws UtilisateurInvalideException
+     * @throws IOException 
+     * @throws ClassNotFoundException 
+     */
+    public void reinitialiserGestionNotes() throws UtilisateurInvalideException, ClassNotFoundException, IOException {
+        setSemestreGestionNotes(new Semestre());
+        setUtilisateurGestionNotes(new Utilisateur());
+        deserializerDonnees();
+        serializerDonnees();
+    }
+    
+    /** 
+     * TODO comment method role
+     * @throws IOException
+     */
+    public void serializerDonnees() throws IOException {
+        try (// ouverture d'un flux sur un fichier
+             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fichierSerialize))) {
+            // sérialization des objets
+            oos.writeObject(semestreGestionNotes);
+            oos.writeObject(utilisateurGestionNotes);
+        }
+    }
+    
+    /** 
+     * TODO comment method role
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
+    public void deserializerDonnees() throws ClassNotFoundException, IOException {
+        try (// ouverture d'un flux sur un fichier  
+             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fichierSerialize))) {
+            // désérialization de l'objet
+            semestreGestionNotes = (Semestre) ois.readObject();
+            utilisateurGestionNotes = (Utilisateur) ois.readObject();
+        }
+    }
+    
+    /** 
      * Execution de scipts de test 
      * @param args non utilisé
      */
     public static void main(String[] args) {
         GestionNotes gn = new GestionNotes();
+//        
+//        try {
+//            gn.importerParametrageSemestre(".\\csv\\ParametresSemestre(AImporter).csv");
+//            gn.importerParametrageEnseignement(".\\csv\\ParametresRessource(AImporter).csv");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//      
         
         try {
-            gn.importerParametrageSemestre("Z:\\Eclipse\\workspace\\SaeGestionNotes\\csv\\parametrage-sae.csv");
-            gn.importerParametrageEnseignement("Z:\\Eclipse\\workspace\\SaeGestionNotes\\csv\\ressources-sae.csv");
-        } catch (Exception e) {
+            gn.deserializerDonnees();
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         
@@ -333,25 +395,31 @@ public class GestionNotes {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        try {
-            gn.ajouterNoteAControle("R2.01.00", 12.2, 20, "");
-            gn.ajouterNoteAControle("R2.01.01", 8, 10, "");
-            gn.ajouterNoteAControle("R2.01.02", 15, 40, "");
-            gn.ajouterNoteAControle("R2.01.03", 999, 1000, "");
-        } catch (NoteInvalideException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            gn.calculerMoyenneEnseignement("R2.01");
-        } catch (MoyenneRessourceException e) {
-            e.printStackTrace();
-        } catch (NoteInvalideException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(gn.getValeurNoteDeControle("R2.01.01"));
-        System.out.println(gn.moyenneEnseignemnt("R2.01").getValeurNote());
+//        
+//        try {
+//            gn.ajouterNoteAControle("R2.01.00", 12.2, 20, "");
+//            gn.ajouterNoteAControle("R2.01.01", 8, 10, "");
+//            gn.ajouterNoteAControle("R2.01.02", 15, 40, "");
+//            gn.ajouterNoteAControle("R2.01.03", 15.5, 20, "");
+//        } catch (NoteInvalideException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            gn.calculerMoyenneEnseignement("R2.01");
+//        } catch (MoyenneRessourceException e) {
+//            e.printStackTrace();
+//        } catch (NoteInvalideException e) {
+//            e.printStackTrace();
+//        }
+//        
+//        try {
+//            gn.serializerDonnees();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        System.out.println(gn.getValeurNoteDeControle("R2.01.01"));
+//        System.out.println(gn.moyenneEnseignemnt("R2.01").getValeurNote());
     }
 }

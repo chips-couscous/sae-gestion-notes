@@ -8,6 +8,7 @@ import application.model.exception.EnseignementInvalideException;
 import application.model.exception.MoyenneRessourceException;
 import application.model.exception.NoteInvalideException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
  * @author thomas.lemaire
  * @version 2.0
  */
-public class Ressource extends Enseignement{
+public class Ressource extends Enseignement implements Serializable {
 
     /* Expression régulière de l'identifiant d'une ressource */
     private static final String REGEX_RESSOURCE = "R[1-6]\\.[0-9]{2}";

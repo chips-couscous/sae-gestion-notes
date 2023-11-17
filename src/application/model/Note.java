@@ -4,6 +4,8 @@
  */
 package application.model;
 
+import java.io.Serializable;
+
 import application.model.exception.NoteInvalideException;
 
 /** 
@@ -13,7 +15,7 @@ import application.model.exception.NoteInvalideException;
  * @author thomas.lemaire
  * @version 2.0
  */
-public class Note {
+public class Note implements Serializable {
 
     /* valeur de la note (exemple : 10, 12, 50 ...) */
     private double valeurNote;

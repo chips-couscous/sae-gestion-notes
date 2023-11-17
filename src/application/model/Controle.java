@@ -4,6 +4,8 @@
  */
 package application.model;
 
+import java.io.Serializable;
+
 import application.model.exception.ControleInvalideException;
 
 /** 
@@ -13,7 +15,7 @@ import application.model.exception.ControleInvalideException;
  * @author thomas.lemaire
  * @version 2.0
  */
-public class Controle {
+public class Controle implements Serializable {
 
     /* type du contrôle renseigné (exemple : oral, écrit ...) */
     private String typeControle;

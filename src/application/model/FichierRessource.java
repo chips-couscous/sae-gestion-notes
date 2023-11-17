@@ -4,6 +4,7 @@
  */
 package application.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,7 @@ import application.model.exception.ParametresSemestreException;
  * @author thomas.lemaire
  * @version 1.0
  */
-public class FichierRessource extends FichierCsv {
+public class FichierRessource extends FichierCsv implements Serializable {
     
     private HashMap<String, List<String[]>> ressourcesControles;
 

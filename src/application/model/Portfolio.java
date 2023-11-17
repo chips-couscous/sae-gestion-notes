@@ -4,6 +4,8 @@
  */
 package application.model;
 
+import java.io.Serializable;
+
 import application.model.exception.EnseignementInvalideException;
 
 /** 
@@ -13,7 +15,7 @@ import application.model.exception.EnseignementInvalideException;
  * @author thomas.lemaire
  * @version 2.0
  */
-public class Portfolio extends Enseignement{
+public class Portfolio extends Enseignement implements Serializable {
 
     /* Expression régulière de l'identifiant d'un portfolio */
     private static final String REGEX_PORTFOLIO = "P[1-6]\\.[0-9]{2}";

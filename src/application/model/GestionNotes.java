@@ -84,20 +84,11 @@ public class GestionNotes {
      */
     public Controle trouverControle(String identifiant) {
         Controle controleATrouver = null;
+        Enseignement enseignement = trouverEnseignement(identifiant.substring(0,5));
         
-        for(Enseignement enseignement: getSemestreGestionNotes().getEnseignementsSemestre()) {
-            char typeEnseignement = enseignement.getIntituleEnseignement().charAt(0);
-            boolean estUneRessource = false;
-            
-            if (typeEnseignement == 'R') {
-                estUneRessource = true;
-            }
-            if (estUneRessource) {
-                for(Controle controle: ((Ressource) enseignement).getControlesRessource()) {
-                    if (controle.getIndentifiantControle().equals(identifiant)) {
-                        controleATrouver = controle;
-                    }
-                }
+        for(Controle controle: ((Ressource) enseignement).getControlesRessource()) {
+            if (controle.getIndentifiantControle().equals(identifiant)) {
+                controleATrouver = controle;
             }
         }
         
@@ -284,13 +275,21 @@ public class GestionNotes {
                     String type = controleADecomposer[0];
                     String date = controleADecomposer[1];
                     int poids = Integer.parseInt(controleADecomposer[2]);
-                    
-                    System.out.println(type + " " + date + " " + poids);
-                    
+                                        
                     ajouterControleAEnseignement(identifiant, type, date, poids);
                 }
             }
         }
+    }
+    
+    /** 
+     * Méthode de test
+     * @param identifiant
+     * @return 0
+     */
+    public double getValeurNoteDeControle(String identifiant) {
+        Controle controle = trouverControle(identifiant);
+        return controle.getNoteControle().getValeurNoteSurVingt();
     }
 
     /** @return valeur de semestreGestionNotes */
@@ -326,5 +325,35 @@ public class GestionNotes {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+        try {
+            Ressource ressourceControles;
+            ressourceControles = (Ressource) gn.trouverEnseignement("R2.01");
+            System.out.println(ressourceControles.getControleToString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        try {
+            gn.ajouterNoteAControle("R2.01.00", 12.2, 20, "");
+            gn.ajouterNoteAControle("R2.01.01", 8, 10, "");
+            gn.ajouterNoteAControle("R2.01.02", 15, 40, "");
+            gn.ajouterNoteAControle("R2.01.03", 15.5, 20, "");
+        } catch (NoteInvalideException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            gn.calculerMoyenneEnseignement("R2.01");
+        } catch (MoyenneRessourceException e) {
+            e.printStackTrace();
+        } catch (NoteInvalideException e) {
+            e.printStackTrace();
+        }
+        
+        
+
+        System.out.println(gn.getValeurNoteDeControle("R2.01.01"));
+        System.out.println(gn.moyenneEnseignemnt("R2.01").getValeurNote());
     }
 }

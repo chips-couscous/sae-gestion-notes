@@ -147,4 +147,16 @@ public class Ressource extends Enseignement{
         poidsTotalDesControles -= controleAVerifier.getPoidsControle();
         return false;
     }
+    
+    /**
+     * Méthode de test
+     * @return 0
+     */
+    public String getControleToString() {
+        String resultat = "";
+        for(Controle controle: controlesRessource) {
+            resultat += controle.toString();
+        }
+        return resultat;       
+    }
 }

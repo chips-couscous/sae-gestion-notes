@@ -95,7 +95,7 @@ public class Controle {
     public void setIndentifiantControle(String indentifiantControle) {
         this.indentifiantControle = indentifiantControle;
     }
-
+    
     /**
      * Validation de la création du contrôle
      * @param type est valide s'il n'est pas vide
@@ -104,5 +104,12 @@ public class Controle {
      */
     private static boolean estValide(String type, int poids) {
         return !type.equals("") && poids > 0; 
+    }
+    
+    /**
+     * Méthode de test
+     */
+    public String toString() {
+        return getIndentifiantControle() + " " + getTypeControle() + " " + getDateControle() + " " + getPoidsControle() + "\n";
     }
 }

@@ -141,7 +141,8 @@ public class Client {
             /* Réception de données du serveur */
             gPuissanceB = Integer.parseInt(in.readLine());
             
-            // TODO réussir a créer une chaîne de caractère a partir d'int
+            // TODO séparer dans une méthode l'échange de Diffie-Helman pour 
+            // générer aléatoirement une clé de 3 a 5 lettres
             int gPuissanceAB = puissanceModulo(gPuissanceB, a, p);
             char caractere;
             caractere = (char)(65 + gPuissanceAB % 26);

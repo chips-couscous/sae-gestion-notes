@@ -104,11 +104,11 @@ public class Note {
 
     /**
      * Validation de la création de la note
-     * @param valeur est valide si elle est supérieure ou égale à 0 et inférieure au dénominateur
+     * @param valeur est valide si elle est supérieure ou égale à 0 et inférieure ou égale au dénominateur
      * @param denominateur est valide si il est strictement supérieur à 0 est inférieur ou égal à 1000
      * @return true si la note est valide, false sinon
      */
     private static boolean estValide(double valeur, int denominateur) {
-        return valeur >= 0 && valeur < denominateur && denominateur > 0 && denominateur <= 1000;
+        return valeur >= 0 && valeur <= denominateur && denominateur > 0 && denominateur <= 1000;
     }
 }

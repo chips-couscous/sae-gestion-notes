@@ -338,7 +338,7 @@ public class GestionNotes {
             gn.ajouterNoteAControle("R2.01.00", 12.2, 20, "");
             gn.ajouterNoteAControle("R2.01.01", 8, 10, "");
             gn.ajouterNoteAControle("R2.01.02", 15, 40, "");
-            gn.ajouterNoteAControle("R2.01.03", 15.5, 20, "");
+            gn.ajouterNoteAControle("R2.01.03", 999, 1000, "");
         } catch (NoteInvalideException e) {
             e.printStackTrace();
         }
@@ -350,8 +350,6 @@ public class GestionNotes {
         } catch (NoteInvalideException e) {
             e.printStackTrace();
         }
-        
-        
 
         System.out.println(gn.getValeurNoteDeControle("R2.01.01"));
         System.out.println(gn.moyenneEnseignemnt("R2.01").getValeurNote());

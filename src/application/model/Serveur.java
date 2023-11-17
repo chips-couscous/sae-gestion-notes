@@ -5,9 +5,12 @@
 package application.model;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -59,11 +62,11 @@ public class Serveur {
             /* Reception et écriture du fichier
              * buffer contient le code ascii de chaque caractères
              */
-            // TODO enlever le decryptage pour echanger la cle
             byte[] buffer = new byte[TAILLE_BLOC_DONNEES];
             int tailleBlocEnvoye;
+            final String cle = generationCle(clientSocket);
             while ((tailleBlocEnvoye = in.read(buffer)) != -1) {
-                fileOut.write(decryptage(buffer), 0, tailleBlocEnvoye);
+                fileOut.write(decryptage(cle,buffer), 0, tailleBlocEnvoye);
                 System.out.println("Reception d'un bloc");
                 System.out.println("Taille du bloc : " + tailleBlocEnvoye);
             }
@@ -80,7 +83,7 @@ public class Serveur {
             e.printStackTrace();
         }
     }
-    
+
     /** 
      * Méthode de décryptage d'un tableau de byte contenant des code ascii a crypté
      * La méthode de cryptage utilisé est une méthode de Vigenère
@@ -88,15 +91,78 @@ public class Serveur {
      * @param donnees tableau de byte a décrypter
      * @return le tableau de byte décrypté
      */
-    private static byte[] decryptage(byte[] donneesCryptees) {
-        
-        final String cle = "GeStIoNnOtEs";
+    private static byte[] decryptage(String cle, byte[] donneesCryptees) {
         
         /* Pour l'instant cryptage et décryptage bidon, juste phase de test */
-        for (int i = 0; i < donneesCryptees.length; i++) {
-            donneesCryptees[i] -= cle.charAt(i%cle.length());;
-        }
+//        for (int i = 0; i < donneesCryptees.length; i++) {
+//            donneesCryptees[i] -= cle.charAt(i%cle.length());;
+//        }
         
         return donneesCryptees;
+    }
+    
+    /** 
+     * Génère une clé pour un chiffrement de Vigenère
+     * Génère la clé de manière aléatoire grâce a un échange de Diffie-Hellman
+     * avec le client
+     *
+     * @param socket du serveur pour l'échange de Diffie-Hellman
+     * @return clé pour un chiffrement de Vigenère
+     */
+    private static String generationCle(Socket client) {
+        
+        int p; // généré et transmis par le client
+        int g; // généré et transmis par le client
+        int gPuissanceA; // généré et transmis par le client
+        String cle = "";
+        
+        System.out.println("Génération de la clé");
+        try {
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(client.getInputStream()));
+            PrintStream out = new PrintStream(client.getOutputStream());
+            
+            /* Réception des données du client */
+            p = Integer.parseInt(in.readLine());
+            g = Integer.parseInt(in.readLine());
+            gPuissanceA = Integer.parseInt(in.readLine());
+            
+            /* Génération aléatoire des données nécessaire à l'échange de Diffe-Hellman */
+            int b = (int)(1 + Math.random()*(p - 1));
+            int gPuissanceB = puissanceModulo(g,b,p);
+            
+            /* Envoie de données au client */
+            out.println(gPuissanceB);
+            
+            int gPuissanceAB = puissanceModulo(gPuissanceA,b,p) % p;
+            char caractere;
+            caractere = (char)(65 + gPuissanceAB % 26);
+            cle += caractere;
+            
+            System.out.println(cle);
+        } catch (IOException e) {
+            System.err.println("Communication avec le serveur impossible");
+            cle = null;
+        }
+        
+        return cle;
+    }
+    
+    /** 
+     * Calcule g puissance a dans l'ensemble Z/pZ
+     * 
+     * @param g int dont ont calcul la puissance 
+     * @param a exposant
+     * @param p ensemble du calcul
+     * @return resultat de g puissance a dans l'ensemble Z/pZ
+     */
+    private static int puissanceModulo(int g, int a, int p) {
+        /* TODO optimiser avec méthode plus efficace */
+        int resultat = g;
+        for (int i = 1; i < a; i++) {
+            resultat *= g;
+            resultat %= p;
+        }
+        return resultat;
     }
 }

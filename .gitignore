@@ -6,7 +6,6 @@ bin/
 .project
 .classpath
 bin/
-csv/
 src/module-info.java
 README.md
 /.metadata/

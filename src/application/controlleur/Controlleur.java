@@ -12,6 +12,11 @@ import java.io.IOException;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import application.model.GestionNotes;
+import application.model.exception.CompetenceInvalideException;
+import application.model.exception.ControleInvalideException;
+import application.model.exception.EnseignementInvalideException;
+import application.model.exception.ExtensionFichierException;
+import application.model.exception.SemestreInvalideExecption;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -70,6 +75,8 @@ public class Controlleur {
 	@FXML
 	Button boutonImporterFichierRessource;
 	@FXML
+	Button boutonAjouterNote;
+	@FXML
 	Button boutonPartagerFichier;
 	@FXML
 	ScrollPane listeRessources;
@@ -81,9 +88,20 @@ public class Controlleur {
 	int indice = 0;
 
 	FXMLLoader loader = new FXMLLoader(); // FXML loader permettant de charger un fichier FXML et de changer de scene
-	
+
 	private static final int LONGUEUR_MAX_LIGNE = 50;
-	private static final int LONGUEUR_MAX = 200;	
+	private static final int LONGUEUR_MAX = 200;
+
+
+	GestionNotes gn = GestionNotes.getInstance();
+
+	final String MESSAGE_AIDE = "Aide";
+	final String MESSAGE_SAUVEGARDE = "Sauvegarder";
+	final String MESSAGE_AJOUT_NOTE = "Ajouter une note";
+	final String MESSAGE_AJOUT_CONTROLE = "Ajouter un contrôle";
+	final String MESSAGE_SUPPRIMER_NOTE = "Supprimer une note";
+	final String MESSAGE_MODIFIER_NOTE = "Modifier une note";
+
 
 	/**
 	 * Méthode permmettant de lancer d'autres méthodes ou des attributs
@@ -91,7 +109,9 @@ public class Controlleur {
 	 */
 	public void initialize() {
 
-
+		if (boutonAjouterNote != null) {
+			afficherMessageSurvol(boutonAjouterNote, MESSAGE_AJOUT_NOTE);
+		}
 
 		// Vérification de la présence des éléments fxml
 		if (labelNomEtudiant != null && validerNom != null && texteNom != null && textePrenom != null) {
@@ -103,35 +123,35 @@ public class Controlleur {
 		// Vérification de la présence des éléments fxml
 		if (boutonImporterFichierProgramme != null && boutonImporterFichierRessource != null) {
 
-			boutonImporterFichierProgramme.setOnAction(event -> selectionnerFichier());
-			boutonImporterFichierRessource.setOnAction(event -> selectionnerFichier());
+			boutonImporterFichierProgramme.setOnAction(event -> selectionnerFichier(boutonImporterFichierProgramme));
+			boutonImporterFichierRessource.setOnAction(event -> selectionnerFichier(boutonImporterFichierRessource));
 
 		} else if (boutonPartagerFichier != null) {
-			boutonPartagerFichier.setOnAction(event -> selectionnerFichier());
+			boutonPartagerFichier.setOnAction(event -> selectionnerFichier(boutonPartagerFichier));
 		}
 		// Vérification de la présence des éléments fxml
 		if (labelNomEtudiant != null) {
 			afficherNom(); // Affichage du nom
 		}
 		// Vérification de la présence des éléments fxml
-				if (note != null && commentaire != null && denominateur != null) {
-					// Appliquer un format de saisie spécifique aux TextField
-					note.setTextFormatter(patternNote());
-					denominateur.setTextFormatter(patternDenominateur());
-					commentaire.setWrapText(true);
-					commentaire.textProperty().addListener((observable, ancienneValeur, nouvelleValeur) -> {
-						// Vérifier si la longueur du texte dépasse la limite
-						if (nouvelleValeur.length() > LONGUEUR_MAX_LIGNE) {
-							int dernierEspace = nouvelleValeur.lastIndexOf(" ", LONGUEUR_MAX_LIGNE);
-							if (dernierEspace > 0 && dernierEspace == LONGUEUR_MAX_LIGNE) {
-								commentaire.replaceText(dernierEspace, dernierEspace + 1, "\n"); // Insérer un retour à la ligne après le dernier espace avant la limite
-							}
-						}
-						if (nouvelleValeur.length() > LONGUEUR_MAX) {
-							commentaire.setText(ancienneValeur); // Revenir à la valeur précédente si la limite est dépassée
-						}
-					});
+		if (note != null && commentaire != null && denominateur != null) {
+			// Appliquer un format de saisie spécifique aux TextField
+			note.setTextFormatter(patternNote());
+			denominateur.setTextFormatter(patternDenominateur());
+			commentaire.setWrapText(true);
+			commentaire.textProperty().addListener((observable, ancienneValeur, nouvelleValeur) -> {
+				// Vérifier si la longueur du texte dépasse la limite
+				if (nouvelleValeur.length() > LONGUEUR_MAX_LIGNE) {
+					int dernierEspace = nouvelleValeur.lastIndexOf(" ", LONGUEUR_MAX_LIGNE);
+					if (dernierEspace > 0 && dernierEspace == LONGUEUR_MAX_LIGNE) {
+						commentaire.replaceText(dernierEspace, dernierEspace + 1, "\n"); // Insérer un retour à la ligne après le dernier espace avant la limite
+					}
 				}
+				if (nouvelleValeur.length() > LONGUEUR_MAX) {
+					commentaire.setText(ancienneValeur); // Revenir à la valeur précédente si la limite est dépassée
+				}
+			});
+		}
 	}
 
 	/**
@@ -164,9 +184,11 @@ public class Controlleur {
 		//Création des boutons avec leurs images
 		Button modifier = new Button();
 		modifier.setGraphic(imageViewModifier);
+		afficherMessageSurvol(modifier, MESSAGE_MODIFIER_NOTE);
 
 		Button supprimer = new Button();
 		supprimer.setGraphic(imageViewSupprimer);
+		afficherMessageSurvol(supprimer, MESSAGE_SUPPRIMER_NOTE);
 
 		//Récupération de la grille à laquelle on veut ajouter les notes
 		GridPane mainGridPane = (GridPane) ((ScrollPane) ((Pane) ((BorderPane) listeNotes.getScene().getRoot()).getChildren().get(1)).getChildren().get(2)).getContent();
@@ -189,7 +211,7 @@ public class Controlleur {
 				labelType.getStyleClass().remove("labelType");
 				labelPoids.getStyleClass().remove("labelPoids");
 				labelRessources.getStyleClass().remove("labelRessources");
-				
+
 				labelType.getStyleClass().add("labelTypeClique");
 				labelPoids.getStyleClass().add("labelPoidsClique");
 				labelRessources.getStyleClass().add("labelRessourcesClique");
@@ -197,7 +219,7 @@ public class Controlleur {
 				labelType.getStyleClass().remove("labelTypeClique");
 				labelPoids.getStyleClass().remove("labelPoidsClique");
 				labelRessources.getStyleClass().remove("labelRessourcesClique");
-				
+
 				labelType.getStyleClass().add("labelType");
 				labelPoids.getStyleClass().add("labelPoids");
 				labelRessources.getStyleClass().add("labelRessources");
@@ -282,7 +304,7 @@ public class Controlleur {
 	 * L'affichage se fait dans un label présent sur toutes nos pages (sauf popUp)
 	 */
 	public void afficherNom() {
-		labelNomEtudiant.setText(GestionNotes.afficherIdentite());
+		labelNomEtudiant.setText(gn.getUtilisateurGestionNotes());
 	}
 
 	/**
@@ -293,7 +315,7 @@ public class Controlleur {
 	 * @param prenom est le nouveau Prenom
 	 */
 	public void modifierNom(TextField nom, TextField prenom) {
-		GestionNotes.changerIdentite(nom.getText(), prenom.getText());
+		gn.setUtilisateurGestionNotes(nom.getText(), prenom.getText());
 		afficherNom();
 	}
 
@@ -351,10 +373,11 @@ public class Controlleur {
 			loader.setLocation(getClass().getResource("/application/vue/PageNotes.fxml"));
 			Parent nouvelleScene = loader.load();
 			Scene nouvelleSceneObjet = new Scene(nouvelleScene);
+			creerFiltres(nouvelleSceneObjet);
 			Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
 			stage.setScene(nouvelleSceneObjet); //Affichage de la nouvelle scene
 			nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
-			creerFiltres(nouvelleSceneObjet);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -705,7 +728,7 @@ public class Controlleur {
 	 * 
 	 * @param sceneActuelle
 	 */
-	private void creerFiltres(Scene sceneActuelle) {
+	public static void creerFiltres(Scene sceneActuelle) {
 		GridPane gridPaneRessources = (GridPane)((ScrollPane) ((Pane)((BorderPane) sceneActuelle.getRoot()).getChildren().get(1)).getChildren().get(4)).getContent();
 		System.out.println((GridPane)((ScrollPane) ((Pane)((BorderPane) sceneActuelle.getRoot()).getChildren().get(1)).getChildren().get(4)).getContent());
 
@@ -783,8 +806,9 @@ public class Controlleur {
 	/**
 	 * Permet d'ouvrir un explorateur de fichier
 	 * Et de choisir un fichier
+	 * @throws ExtensionFichierException 
 	 */
-	private void selectionnerFichier() {
+	private void selectionnerFichier(Button boutonClique) {
 		FileChooser explorateurFichier = new FileChooser();
 		explorateurFichier.setTitle("Sélectionner un fichier");
 		explorateurFichier.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv"));
@@ -793,18 +817,34 @@ public class Controlleur {
 		java.io.File fichierChoisi = explorateurFichier.showOpenDialog(stageActuel);
 		// Si l'utilisateur a sélectionné un fichier, affiche son chemin
 		if (fichierChoisi != null) {
-			System.out.println("Fichier sélectionné : " + fichierChoisi.getAbsolutePath());
 			String nomFichier = fichierChoisi.getAbsolutePath();
-			int tailleNomFichier = nomFichier.length();
-			String extension = nomFichier.substring(tailleNomFichier -3, tailleNomFichier);
-			if (extension.equals("csv")) {
-				System.out.println("Extension valide");
-			}else {
-				System.out.println("Extension invalide");
+			
+			if (boutonClique == boutonImporterFichierProgramme) {
+				try {
+					System.out.println("J'importe semestre");
+					gn.importerParametrageSemestre(nomFichier);
+					
+				} catch (ExtensionFichierException | SemestreInvalideExecption | CompetenceInvalideException
+						| EnseignementInvalideException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			} else if (boutonClique == boutonImporterFichierRessource) {
+				try {
+					gn.importerParametrageEnseignement(nomFichier);
+					System.out.println("J'importe ressources");
+				} catch (ExtensionFichierException | ControleInvalideException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-		} else {
-			System.out.println("Aucun fichier sélectionné.");
 		}
+	}
+
+	private void afficherMessageSurvol(Button bouton, String message) {
+		javafx.scene.control.Tooltip tooltip = new javafx.scene.control.Tooltip(message);
+		javafx.scene.control.Tooltip.install(bouton, tooltip);
 	}
 
 

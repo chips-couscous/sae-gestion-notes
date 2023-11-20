@@ -11,7 +11,7 @@ import javafx.scene.image.ImageView;
 import java.io.IOException;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
-import application.modele.GestionNote;
+import application.model.GestionNotes;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -282,7 +282,7 @@ public class Controlleur {
 	 * L'affichage se fait dans un label présent sur toutes nos pages (sauf popUp)
 	 */
 	public void afficherNom() {
-		labelNomEtudiant.setText(GestionNote.afficherIdentite());
+		labelNomEtudiant.setText(GestionNotes.afficherIdentite());
 	}
 
 	/**
@@ -293,7 +293,7 @@ public class Controlleur {
 	 * @param prenom est le nouveau Prenom
 	 */
 	public void modifierNom(TextField nom, TextField prenom) {
-		GestionNote.changerIdentite(nom.getText(), prenom.getText());
+		GestionNotes.changerIdentite(nom.getText(), prenom.getText());
 		afficherNom();
 	}
 

@@ -7,6 +7,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
+import application.controlleur.Controlleur;
+
 public class Vue extends Application {
 
 	private Stage primaryStage;
@@ -36,7 +38,7 @@ public class Vue extends Application {
             primaryStage.getIcons().add(logo);
 			primaryStage.setScene(PageNoteScene);
 			primaryStage.show();
-
+			PageNoteScene.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

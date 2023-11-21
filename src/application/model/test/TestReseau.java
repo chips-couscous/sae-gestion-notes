@@ -18,23 +18,45 @@ public class TestReseau {
      * Méthode de test de estPremier
      *
      */
-    private void testEstPremier() {
+    private static void testEstPremier() {
+        final int[] nbPremiers = {
+                2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,
+                83,89,97,101
+        };
+        final int[] nbNonPremiers = {
+                1,6,8,9,10,15,24,35,45,48,50,57,58,62,66,72,78,86,93,99,102
+        };
+        int nbTestOk = 0;
         
-        for (int i = 0; i < 200; i++) {
+        for (int i : nbPremiers) {
             if (Reseau.estPremier(i)) {
-                System.out.println(i + " est premier");
+                nbTestOk ++;
             }
+        }
+        for (int i : nbNonPremiers) {
+            if (!Reseau.estPremier(i)) {
+                nbTestOk ++;
+            }
+        }
+        if (nbTestOk == nbPremiers.length+nbNonPremiers.length) {
+            System.out.println("Test estPremier validé avec succès");
         }
     }
     
     /**
      * Méthode de test de la classe estGenerateur
+     * Vérifier les résultats à la main pour vérifier la validité du test
      *
      */
-    private void testEstGenerateur() {
+    private static void testEstGenerateur() {
         for (int i = 2; i < 7; i++) {
             if (Reseau.estGenerateur(7,i)) {
                 System.out.println(i + " est un générateur de " + 7);
+            }
+        }
+        for (int i = 2; i < 11; i++) {
+            if (Reseau.estGenerateur(11,i)) {
+                System.out.println(i + " est un générateur de " + 11);
             }
         }
     }
@@ -44,8 +66,8 @@ public class TestReseau {
      * @param args
      */
     public static void main(String[] args) {
-//        testEstPremier();
-//        testEstGenerateur();
-        Reseau.envoyer("127.0.0.1", 8064, "testReseau.txt");
+        testEstPremier();
+        testEstGenerateur();
+//        Reseau.envoyer("127.0.0.1", 8064, "testReseau.txt");
     }
 }

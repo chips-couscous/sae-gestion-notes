@@ -248,7 +248,7 @@ public class Reseau {
                 } while (!estGenerateur(p,g));
                 
                 a = (int)(1 + Math.random()*(p - 1));
-                gPuissanceA = puissanceModulo(g,a,p) % p;
+                gPuissanceA = puissanceModulo(g,a,p);
                 
                 out.println(p);
                 out.println(g);
@@ -310,7 +310,7 @@ public class Reseau {
                 out.println(gPuissanceB);
                 
                 /* Génération du caractère */
-                int gPuissanceAB = puissanceModulo(gPuissanceA,b,p) % p;
+                int gPuissanceAB = puissanceModulo(gPuissanceA,b,p);
                 char caractere;
                 caractere = (char)(65 + gPuissanceAB % 26);
                 cle += caractere;

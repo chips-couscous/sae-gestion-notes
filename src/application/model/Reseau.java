@@ -225,7 +225,7 @@ public class Reseau {
         int a;
         int gPuissanceA;
         int gPuissanceB;
-        int tailleCle = (int)(3 + Math.random()*5);;
+        int tailleCle = (int)(3 + Math.random()*5);
         String cle = ""; 
         
         try {
@@ -239,10 +239,17 @@ public class Reseau {
             
             /* Génération des différents caractères de la clé */
             for (int i = 0; i < tailleCle; i++) {
-                p = 9739;
-                g = 1527;
+                do {
+                    p = (int)(1000 + Math.random()*9000);
+                } while (!estPremier(p));
+                
+                do {
+                    g = (int)(1000 + Math.random()*9000);
+                } while (!estGenerateur(p,g));
+                
                 a = (int)(1 + Math.random()*(p - 1));
                 gPuissanceA = puissanceModulo(g,a,p) % p;
+                
                 out.println(p);
                 out.println(g);
                 out.println(gPuissanceA);

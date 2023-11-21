@@ -31,13 +31,13 @@ public class Reseau {
     /* Dictionnaire utilisé pour le chiffrement des données */
     final static HashMap<Character,Integer> dictionnaireCryptage = new HashMap<>();    
     
-    /**
-     * Méthode principal, appelle les différentes méthodes de test
-     * @param args
-     */
-    public static void main(String[] args) {
-        recevoir(8064);
-    }
+//    /**
+//     * Méthode utilisé pour les test, fait office de serveur
+//     * @param args
+//     */
+//    public static void main(String[] args) {
+//        recevoir(8064);
+//    }
     
     /** 
      * Méthode d'envoie d'un fichier
@@ -124,7 +124,7 @@ public class Reseau {
             BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream());
 
             // Création d'un fichier pour stocker le fichier CSV reçu
-            File receivedFile = new File("fichierRecu.txt");
+            File receivedFile = new File("fichierRecu.csv");
             FileOutputStream fileOut = new FileOutputStream(receivedFile);
 
             /* Reception et écriture du fichier

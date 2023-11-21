@@ -17,10 +17,13 @@ import application.model.exception.CompetenceInvalideException;
 import application.model.exception.ControleInvalideException;
 import application.model.exception.EnseignementInvalideException;
 import application.model.exception.ExtensionFichierException;
+import application.model.exception.IpException;
 import application.model.exception.MoyenneRessourceException;
 import application.model.exception.NoteInvalideException;
+import application.model.exception.PortReseauException;
 import application.model.exception.SemestreInvalideExecption;
 import application.model.exception.UtilisateurInvalideException;
+import application.model.exception.cheminFichierException;
 
 /** 
  * Représentation du model de l'application gestion de notes
@@ -430,5 +433,44 @@ public class GestionNotes {
 //
 //        System.out.println(gn.getValeurNoteDeControle("R2.01.01"));
 //        System.out.println(gn.moyenneEnseignemnt("R2.01").getValeurNote());
+    }
+
+    /** 
+     * Vérifie la conformité du port de connexion avant de lancer le serveur 
+     * pour recevoir un fichier d'un autre utilisateur
+     * 
+     * @param port port de connexion (compris entre 1024 et 60000)
+     * @throws PortReseauException si le port est invalide
+     */
+    public static void recevoirFichier(int port) throws PortReseauException {
+        
+        if (port < 1024 || port > 60000) {
+            throw new PortReseauException("Le port est incorrect");
+        }
+        Reseau.recevoir(port);
+    }
+
+    /** 
+     * Vérifie que la conformité des paramètres et lance le client 
+     * pour envoyer le fichier passé en paramètre à l'adresse IP communiqué en paramètre
+     * @param ipServeur IP de la machine a qui on envoi le fichier
+     * @param port port de connexion 
+     * @param cheminFichier chemin du fichier a envoyer
+     * @throws PortReseauException  si le port est invalide
+     * @throws IpException si l'adresse IP est invalide
+     * @throws cheminFichierException si le chemin est invalide
+     */
+    public static void envoyerFichier(String ipServeur, int port, String cheminFichier) throws PortReseauException, IpException, cheminFichierException {
+        if (port < 1024 || port > 60000) {
+            throw new PortReseauException("Le port est incorrect");
+        }
+        if (ipServeur.equals("")) { // TODO matche un regex
+            throw new IpException("L'adresse IP est incorrect");
+        }
+        if (cheminFichier.equals("")) { // Pas besoin de vérifier plus, la vue impose un chemin correct
+            throw new cheminFichierException("Le fichier est incorrect");
+        }
+        
+        Reseau.envoyer(ipServeur, port, cheminFichier);
     }
 }

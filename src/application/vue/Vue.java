@@ -49,8 +49,8 @@ public class Vue extends Application {
 			Scene PageNoteScene = new Scene(PageNotes);
 			Controlleur.creerFiltres(PageNoteScene);
 			 // Ajoutez un logo à la barre de titre
-            Image logo = new Image(getClass().getResourceAsStream("logo.png"));
-            primaryStage.getIcons().add(logo);
+                        Image logo = new Image(getClass().getResourceAsStream("logo.png"));
+                        primaryStage.getIcons().add(logo);
 			primaryStage.setScene(PageNoteScene);
 			primaryStage.show();
 			PageNoteScene.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());

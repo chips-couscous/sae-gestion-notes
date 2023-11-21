@@ -9,6 +9,8 @@ import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
@@ -19,7 +21,10 @@ import application.model.exception.CompetenceInvalideException;
 import application.model.exception.ControleInvalideException;
 import application.model.exception.EnseignementInvalideException;
 import application.model.exception.ExtensionFichierException;
+import application.model.exception.IpException;
+import application.model.exception.PortReseauException;
 import application.model.exception.SemestreInvalideExecption;
+import application.model.exception.cheminFichierException;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -32,6 +37,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -84,7 +91,21 @@ public class Controlleur {
 	@FXML
 	Button boutonAjouterNote;
 	@FXML
-	Button boutonPartagerFichier;
+	Button boutonSelectionFichierPartager;
+	@FXML
+	Button btnEnvoyerFichier;
+	@FXML
+	Button btnRecevoirFichier;
+	@FXML
+	Label ipUtilisateur;
+	@FXML
+	Label cheminFichierExport;
+	@FXML
+	TextField saisieIpServeur;
+	@FXML
+	TextField saisiePortClient;
+	@FXML
+        TextField saisiePortServeur;
 
 	String prenomEtu;
 
@@ -129,11 +150,8 @@ public class Controlleur {
 		if (boutonImporterFichierProgramme != null && boutonImporterFichierRessource != null) {
 
 			boutonImporterFichierProgramme.setOnAction(event -> selectionnerFichier(boutonImporterFichierProgramme));
-			boutonImporterFichierRessource.setOnAction(event -> selectionnerFichier(boutonImporterFichierRessource));
-
-		} else if (boutonPartagerFichier != null) {
-			boutonPartagerFichier.setOnAction(event -> selectionnerFichier(boutonPartagerFichier));
-		}
+		} 
+		
 		// Vérification de la présence des éléments fxml
 		if (labelNomEtudiant != null) {
 			afficherNom(); // Affichage du nom
@@ -141,8 +159,8 @@ public class Controlleur {
 		// Vérification de la présence des éléments fxml
 		if (note != null && commentaire != null && denominateur != null) {
 			// Appliquer un format de saisie spécifique aux TextField
-			note.setTextFormatter(patternNote());
-			denominateur.setTextFormatter(patternDenominateur());
+			note.setTextFormatter(pattern("^1000$|^\\d{1,3}(\\.\\d{0,2})?$"));
+			denominateur.setTextFormatter(pattern("^1000$|^\\d{1,3}?$"));
 			commentaire.setWrapText(true);
 			commentaire.textProperty().addListener((observable, ancienneValeur, nouvelleValeur) -> {
 				// Vérifier si la longueur du texte dépasse la limite
@@ -157,9 +175,106 @@ public class Controlleur {
 				}
 			});
 		}
+		
+		/* Vérification de la présence des éléments pour la page partager paramètres */
+		if (boutonSelectionFichierPartager != null && ipUtilisateur != null
+		        && saisieIpServeur != null && btnEnvoyerFichier != null
+		        && btnRecevoirFichier != null && cheminFichierExport != null
+		        && saisieIpServeur != null && saisiePortClient != null
+		        && saisiePortServeur != null) {
+                    boutonSelectionFichierPartager.setOnAction(event -> selectionnerFichier(boutonSelectionFichierPartager));
+                    btnEnvoyerFichier.setOnAction(event -> envoyerFichier());
+                    btnRecevoirFichier.setOnAction(event -> recevoirFichier());
+                    saisiePortClient.setTextFormatter(pattern("^\\d{1,5}?$"));
+                    saisiePortServeur.setTextFormatter(pattern("^\\d{1,5}?$"));
+                    afficherIP(ipUtilisateur);
+                }
 	}
 
-	/**
+    /** 
+     * Met en attente l'application pour recevoir un fichier d'un autre utilisateur
+     */
+    private void recevoirFichier() {
+            
+            try {
+                Alert alertEnvoi = new Alert(AlertType.CONFIRMATION);
+                alertEnvoi.setTitle("Envoi du fichier");
+                alertEnvoi.show();
+                gn.recevoirFichier(Integer.parseInt(saisiePortServeur.getText()));
+                alertEnvoi.close();
+                
+                Alert alertEnvoye = new Alert(AlertType.CONFIRMATION);
+                alertEnvoye.setTitle("Fichier envoyé");
+                alertEnvoye.showAndWait(); 
+            } catch (PortReseauException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Reception impossible");
+                alert.setHeaderText(e.getMessage());
+                alert.showAndWait(); 
+            }
+                        
+    }
+
+    /** 
+     * Exporte un fichier a un autre utilisateur
+     */
+    private void envoyerFichier() {
+        
+        int port;
+        String ipServeur = saisieIpServeur.getText();
+        String cheminFichier = cheminFichierExport.getText();
+        
+        if (!saisiePortClient.getText().equals("")) {
+            port = Integer.parseInt(saisiePortClient.getText());
+        } else {
+            port = 0;
+        }
+        if (!cheminFichier.equals("")) {
+            cheminFichier = cheminFichier.substring(10); // On enlève le "Fichier : "
+        }
+        
+        try {
+            gn.envoyerFichier(ipServeur, port, cheminFichier);
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Fichier récupéré");
+            alert.setContentText("Nom du fichier : fichierRecu.txt");
+            alert.showAndWait(); 
+        } catch (IpException e) {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Envoi impossible");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait(); 
+        } catch (PortReseauException e) {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Envoi impossible");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait(); 
+        } catch (cheminFichierException e) {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Envoi impossible");
+            alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    /** 
+     * Affiche l'adresse IP de la machine sur le réseau local 
+     * pour que l'utilisateur puisse la transmettre a un quelqu'un qui veut lui
+     * envoyer un fichier
+     * @param le label dans lequel on affiche l'IP
+     */
+    private void afficherIP(Label adresseIP) {
+        String adresseIPLocale;
+        try {
+            InetAddress inetadr = InetAddress.getLocalHost();
+            adresseIPLocale = (String) inetadr.getHostAddress();
+            adresseIP.setText(adresseIPLocale);
+        } catch (UnknownHostException e) {
+            adresseIP.setText("IP inconnue");
+        }
+    }
+
+    /**
 	 *
 	 */
 	private void ajouterCompetence(List<Competence> listeCompetences, Scene scene) {
@@ -821,12 +936,12 @@ public class Controlleur {
 	/**
 	 * Crée un TextFormatter pour valider et filtrer les saisies dans un TextField.
 	 * Ce TextFormatter garantit que les saisies correspondent à un modèle spécifique.
+	 * @param le pattern qui doit être respecté
 	 * @return TextFormatter pour le TextField
 	 */
-	private TextFormatter<Object> patternNote() {
+	private TextFormatter<Object> pattern(String regexp) {
 		// Modèle avec une expression régulière
-		Pattern pattern = Pattern.compile("^1000$|^\\d{1,3}(\\.\\d{0,2})?$");
-
+		Pattern pattern = Pattern.compile(regexp);
 		// Filtre pour valider et filtrer les saisies selon le modèle défini
 		UnaryOperator<TextFormatter.Change> filter = change -> {
 			String newText = change.getControlNewText();
@@ -841,33 +956,6 @@ public class Controlleur {
 		// Retourne un TextFormatter configuré avec le filtre défini
 		return new TextFormatter<>(filter);
 	}
-
-
-
-	/**
-	 * Crée un TextFormatter pour valider et filtrer les saisies dans un TextField.
-	 * Ce TextFormatter garantit que les saisies correspondent à un modèle spécifique.
-	 * @return TextFormatter pour le TextField
-	 */
-	private TextFormatter<Object> patternDenominateur() {
-		// Modèle avec une expression régulière
-		Pattern pattern = Pattern.compile("^1000$|^\\d{1,3}?$");
-
-		// Filtre pour valider et filtrer les saisies selon le modèle défini
-		UnaryOperator<TextFormatter.Change> filter = change -> {
-			String newText = change.getControlNewText();
-			// Vérifie si le nouveau texte correspond au motif défini ou s'il est vide
-			if (pattern.matcher(newText).matches() || newText.isEmpty()) {
-				return change; // Autorise la saisie
-			} else {
-				return null; // Rejette la saisie
-			}
-		};
-
-		// Retourne un TextFormatter configuré avec le filtre défini
-		return new TextFormatter<>(filter);
-	}
-
 
 	/**
 	 * Permet d'ouvrir un explorateur de fichier
@@ -903,6 +991,8 @@ public class Controlleur {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			} else if (boutonClique == boutonSelectionFichierPartager) {
+			    cheminFichierExport.setText("Fichier : " + nomFichier);
 			}
 		}
 	}

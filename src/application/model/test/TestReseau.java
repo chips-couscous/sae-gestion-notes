@@ -46,6 +46,6 @@ public class TestReseau {
     public static void main(String[] args) {
 //        testEstPremier();
 //        testEstGenerateur();
-        Reseau.envoyer("127.0.0.1", 8064, "test.csv");
+        Reseau.envoyer("127.0.0.1", 8064, "testReseau.txt");
     }
 }

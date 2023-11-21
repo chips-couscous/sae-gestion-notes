@@ -15,7 +15,11 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /** 
  * Classe regroupant un ensemble de méthode permattant de faire des échange 
@@ -26,6 +30,9 @@ import java.util.HashSet;
  *
  */
 public class Reseau {
+    
+    /* Dictionnaire utilisé pour le chiffrement des données */
+    final static HashMap<Character,Integer> dictionnaireCryptage = new HashMap<>();    
     
     /**
      * Méthode principal, appelle les différentes méthodes de test
@@ -49,6 +56,8 @@ public class Reseau {
     public static void envoyer(String ip, int port, String cheminFichier) {
         
         final int TAILLE_BLOC_DONNEES = 1024; 
+        
+        definirDictionnaire();
         
         try {
             
@@ -86,7 +95,7 @@ public class Reseau {
                     + e.getMessage());
         }
     }
-    
+   
     /** 
      * Méthode de reception d'un fichier
      * La communication entre les machines suit un système client / serveur
@@ -100,6 +109,8 @@ public class Reseau {
     public static void recevoir(int port) {
         
         final int TAILLE_BLOC_DONNEES = 1024;
+        
+        definirDictionnaire();
         
         try {
             // Création d'un ServerSocket écoutant sur le port 12345
@@ -116,7 +127,7 @@ public class Reseau {
             BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream());
 
             // Création d'un fichier pour stocker le fichier CSV reçu
-            File receivedFile = new File("testRecu.csv");
+            File receivedFile = new File("fichierRecu.txt");
             FileOutputStream fileOut = new FileOutputStream(receivedFile);
 
             /* Reception et écriture du fichier
@@ -154,15 +165,23 @@ public class Reseau {
      * @return le tableau de byte crypté
      */
     private static byte[] crypter(byte[] donnees, String cle) {
+        byte caractere;
         
-        /* Pour l'instant cryptage et décryptage bidon, juste phase de test */
-        for (int i = 0; i < donnees.length; i++) {
-            donnees[i] += cle.charAt(i%cle.length());
+        /* Parcours des données a crypter */ 
+        for (int i = 0; i < donnees.length && donnees[i] != 0; i++) {
+            /* Chiffrement */
+            System.out.print("Donnees = " + donnees[i] + " code = " + dictionnaireCryptage.get((char)donnees[i]) + " cle = " + cle.charAt(i%cle.length()) + " code " + dictionnaireCryptage.get(cle.charAt(i%cle.length())));
+            caractere = (byte) ((dictionnaireCryptage.get((char)donnees[i]) 
+                    + dictionnaireCryptage.get(cle.charAt(i%cle.length())))
+                    % dictionnaireCryptage.size());
+            System.out.println(" cryptage = " + toCaractere(caractere));
+          
+            donnees[i] = (byte)toCaractere(caractere);
         }
       
         return donnees;
     }
-    
+
     /** 
      * Méthode de décryptage d'un tableau de byte contenant des code ascii a crypté
      * La méthode de cryptage utilisé est une méthode de Vigenère
@@ -171,10 +190,22 @@ public class Reseau {
      * @return le tableau de byte décrypté
      */
     private static byte[] decrypter(String cle, byte[] donneesCryptees) {
+        byte caractere;
         
-        /* Pour l'instant cryptage et décryptage bidon, juste phase de test */
-        for (int i = 0; i < donneesCryptees.length; i++) {
-            donneesCryptees[i] -= cle.charAt(i%cle.length());;
+        /* Parcours des données a crypter */ 
+        for (int i = 0; i < donneesCryptees.length && donneesCryptees[i] != 0; i++) {
+            /* Chiffrement */
+            System.out.print("Donnees = " + (char)donneesCryptees[i] + " code = " + dictionnaireCryptage.get((char)donneesCryptees[i]) + " cle = " + cle.charAt(i%cle.length()) + " code " + dictionnaireCryptage.get(cle.charAt(i%cle.length())));
+            caractere = (byte) (dictionnaireCryptage.get((char)donneesCryptees[i]) 
+                      - dictionnaireCryptage.get(cle.charAt(i%cle.length())));
+            /* Effectue le modulo */
+            if (caractere < 0) {
+                caractere += dictionnaireCryptage.size();
+            }
+              
+            System.out.println(" cryptage = " + toCaractere(caractere));
+              
+            donneesCryptees[i] = (byte)toCaractere(caractere);
         }
         
         return donneesCryptees;
@@ -299,7 +330,6 @@ public class Reseau {
      * @return resultat de g puissance a dans l'ensemble Z/pZ
      */
     public static int puissanceModulo(int g, int a, int p) {
-        /* TODO optimiser avec méthode plus efficace */
         int resultat = g;
         for (int i = 1; i < a; i++) {
             resultat *= g;
@@ -353,6 +383,65 @@ public class Reseau {
         }
         
         return estPremier;
+    }
+    
+    /**
+     * Génère la HashMap contenant le dictionnaire de caractère utilisés
+     * pour le chiffrement des données 
+     */
+    private static void definirDictionnaire() {
+        
+        /* Ajout de l'alphabet minuscule */
+        char caractere = 'a';
+        for (int i = 0; i < 26; i++) {
+            dictionnaireCryptage.put(caractere, i);
+            caractere++;
+        }
+        /* Ajout de l'alphabet majuscule */
+        caractere = 'A';
+        for (int i = 26; i < 52; i++) {
+            dictionnaireCryptage.put(caractere, i);
+            caractere++;
+        }
+        /* Ajout des chiffres */
+        caractere = '0';
+        for (int i = 52; i < 62; i++) {
+            dictionnaireCryptage.put(caractere, i);
+            caractere++;
+        }
+        /* Ajout des caracteres spéciaux */
+        dictionnaireCryptage.put((char)-61, 62); // Chiffrage des caractères accentués
+        dictionnaireCryptage.put((char)-87, 63); // Chiffrage du é
+        dictionnaireCryptage.put((char)-88, 64); // Chiffrage du è
+        dictionnaireCryptage.put((char)-96, 65); // Chiffrage du à
+        dictionnaireCryptage.put((char)-89, 66); // Chiffrage du ç
+        dictionnaireCryptage.put((char)-71, 67); // Chiffrage du ù
+        dictionnaireCryptage.put('/', 68);
+        dictionnaireCryptage.put('\'', 69);
+        dictionnaireCryptage.put(' ', 70);
+        dictionnaireCryptage.put('.', 71);
+        dictionnaireCryptage.put(';', 72);
+        dictionnaireCryptage.put('-', 73);
+        /* caractères composant un retour à la ligne */
+        dictionnaireCryptage.put((char)10, 74); // Chiffrage du saut de ligne
+        dictionnaireCryptage.put((char)13, 75); // Chiffrage du retour chariot
+    }
+    
+    /** 
+     * Renvoie le caractère associé à la valeur passé en paramètre en fonction 
+     * du dictionnaire de caractère utilisé pour le chiffrage de données
+     * @param code code du caractère a récupérer
+     * @return le caractère correspondant ou 0 si aucun caractère ne correspond
+     */
+    private static char toCaractere(byte code) {
+        
+        for(char caractere : dictionnaireCryptage.keySet()) {
+            if (dictionnaireCryptage.get(caractere) == code) {
+                return caractere;
+            }
+        }
+        
+        return 0;
     }
 
 }

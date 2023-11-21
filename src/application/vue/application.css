@@ -1,0 +1,89 @@
+.labelNote {
+	-fx-font-size: 14px; 
+	-fx-font-weight: bold;
+	-fx-text-fill: #354B85;
+	-fx-border-width: 2px 0px 2px 2px;
+	-fx-border-color: #E6E9F0;
+	-fx-border-radius: 2px;
+	-fx-background-color: #E6E9F0;
+ }
+ .labelType{
+	-fx-font-size: 14px; 
+	-fx-font-weight: bold; 
+	-fx-text-fill: #354B85;
+	-fx-border-radius: 2px;
+	-fx-border-width: 2px 0px 2px 0px;
+	-fx-border-color: #E6E9F0;
+ }
+ .labelRessources {
+	-fx-font-size: 14px;
+	-fx-font-weight: bold; 
+	-fx-text-fill: #354B85;
+	-fx-border-width: 2px 2px 2px 0px;
+	-fx-border-color: #E6E9F0;
+	-fx-border-radius: 2px;
+ }
+ .labelPoids {
+	-fx-font-size: 14px; 
+	-fx-font-weight: bold; 
+	-fx-text-fill: #354B85;
+	-fx-border-width: 2px 0px 2px 0px; 
+	-fx-border-color: #E6E9F0; 
+	-fx-border-radius: 2px;
+ }
+ 
+  .labelCommentaire {
+	-fx-font-size: 11px; 
+	-fx-fill: #354B85;
+ }
+ 
+  .paneCommentaire {
+ 	-fx-border-width: 0px 2px 2px 2px; 
+	-fx-border-color: #E6E9F0; 
+	-fx-border-radius: 2px;
+ }
+ 
+  .labelDate {
+	-fx-font-size: 12px; 
+	-fx-text-fill: #354B85;
+ }
+ 
+ .boutonSupprimerModifier {
+ 	-fx-background-color: #e6e9f0; 
+ 	-fx-text-fill: #354B85; 
+ 	-fx-background-radius: 100%;
+ }
+ 
+ .labelTypeClique{
+	-fx-font-size: 14px; 
+	-fx-font-weight: bold; 
+	-fx-text-fill: #354B85;
+	-fx-border-radius: 2px;
+	-fx-border-width: 2px 0px 0px 0px;
+	-fx-border-color: #E6E9F0;
+ }
+ .labelRessourcesClique {
+	-fx-font-size: 14px;
+	-fx-font-weight: bold; 
+	-fx-text-fill: #354B85;
+	-fx-border-width: 2px 2px 0px 0px;
+	-fx-border-color: #E6E9F0;
+	-fx-border-radius: 2px;
+ }
+ .labelPoidsClique {
+	-fx-font-size: 14px; 
+	-fx-font-weight: bold; 
+	-fx-text-fill: #354B85;
+	-fx-border-width: 2px 0px 0px 0px; 
+	-fx-border-color: #E6E9F0; 
+	-fx-border-radius: 2px;
+ }
+ 
+ .labelCompetence {
+ 	-fx-font-size: 14px; 
+	-fx-font-weight: bold; 
+	-fx-text-fill: #354B85;
+	-fx-border-width: 2px 2px 2px 0px; 
+	-fx-border-color: #E6E9F0; 
+	-fx-border-radius: 2px;
+ }

@@ -1,7 +1,12 @@
-.classpath
-.project
 .settings/
+.project
+.classpath
 bin/
-build.fxbuild
-build.fxbuild
+.settings/
+.project
+.classpath
+bin/
+src/module-info.java
+README.md
+/.metadata/
 csv/

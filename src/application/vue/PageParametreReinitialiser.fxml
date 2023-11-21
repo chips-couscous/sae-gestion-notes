@@ -120,7 +120,7 @@
 							text="Réinitialiser mes données" textFill="#e6e9f0"
 							GridPane.columnIndex="2" />
 						<Button fx:id="boutonRessources" mnemonicParsing="false"
-							onAction="#changerSceneRessources" prefHeight="125.0"
+							onAction="#changerSceneEnseignements" prefHeight="125.0"
 							prefWidth="258.0" style="-fx-background-color: #e6e9f0;"
 							text="Les ressources" textFill="#354b85" GridPane.columnIndex="3" />
 					</children>

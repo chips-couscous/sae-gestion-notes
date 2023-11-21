@@ -78,3 +78,12 @@
 	-fx-border-color: #E6E9F0; 
 	-fx-border-radius: 2px;
  }
+ 
+ .labelCompetence {
+ 	-fx-font-size: 14px; 
+	-fx-font-weight: bold; 
+	-fx-text-fill: #354B85;
+	-fx-border-width: 2px 2px 2px 0px; 
+	-fx-border-color: #E6E9F0; 
+	-fx-border-radius: 2px;
+ }

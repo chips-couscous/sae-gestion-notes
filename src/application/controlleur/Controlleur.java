@@ -9,8 +9,11 @@ import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.io.IOException;
+import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
+
+import application.model.Competence;
 import application.model.GestionNotes;
 import application.model.exception.CompetenceInvalideException;
 import application.model.exception.ControleInvalideException;
@@ -22,7 +25,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -59,6 +61,10 @@ public class Controlleur {
 	@FXML
 	ScrollPane listeNotes;
 	@FXML
+	ScrollPane listeCompetencesTri;
+	@FXML
+	ScrollPane listeRessources;
+	@FXML
 	Button valider;
 	@FXML
 	GridPane grilleNotes;
@@ -78,8 +84,6 @@ public class Controlleur {
 	Button boutonAjouterNote;
 	@FXML
 	Button boutonPartagerFichier;
-	@FXML
-	ScrollPane listeRessources;
 
 	String prenomEtu;
 
@@ -153,6 +157,29 @@ public class Controlleur {
 			});
 		}
 	}
+
+	/**
+	 *
+	 */
+	private void ajouterCompetence(List<Competence> listeCompetences, Scene scene) {
+		int indiceCompetence = 0;
+		//Permet de mettre un taille à une ligne quand on l'ajoute
+		RowConstraints taille = new RowConstraints();
+		taille.setPrefHeight(40);
+		GridPane grilleCompetence = ((GridPane)((ScrollPane) ((Pane) ((BorderPane) scene.getRoot()).getChildren().get(1)).getChildren().get(4)).getContent());
+		for(Competence competence: gn.getSemestreGestionNotes().getCompetencesSemestre()) {
+			Pane paneCompetence = new Pane();
+			Label labelCompetence = new Label (competence.getIdentifiantCompetence() + " " + competence.getIntituleCompetence());
+			paneCompetence.getChildren().add(labelCompetence);
+			grilleCompetence.getRowConstraints().addAll(taille);
+			labelCompetence.getStyleClass().add("labelCompetences");
+			labelCompetence.setMaxSize(130, 40);
+			paneCompetence.getStyleClass().add("paneCommentaire");
+			grilleCompetence.add(paneCompetence, 0, indiceCompetence);
+			indiceCompetence++;
+		}		
+	}
+
 
 	/**
 	 * Cette méthode permet l'ajout d'une note en fonction d'un index donné
@@ -429,13 +456,14 @@ public class Controlleur {
 	 * Si la scène n'est pas trouvée, la méthode lève l'exception IOException
 	 */
 	@FXML
-	public void changerSceneRessources() {
+	public void changerSceneEnseignements() {
 		try {
 			/* Récupération du fichier qu'on veut charger */
-			loader.setLocation(getClass().getResource("/application/vue/PageRessources.fxml"));
+			loader.setLocation(getClass().getResource("/application/vue/PageEnseignements.fxml"));
 			Parent nouvelleScene = loader.load();
 			Scene nouvelleSceneObjet = new Scene(nouvelleScene);
 			Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
+			ajouterCompetence(gn.getSemestreGestionNotes().getCompetencesSemestre(), nouvelleSceneObjet);
 			stage.setScene(nouvelleSceneObjet); //Affichage de la nouvelle scene
 			nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
 		} catch (IOException e) {
@@ -664,6 +692,44 @@ public class Controlleur {
 	}
 
 	/**
+	 * Cette méthode permet d'afficher un popUp sur lequel on peut saisir plusieurs informations
+	 * On peut y saisir une note, un controle, une commentaire et une date.
+	 * Le popUp récupère les données saisies et lors du clic sur le bouton de validation
+	 * On y ajoute une note avec les données saisies dans le popUp
+	 */
+	@FXML
+	public void sceneAjouterControle() {
+		try {
+			/* Récupération du fichier qu'on veut charger */
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/vue/PageAjouterControle.fxml"));
+			Parent root = loader.load();
+			Stage popupStage = new Stage();
+			popupStage.initModality(Modality.APPLICATION_MODAL);
+			popupStage.setTitle("Ajouter Controle");
+			Scene popupScene = new Scene(root);
+			popupStage.setScene(popupScene);
+			/* Récupération des éléments FXML que l'on veut  */
+			Button boutonValider = (Button) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(4)).getChildren().get(0));
+			TextField note = (TextField)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(0);
+			TextArea commentaire = (TextArea)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(3)).getChildren().get(0);
+			//TextField date = (TextField) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(4)).getChildren().get(0));
+			TextField denominateur = (TextField)(((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(2));
+			boutonValider.setOnAction(e -> {
+				if (!note.getText().isEmpty() && !denominateur.getText().isEmpty() && Double.parseDouble(note.getText()) <= Double.parseDouble(denominateur.getText())) {
+					ajouterNote(note.getText(), commentaire.getText(), denominateur.getText(), indice);
+					popupStage.close();
+				}
+			});
+			/* Ouvre le popUp et attend sa fermeture */
+			popupStage.showAndWait();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
+	/**
 	 * 
 	 * @param gridPane
 	 * @param ligneCliquée
@@ -730,7 +796,6 @@ public class Controlleur {
 	 */
 	public static void creerFiltres(Scene sceneActuelle) {
 		GridPane gridPaneRessources = (GridPane)((ScrollPane) ((Pane)((BorderPane) sceneActuelle.getRoot()).getChildren().get(1)).getChildren().get(4)).getContent();
-		System.out.println((GridPane)((ScrollPane) ((Pane)((BorderPane) sceneActuelle.getRoot()).getChildren().get(1)).getChildren().get(4)).getContent());
 
 		Label labelToutes = new Label("Toutes");
 		labelToutes.setPrefSize(185,30);
@@ -818,12 +883,11 @@ public class Controlleur {
 		// Si l'utilisateur a sélectionné un fichier, affiche son chemin
 		if (fichierChoisi != null) {
 			String nomFichier = fichierChoisi.getAbsolutePath();
-			
+
 			if (boutonClique == boutonImporterFichierProgramme) {
 				try {
 					System.out.println("J'importe semestre");
 					gn.importerParametrageSemestre(nomFichier);
-					
 				} catch (ExtensionFichierException | SemestreInvalideExecption | CompetenceInvalideException
 						| EnseignementInvalideException e) {
 					// TODO Auto-generated catch block
@@ -846,7 +910,6 @@ public class Controlleur {
 		javafx.scene.control.Tooltip tooltip = new javafx.scene.control.Tooltip(message);
 		javafx.scene.control.Tooltip.install(bouton, tooltip);
 	}
-
 
 
 }

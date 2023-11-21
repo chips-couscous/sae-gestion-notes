@@ -263,8 +263,6 @@ public class GestionNotes {
                 competence.ajouterEnseignement(trouverEnseignement(identifiantEnseignement), poidsEnseignement);
             }
         }
-        
-        System.out.println(semestreGestionNotes.toString());
     }
     
     /**

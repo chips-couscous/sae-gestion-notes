@@ -69,7 +69,7 @@
 						<Button fx:id="boutonParametrePartager" mnemonicParsing="false" onAction="#changerSceneParametrePartager" prefHeight="125.0" prefWidth="258.0" style="-fx-background-color: #354B85;" text="Partager les paramètres" textFill="#e6e9f0" GridPane.columnIndex="1" />
 						<Button fx:id="boutonParametreModifier" mnemonicParsing="false" onAction="#changerSceneModifier" prefHeight="133.0" prefWidth="257.0" style="-fx-background-color: #e6e9f0;" text="Modifier mon identité" textFill="#354b85" GridPane.columnIndex="4" />
 						<Button fx:id="boutonParametreReinitialiser" mnemonicParsing="false" onAction="#changerSceneParametreReiniti" prefHeight="97.0" prefWidth="257.0" style="-fx-background-color: #e6e9f0;" text="Réinitialiser mes données" textFill="#354b85" GridPane.columnIndex="2" />
-						<Button fx:id="boutonRessources" mnemonicParsing="false" onAction="#changerSceneRessources" prefHeight="97.0" prefWidth="257.0" style="-fx-background-color: #e6e9f0;" text="Les ressources" textFill="#354b85" GridPane.columnIndex="3" />
+						<Button fx:id="boutonRessources" mnemonicParsing="false" onAction="#changerSceneEnseignements" prefHeight="97.0" prefWidth="257.0" style="-fx-background-color: #e6e9f0;" text="Les ressources" textFill="#354b85" GridPane.columnIndex="3" />
 					</children>
 				</GridPane>
 			</children>

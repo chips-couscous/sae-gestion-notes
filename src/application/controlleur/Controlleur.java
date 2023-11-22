@@ -216,28 +216,30 @@ public class Controlleur {
         
         /* Récupération du dossier et de son chemin */
         File dossierSelectionne = explorateurDossier.showDialog(stageActuel);
-        String cheminDossier = dossierSelectionne.getAbsolutePath();
+        if (dossierSelectionne != null) {
+            String cheminDossier = dossierSelectionne.getAbsolutePath();
+            
+            /* Choix du nom a donner au fichier reçu */
+            TextInputDialog choixNom = new TextInputDialog("fichierRecu");
+            choixNom.setTitle("Nom fichier");
+            choixNom.setHeaderText("Choisissez le nom du fichier");
+            choixNom.setContentText("Nom du fichier :");
+            choixNom.showAndWait();
+            String nomFichier = choixNom.getResult();
+            
+            if(nomFichier == null ||nomFichier.equals("")) {
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Nom du fichier");
+                alert.setHeaderText("Le nom saisi est incorrect");
+                alert.setContentText("Nom par défaut choisi (\""+ NOM_FICHIER_DEFAUT +"\")");
+                alert.showAndWait();
+                nomFichier = NOM_FICHIER_DEFAUT;
+            } else {
+                nomFichier += ".csv";
+            }
         
-        /* Choix du nom a donner au fichier reçu */
-        TextInputDialog choixNom = new TextInputDialog("fichierRecu");
-        choixNom.setTitle("Nom fichier");
-        choixNom.setHeaderText("Choisissez le nom du fichier");
-        choixNom.setContentText("Nom du fichier :");
-        choixNom.showAndWait();
-        String nomFichier = choixNom.getResult();
-        
-        if(nomFichier == null ||nomFichier.equals("")) {
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Nom du fichier");
-            alert.setHeaderText("Le nom saisi est incorrect");
-            alert.setContentText("Nom par défaut choisi (\""+ NOM_FICHIER_DEFAUT +"\")");
-            alert.showAndWait();
-            nomFichier = NOM_FICHIER_DEFAUT;
-        } else {
-            nomFichier += ".csv";
+            cheminDossierReception.setText("Dossier : " + cheminDossier + "\\" + nomFichier);
         }
-        
-        cheminDossierReception.setText("Dossier : " + cheminDossier + "\\" + nomFichier);
     }
 
     /** 
@@ -522,7 +524,7 @@ public class Controlleur {
 	 * Méthode qui permet de changer le nom et de l'afficher sur toute nos pages
 	 * L'affichage se fait dans un label présent sur toutes nos pages (sauf popUp)
 	 */
-	public void afficherNom() {
+	private void afficherNom() {
 		labelNomEtudiant.setText(gn.getUtilisateurGestionNotes());
 	}
 

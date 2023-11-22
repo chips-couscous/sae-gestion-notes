@@ -18,8 +18,10 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 import application.model.Competence;
+import application.model.Controle;
 import application.model.Enseignement;
 import application.model.GestionNotes;
+import application.model.Ressource;
 import application.model.exception.CompetenceInvalideException;
 import application.model.exception.ControleInvalideException;
 import application.model.exception.EnseignementInvalideException;
@@ -97,6 +99,7 @@ public class Controlleur {
 	String nomEtu;
 
 	int indice = 0;
+	int indiceEnseignement = 0;
 
 	FXMLLoader loader = new FXMLLoader(); // FXML loader permettant de charger un fichier FXML et de changer de scene
 
@@ -315,11 +318,11 @@ public class Controlleur {
 	}
 
 	/**
-	 * @param hashMap
+	 * @param hashMap 
 	 *
 	 */
 	private void ajouterEnseignements(Pane competenceSelectionnee, HashMap<Enseignement, Integer> listeEnseignements, Scene scene) {
-		int indiceEnseignement = 0;
+		indiceEnseignement = 0;
 		//Permet de mettre une taille à une ligne quand on l'ajoute
 		GridPane grilleEnseignement = ((GridPane)((ScrollPane) ((Pane) ((BorderPane) scene.getRoot()).getChildren().get(1)).getChildren().get(0)).getContent());
 		grilleEnseignement.setVgap(10);
@@ -333,31 +336,107 @@ public class Controlleur {
 			grilleEnseignement.getRowConstraints().addAll(tailleEnseignement);
 			Pane paneEnseignement = new Pane();
 			paneEnseignement.setPrefSize(640, 40);
+			paneEnseignement.setMinSize(640, 40);
 			GridPane.setColumnSpan(paneEnseignement, 4);
-			paneEnseignement.getStyleClass().add("paneCompetence");
+			paneEnseignement.getStyleClass().add("paneEnseignement");
+			paneEnseignement.setId("Non Cliquée");
 			Label labelEnseignement = new Label(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
 			paneEnseignement.setPrefSize(630, 40);
 			labelEnseignement.getStyleClass().add("labelCompetence");
 			labelEnseignement.setPadding(new Insets(0, 5, 0, 5));
 			paneEnseignement.getChildren().add(labelEnseignement);
 			grilleEnseignement.add(paneEnseignement, 0, indiceEnseignement);
-			paneEnseignement.setOnMouseClicked(event -> afficherControle(scene, paneEnseignement, enseignement));
+			paneEnseignement.setOnMouseClicked(event -> {
+				/*
+				if (ligneNote.getId()=="Non Cliquée") {
+					labelType.getStyleClass().remove("labelType");
+					labelPoids.getStyleClass().remove("labelPoids");
+					labelRessources.getStyleClass().remove("labelRessources");
+					labelType.getStyleClass().add("labelTypeClique");
+					labelPoids.getStyleClass().add("labelPoidsClique");
+					labelRessources.getStyleClass().add("labelRessourcesClique");
+				}else {
+					labelType.getStyleClass().remove("labelTypeClique");
+					labelPoids.getStyleClass().remove("labelPoidsClique");
+					labelRessources.getStyleClass().remove("labelRessourcesClique");
+					labelType.getStyleClass().add("labelType");
+					labelPoids.getStyleClass().add("labelPoids");
+					labelRessources.getStyleClass().add("labelRessources");
+				}
+				*/
+				afficherControle(scene, paneEnseignement, enseignement);
+				});
 			indiceEnseignement++;
 		}
 	}
 
 	/**
-	 *
+	 * 
 	 */
 	private void afficherControle(Scene scene, Pane enseignementSelectionne, Enseignement enseignement) {
+		GridPane grilleEnseignement = ((GridPane)((ScrollPane) ((Pane) ((BorderPane) scene.getRoot()).getChildren().get(1)).getChildren().get(0)).getContent());
 		if (gn.estUneRessource(enseignement)) {
-			System.out.println("Oui");
-		}else if (gn.estUneSae(enseignement)) {
-			System.out.println("Sae");
-		}else if (gn.estUnPortfolio(enseignement)) {
-			System.out.println("Port");
+			Ressource ressource = (Ressource) enseignement;
+			Integer rowIndex = GridPane.getRowIndex(enseignementSelectionne);
+			if (enseignementSelectionne.getId()=="Non Cliquée") {
+				System.out.println("Ici");
+				for (Node node : grilleEnseignement.getChildren()) {
+					Integer row = GridPane.getRowIndex(node);
+					if (row != null && row > rowIndex) {
+						GridPane.setRowIndex(node, row + ressource.getControlesRessource().size());
+					}
+				}
+				int indiceControle = 1;
+				for (Controle controle : ressource.getControlesRessource()) {
+					enseignementSelectionne.setId("Cliquée");
+					Pane paneControle = new Pane();
+					GridPane.setColumnSpan(paneControle, 4);
+					Label labelType = new Label(controle.getTypeControle());
+					Label labelPoids = new Label("" + controle.getPoidsControle());
+					Label labelDate = new Label(controle.getDateControle());
+					paneControle.getChildren().add(labelType);
+					paneControle.getChildren().add(labelPoids);
+					paneControle.getChildren().add(labelDate);
+					paneControle.getStyleClass().add("paneControle");
+					paneControle.setPrefSize(640, 40);
+					paneControle.setMinSize(640, 40);
+					labelType.setLayoutX(0);
+					labelPoids.setLayoutX(130);
+					labelDate.setLayoutX(260);
+					labelType.getStyleClass().add("labelCompetence");
+					labelPoids.getStyleClass().add("labelCompetence");
+					labelDate.getStyleClass().add("labelCompetence");
+					labelType.setAlignment(Pos.CENTER);
+					labelPoids.setAlignment(Pos.CENTER);
+					labelDate.setAlignment(Pos.CENTER);
+					GridPane.setHalignment(labelType, javafx.geometry.HPos.CENTER);
+					GridPane.setHalignment(labelPoids, javafx.geometry.HPos.CENTER);
+					GridPane.setHalignment(labelDate, javafx.geometry.HPos.CENTER);
+					GridPane.setMargin(paneControle, new Insets(-10, 0, 0, 0));
+					grilleEnseignement.add(paneControle, 0, rowIndex + indiceControle);
+					indiceControle++;
+				}
+			}else {
+					enseignementSelectionne.setId("Non Cliquée");
+					for (int indiceControle = 1;indiceControle <= ressource.getControlesRessource().size();indiceControle++) {
+						int indice = indiceControle;
+						grilleEnseignement.getChildren().removeIf(node ->
+						GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node).equals(rowIndex + indice));
+					}
+					for (Node node : grilleEnseignement.getChildren()) {
+						Integer row = GridPane.getRowIndex(node);
+						if (row != null && row > rowIndex+1) {
+							GridPane.setRowIndex(node, row - ressource.getControlesRessource().size());
+						}
+						indiceEnseignement--;
+					}
+				}
+			}else if (gn.estUneSae(enseignement)) {
+				System.out.println("Sae");
+			}else if (gn.estUnPortfolio(enseignement)) {
+				System.out.println("Port");
+			}
 		}
-	}
 
 
 

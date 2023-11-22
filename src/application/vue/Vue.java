@@ -30,6 +30,7 @@ public class Vue extends Application {
 	}
 
 	public void initRootLayout() {
+
 		try {
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(getClass().getResource("PageNotes.fxml"));
@@ -45,4 +46,5 @@ public class Vue extends Application {
 			e.printStackTrace();
 		}
 	}
+
 }

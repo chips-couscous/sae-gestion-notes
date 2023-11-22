@@ -29,7 +29,12 @@
 			<children>
 				<GridPane style="-fx-background-color: #e6e9f0;">
 					<children>
-						<Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #354B85;" />
+						<Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #354B85;">
+							<children>
+								<Button fx:id="boutonSauvegarder" layoutX="14.0" layoutY="4.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="Button" />
+								<Button fx:id="boutonAide" layoutX="68.0" layoutY="4.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0" text="Button" />
+							</children>
+						</Pane>
 						<Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #354B85;" GridPane.columnIndex="1" />
 						<Pane prefHeight="48.0" prefWidth="200.0" style="-fx-background-color: #354B85;" GridPane.columnIndex="2">
 							<children>
@@ -69,7 +74,7 @@
 						<Button fx:id="boutonParametrePartager" mnemonicParsing="false" onAction="#changerSceneParametrePartager" prefHeight="125.0" prefWidth="258.0" style="-fx-background-color: #354B85;" text="Partager les paramètres" textFill="#e6e9f0" GridPane.columnIndex="1" />
 						<Button fx:id="boutonParametreModifier" mnemonicParsing="false" onAction="#changerSceneModifier" prefHeight="133.0" prefWidth="257.0" style="-fx-background-color: #e6e9f0;" text="Modifier mon identité" textFill="#354b85" GridPane.columnIndex="4" />
 						<Button fx:id="boutonParametreReinitialiser" mnemonicParsing="false" onAction="#changerSceneParametreReiniti" prefHeight="97.0" prefWidth="257.0" style="-fx-background-color: #e6e9f0;" text="Réinitialiser mes données" textFill="#354b85" GridPane.columnIndex="2" />
-						<Button fx:id="boutonRessources" mnemonicParsing="false" onAction="#changerSceneEnseignements" prefHeight="97.0" prefWidth="257.0" style="-fx-background-color: #e6e9f0;" text="Les ressources" textFill="#354b85" GridPane.columnIndex="3" />
+						<Button fx:id="boutonRessources" mnemonicParsing="false" onAction="#changerSceneEnseignements" prefHeight="97.0" prefWidth="257.0" style="-fx-background-color: #e6e9f0;" text="Les enseignements" textFill="#354b85" GridPane.columnIndex="3" />
 					</children>
 				</GridPane>
 			</children>
@@ -89,7 +94,7 @@
 					</font>
 				</Label>
 				<Pane layoutX="513.0" prefHeight="602.0" prefWidth="4.0" style="-fx-background-color: #354B85;" />
-				<Button fx:id="boutonSelectionFichierPartager" layoutX="158.0" layoutY="301.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #354B85;" text="Sélectionner un fichier" textFill="#e6e9f0">
+				<Button fx:id="boutonSelectionFichierPartager" layoutX="158.0" layoutY="281.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #354B85;" text="Sélectionner un fichier" textFill="#e6e9f0">
 					<font>
 						<Font size="14.0" />
 					</font>
@@ -119,6 +124,12 @@
             <Label fx:id="cheminFichierExport" alignment="CENTER" layoutX="1.0" layoutY="350.0" prefHeight="17.0" prefWidth="512.0" />
             <Label alignment="CENTER" layoutX="513.0" layoutY="256.0" prefHeight="17.0" prefWidth="520.0" text="Le port doit être compris entre 1024 et 60000" />
             <Label alignment="CENTER" layoutX="-2.0" layoutY="256.0" prefHeight="17.0" prefWidth="520.0" text="Le port doit être compris entre 1024 et 60000" />
+            <Button fx:id="boutonSelectionDossierReception" layoutX="652.0" layoutY="301.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="242.0" style="-fx-background-color: #354B85;" text="Sélectionner le dossier de reception" textFill="#e6e9f0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Label fx:id="cheminDossierReception" alignment="CENTER" layoutX="517.0" layoutY="350.0" prefHeight="17.0" prefWidth="512.0" />
 			</children>
 		</Pane>
 	</center>

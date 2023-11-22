@@ -246,6 +246,7 @@ public class Controlleur {
     private void recevoirFichier() {
         int port;
         String cheminReceptionFichier = cheminDossierReception.getText();
+        Alert alertEnvoi = new Alert(AlertType.INFORMATION);
         
         if (!saisiePortServeur.getText().equals("")) {
             port = Integer.parseInt(saisiePortServeur.getText());
@@ -253,13 +254,10 @@ public class Controlleur {
             port = 0;
         }
             try {
-                Alert alertEnvoi = new Alert(AlertType.INFORMATION);
                 alertEnvoi.setTitle("Réception de fichier");
                 alertEnvoi.setHeaderText("Attente de connexion ...");
                 alertEnvoi.show();
-                
                 gn.recevoirFichier(port,cheminReceptionFichier);
-                
                 alertEnvoi.close();
                 /* Affichage d'un popup pour informer du succès de la reception */
                 Alert alertRecu = new Alert(AlertType.INFORMATION);
@@ -267,16 +265,19 @@ public class Controlleur {
                 alertRecu.setContentText("Nom du fichier : fichierRecu.csv");
                 alertRecu.showAndWait(); 
             } catch (PortReseauException e) {
+                alertEnvoi.close();
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Reception impossible");
                 alert.setHeaderText(e.getMessage());
                 alert.showAndWait(); 
             } catch (IOException e) {
+                alertEnvoi.close();
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Reception impossible");
                 alert.setHeaderText(e.getMessage());
                 alert.showAndWait(); 
             } catch (cheminFichierException e) {
+                alertEnvoi.close();
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Reception impossible");
                 alert.setHeaderText(e.getMessage());

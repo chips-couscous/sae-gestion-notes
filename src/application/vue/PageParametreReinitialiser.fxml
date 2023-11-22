@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!-- grid.fxml -->
-
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
@@ -10,12 +12,11 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
-
 <BorderPane fx:id="rootPane" maxHeight="-Infinity"
 	maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
 	prefHeight="720.0" prefWidth="1030.0"
-	style="-fx-background-color: white;"
-	xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+	style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8"
+	xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="application.controlleur.Controlleur">
 	<top>
 		<GridPane BorderPane.alignment="CENTER">
@@ -35,7 +36,16 @@
 				<GridPane style="-fx-background-color: #e6e9f0;">
 					<children>
 						<Pane prefHeight="200.0" prefWidth="200.0"
-							style="-fx-background-color: #354B85;" />
+							style="-fx-background-color: #354B85;">
+							<children>
+								<Button fx:id="boutonSauvegarder" layoutX="14.0"
+									layoutY="4.0" mnemonicParsing="false" prefHeight="40.0"
+									prefWidth="40.0" text="Button" />
+								<Button fx:id="boutonAide" layoutX="68.0" layoutY="4.0"
+									mnemonicParsing="false" prefHeight="40.0" prefWidth="40.0"
+									text="Button" />
+							</children>
+						</Pane>
 						<Pane prefHeight="200.0" prefWidth="200.0"
 							style="-fx-background-color: #354B85;" GridPane.columnIndex="1" />
 						<Pane prefHeight="48.0" prefWidth="200.0"
@@ -122,7 +132,8 @@
 						<Button fx:id="boutonRessources" mnemonicParsing="false"
 							onAction="#changerSceneEnseignements" prefHeight="125.0"
 							prefWidth="258.0" style="-fx-background-color: #e6e9f0;"
-							text="Les ressources" textFill="#354b85" GridPane.columnIndex="3" />
+							text="Les enseignements" textFill="#354b85"
+							GridPane.columnIndex="3" />
 					</children>
 				</GridPane>
 			</children>

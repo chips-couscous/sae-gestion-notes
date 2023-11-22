@@ -147,6 +147,11 @@ public class Competence implements Serializable {
     public String getIdentifiantCompetence() {
         return identifiantCompetence;
     }
+    
+    /** @return HashMap des enseignements d'une compétence */
+    public HashMap<Enseignement, Integer> getListeEnseignements() {
+		return enseignementsCompetence;
+    }
 
     /**
      * Vérifie la validité d'une compétence

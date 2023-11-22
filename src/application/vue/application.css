@@ -78,22 +78,33 @@
 	-fx-border-color: #E6E9F0; 
 	-fx-border-radius: 2px;
  }
- 
+ .boutonSauvegarderAide {
+ 	-fx-background-color: #354B85;
+ 	-fx-border-color: transparent;
+ }
 .labelCompetence {
-	-fx-font-size: 12px;
-	-fx-fill: #354B85; 
-	-fx-font-weight: bold;
-	-fx-text-fill: #354B85
+	-fx-font-size: 12px; 
+	-fx-font-weight: bold; 
+	-fx-text-fill: #354B85;
+	-fx-fill: #354B85;	
 }
 .paneCompetence {
-	-fx-background-color: #E6E9F0;
+	-fx-background-color: #E6E9F0; 
 	-fx-border-color: #354B85;
-	-fx-border-width: 2px;
+	-fx-border-width: 2px; 
 	-fx-border-radius: 2px;
-}
-
-.boutonSauvegarderAide {
-	-fx-background-color: #354B85;
-	-fx-border-color: transparent;
-}
-
+ }
+ 
+ .paneEnseignement {
+	-fx-background-color: #E6E9F0; 
+	-fx-border-color: #354B85;
+	-fx-border-width: 2px; 
+	-fx-border-radius: 2px;
+ }
+ 
+ .paneControle {
+	-fx-background-color: #E6E9F0; 
+	-fx-border-color: #354B85;
+	-fx-border-width: 2px; 
+	-fx-border-radius: 2px;
+ }

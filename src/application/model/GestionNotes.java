@@ -24,7 +24,8 @@ import application.model.exception.SemestreInvalideExecption;
 import application.model.exception.UtilisateurInvalideException;
 
 /** 
- * Représentation du model de l'application gestion de notes
+ * Représentation du model de l'application gestion
+ *  de notes
  * @author tom.jammes
  * @author tony.lapeyre
  * @author thomas.lemaire
@@ -335,6 +336,38 @@ public class GestionNotes {
         deserializerDonnees();
         serializerDonnees();
     }
+    
+    /**
+	 * Vérifie si l'Enseignement est une Ressource
+	 * @return un booléen dont la valeur est vrai si
+	 * 		l'enseignement est bien une ressource
+	 * 		faux sinon
+	 */
+	public boolean estUneRessource(Enseignement enseignement) {
+		String initiale = enseignement.getIdentifiantEnseignement().substring(0,1);
+		return initiale.equals("R");
+	}
+	/**
+	 * Vérifie si l'Enseignement est une Sae
+	 * @return un booléen dont la valeur est vrai si
+	 * 		l'enseignement est bien une sae
+	 * 		faux sinon
+	 */
+	public boolean estUneSae(Enseignement enseignement) {
+		String initiale = enseignement.getIdentifiantEnseignement().substring(0,1);
+		return initiale.equals("S");
+	}
+	/**
+	 * Vérifie si l'Enseignement est un Portfolio
+	 * @return un booléen dont la valeur est vrai si
+	 * 		l'enseignement est bien un Portfolio
+	 * 		faux sinon
+	 */
+	public boolean estUnPortfolio(Enseignement enseignement) {
+		String initiale = enseignement.getIdentifiantEnseignement().substring(0,1);
+		return initiale.equals("P");
+	}
+
     
     /** 
      * TODO comment method role

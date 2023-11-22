@@ -36,7 +36,6 @@ public class Vue extends Application {
 			loader.setLocation(getClass().getResource("PageNotes.fxml"));
 			BorderPane PageNotes = loader.load();
 			Scene PageNoteScene = new Scene(PageNotes);
-			Controlleur.creerFiltres(PageNoteScene);
 			 // Ajoutez un logo à la barre de titre
             Image logo = new Image(getClass().getResourceAsStream("logo.png"));
             primaryStage.getIcons().add(logo);

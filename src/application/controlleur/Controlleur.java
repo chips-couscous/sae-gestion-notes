@@ -6,14 +6,19 @@ package application.controlleur;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 import application.model.Competence;
+import application.model.Enseignement;
 import application.model.GestionNotes;
 import application.model.exception.CompetenceInvalideException;
 import application.model.exception.ControleInvalideException;
@@ -25,6 +30,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -63,8 +69,6 @@ public class Controlleur {
 	@FXML
 	ScrollPane listeCompetencesTri;
 	@FXML
-	ScrollPane listeRessources;
-	@FXML
 	Button valider;
 	@FXML
 	GridPane grilleNotes;
@@ -84,7 +88,10 @@ public class Controlleur {
 	Button boutonAjouterNote;
 	@FXML
 	Button boutonPartagerFichier;
-
+	@FXML
+	Button boutonAide;
+	@FXML
+	Button boutonSauvegarder;
 	String prenomEtu;
 
 	String nomEtu;
@@ -97,7 +104,8 @@ public class Controlleur {
 	private static final int LONGUEUR_MAX = 200;
 
 
-	GestionNotes gn = GestionNotes.getInstance();
+	private GestionNotes gn = GestionNotes.getInstance();
+	
 
 	final String MESSAGE_AIDE = "Aide";
 	final String MESSAGE_SAUVEGARDE = "Sauvegarder";
@@ -105,13 +113,51 @@ public class Controlleur {
 	final String MESSAGE_AJOUT_CONTROLE = "Ajouter un contrôle";
 	final String MESSAGE_SUPPRIMER_NOTE = "Supprimer une note";
 	final String MESSAGE_MODIFIER_NOTE = "Modifier une note";
-
+	
 
 	/**
 	 * Méthode permmettant de lancer d'autres méthodes ou des attributs
 	 * directement au lancement de l'application
 	 */
 	public void initialize() {
+		if (boutonSauvegarder != null) {
+			boutonSauvegarder.setOnAction(event -> sauvegarder());
+			//Récupération d'image pour nos boutons
+			Image imageSauvegarder = new Image(getClass().getResourceAsStream("/application/controlleur/sauvegarder.png"));
+			// On définit une ImageView afin de pouvoir mettre l'image dans le bouton
+			ImageView imageViewSauvegarder = new ImageView(imageSauvegarder);
+			imageViewSauvegarder.setFitWidth(30);
+			imageViewSauvegarder.setFitHeight(30);
+			ColorAdjust colorAdjust = new ColorAdjust();
+			colorAdjust.setContrast(-1.0);
+			colorAdjust.setBrightness(1.0);
+			imageViewSauvegarder.setEffect(colorAdjust);
+			//Création des boutons avec leurs images
+			boutonSauvegarder.setGraphic(imageViewSauvegarder);
+			boutonSauvegarder.setText(""); // Désactive le texte du bouton
+			boutonSauvegarder.getStyleClass().add("boutonSauvegarderAide");
+		}
+		if (boutonAide != null) {
+			boutonAide.setOnAction(event -> afficherAide());
+			//Récupération d'image pour nos boutons
+			Image imageAide = new Image(getClass().getResourceAsStream("/application/controlleur/aide.png"));
+			// On définit une ImageView afin de pouvoir mettre l'image dans le bouton
+			ImageView imageViewAide = new ImageView(imageAide);
+			imageViewAide.setFitWidth(30);
+			imageViewAide.setFitHeight(30);
+			ColorAdjust colorAdjust = new ColorAdjust();
+			colorAdjust.setContrast(-1.0);
+			colorAdjust.setBrightness(1.0);
+			imageViewAide.setEffect(colorAdjust);
+			//Création des boutons avec leurs images
+			boutonAide.setGraphic(imageViewAide);
+			boutonAide.setText(""); // Désactive le texte du bouton
+			boutonAide.getStyleClass().add("boutonSauvegarderAide");
+		}
+
+
+
+
 
 		if (boutonAjouterNote != null) {
 			afficherMessageSurvol(boutonAjouterNote, MESSAGE_AJOUT_NOTE);
@@ -140,8 +186,9 @@ public class Controlleur {
 		// Vérification de la présence des éléments fxml
 		if (note != null && commentaire != null && denominateur != null) {
 			// Appliquer un format de saisie spécifique aux TextField
-			note.setTextFormatter(patternNote());
-			denominateur.setTextFormatter(patternDenominateur());
+			note.setTextFormatter(pattern("^1000$|^\\d{1,3}(\\.\\d{0,2})?$"));
+
+			denominateur.setTextFormatter(pattern("^1000$|^\\d{1,3}?$"));
 			commentaire.setWrapText(true);
 			commentaire.textProperty().addListener((observable, ancienneValeur, nouvelleValeur) -> {
 				// Vérifier si la longueur du texte dépasse la limite
@@ -157,28 +204,161 @@ public class Controlleur {
 			});
 		}
 	}
+	
+	private void sauvegarder() {
+		try {
+			gn.serializerDonnees();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void afficherAide() {
+		
+	}
+
+	private void ajouterCompetence(List<Competence> listeCompetences, Scene scene) {
+		int indiceCompetence = 1;
+		int maxCaractere = 25;
+		//Permet de mettre un taille à une ligne quand on l'ajoute
+		RowConstraints taille = new RowConstraints();
+		taille.setPrefHeight(50);
+		GridPane grilleCompetence = ((GridPane)((ScrollPane) ((Pane) ((BorderPane) scene.getRoot()).getChildren().get(1)).getChildren().get(4)).getContent());
+		Label labelToutes = new Label("Toutes");
+		labelToutes.setPrefSize(185,30);
+		labelToutes.getStyleClass().add("labelCompetence");
+		Pane ligneToutes = new Pane();
+		ligneToutes.getStyleClass().add("paneCompetence");
+		ligneToutes.setPrefSize(185,30);
+		ligneToutes.setId("Toutes");
+		ligneToutes.getChildren().add(labelToutes);
+		labelToutes.setAlignment(Pos.CENTER);
+		GridPane grilleEnseignement = ((GridPane)((ScrollPane) ((Pane) ((BorderPane) scene.getRoot()).getChildren().get(1)).getChildren().get(0)).getContent());
+		grilleCompetence.add(ligneToutes,0,0);
+		List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
+		ligneToutes.setOnMouseClicked(event -> afficherEnseignements(false, grilleEnseignement, listeEnseignement , scene));
+
+		for(Competence competence: gn.getSemestreGestionNotes().getCompetencesSemestre()) {
+
+			String texteCompetence = competence.getIdentifiantCompetence() + " " + competence.getIntituleCompetence(); // Votre texte long à afficher
+			Text texte = new Text(texteCompetence);
+			texte.setWrappingWidth(maxCaractere * 7); // La largeur de l'espace pour un nombre de caractères
+			Pane paneCompetence = new Pane();
+			paneCompetence.getChildren().add(texte);
+			texte.setTranslateY(5);
+			grilleCompetence.getRowConstraints().addAll(taille);
+
+			paneCompetence.getStyleClass().add("paneCompetence");
+
+			paneCompetence.setPrefSize(185, 40);
+
+			texte.getStyleClass().add("labelCompetence");
+
+			texte.setLayoutY(10);
+
+			paneCompetence.setPadding(new Insets(0,5,0,5));
+
+			GridPane.setHalignment(texte, javafx.geometry.HPos.CENTER);
+
+			texte.setTextAlignment(TextAlignment.CENTER);
+
+			GridPane.setHalignment(paneCompetence, javafx.geometry.HPos.CENTER);
+
+			grilleCompetence.add(paneCompetence, 0, indiceCompetence);
+
+			indiceCompetence++;
+			paneCompetence.setOnMouseClicked(event -> ajouterEnseignements(paneCompetence, competence.getListeEnseignements(), scene));
+		}
+	}
+
+	/**
+	 * @param 
+	 *
+	 */
+	private void afficherEnseignements(boolean triRessources, GridPane grilleEnseignement, List<Enseignement> listeEnseignement, Scene scene) {
+		int indiceEnseignement = 0;
+		if (triRessources) {
+			Label labelToutes = new Label("Toutes");
+			labelToutes.setPrefSize(185,30);
+			labelToutes.setStyle("-fx-background-color: #E6E9F0; -fx-text-fill:#354B85; -fx-font-size: 14px; -fx-font-weight: bold;");
+			Pane ligneToutes = new Pane();
+			ligneToutes.setPrefSize(185,30);
+			ligneToutes.setId("Toutes");
+			ligneToutes.getChildren().add(labelToutes);
+			grilleEnseignement.add(ligneToutes,0,0);
+			indiceEnseignement = 1;
+		}
+
+		//Permet de mettre une taille à une ligne quand on l'ajoute
+		grilleEnseignement.setVgap(10);
+		grilleEnseignement.getChildren().clear();
+		grilleEnseignement.getRowConstraints().clear();
+		RowConstraints tailleEnseignement = new RowConstraints();
+		tailleEnseignement.setMinHeight(40);
+		tailleEnseignement.setPrefHeight(40);
+		tailleEnseignement.setMaxHeight(40);
+		for (Enseignement enseignement : listeEnseignement) {
+			grilleEnseignement.getRowConstraints().addAll(tailleEnseignement);
+			Pane paneEnseignement = new Pane();
+			paneEnseignement.setPrefSize(640, 40);
+			GridPane.setColumnSpan(paneEnseignement, 4);
+			paneEnseignement.getStyleClass().add("paneCompetence");
+			Label labelEnseignement = new Label(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
+			paneEnseignement.setPrefSize(630, 40);
+			labelEnseignement.getStyleClass().add("labelCompetence");
+			labelEnseignement.setPadding(new Insets(0, 5, 0, 5));
+			paneEnseignement.getChildren().add(labelEnseignement);
+			grilleEnseignement.add(paneEnseignement, 0, indiceEnseignement);
+			paneEnseignement.setOnMouseClicked(event -> afficherControle(scene, paneEnseignement, enseignement));
+			indiceEnseignement++;
+		}
+	}
+
+	/**
+	 * @param hashMap
+	 *
+	 */
+	private void ajouterEnseignements(Pane competenceSelectionnee, HashMap<Enseignement, Integer> listeEnseignements, Scene scene) {
+		int indiceEnseignement = 0;
+		//Permet de mettre une taille à une ligne quand on l'ajoute
+		GridPane grilleEnseignement = ((GridPane)((ScrollPane) ((Pane) ((BorderPane) scene.getRoot()).getChildren().get(1)).getChildren().get(0)).getContent());
+		grilleEnseignement.setVgap(10);
+		grilleEnseignement.getChildren().clear();
+		grilleEnseignement.getRowConstraints().clear();
+		RowConstraints tailleEnseignement = new RowConstraints();
+		tailleEnseignement.setMinHeight(40);
+		tailleEnseignement.setPrefHeight(40);
+		tailleEnseignement.setMaxHeight(40);
+		for (Enseignement enseignement : listeEnseignements.keySet()) {
+			grilleEnseignement.getRowConstraints().addAll(tailleEnseignement);
+			Pane paneEnseignement = new Pane();
+			paneEnseignement.setPrefSize(640, 40);
+			GridPane.setColumnSpan(paneEnseignement, 4);
+			paneEnseignement.getStyleClass().add("paneCompetence");
+			Label labelEnseignement = new Label(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
+			paneEnseignement.setPrefSize(630, 40);
+			labelEnseignement.getStyleClass().add("labelCompetence");
+			labelEnseignement.setPadding(new Insets(0, 5, 0, 5));
+			paneEnseignement.getChildren().add(labelEnseignement);
+			grilleEnseignement.add(paneEnseignement, 0, indiceEnseignement);
+			paneEnseignement.setOnMouseClicked(event -> afficherControle(scene, paneEnseignement, enseignement));
+			indiceEnseignement++;
+		}
+	}
 
 	/**
 	 *
 	 */
-	private void ajouterCompetence(List<Competence> listeCompetences, Scene scene) {
-		int indiceCompetence = 0;
-		//Permet de mettre un taille à une ligne quand on l'ajoute
-		RowConstraints taille = new RowConstraints();
-		taille.setPrefHeight(40);
-		GridPane grilleCompetence = ((GridPane)((ScrollPane) ((Pane) ((BorderPane) scene.getRoot()).getChildren().get(1)).getChildren().get(4)).getContent());
-		for(Competence competence: gn.getSemestreGestionNotes().getCompetencesSemestre()) {
-			Pane paneCompetence = new Pane();
-			Label labelCompetence = new Label (competence.getIdentifiantCompetence() + " " + competence.getIntituleCompetence());
-			paneCompetence.getChildren().add(labelCompetence);
-			grilleCompetence.getRowConstraints().addAll(taille);
-			labelCompetence.getStyleClass().add("labelCompetences");
-			labelCompetence.setMaxSize(130, 40);
-			paneCompetence.getStyleClass().add("paneCommentaire");
-			grilleCompetence.add(paneCompetence, 0, indiceCompetence);
-			indiceCompetence++;
-		}		
+	private void afficherControle(Scene scene, Pane enseignementSelectionne, Enseignement enseignement) {
+		if (gn.estUneRessource(enseignement)) {
+			System.out.println("Oui");
+		}else if (gn.estUneSae(enseignement)) {
+			System.out.println("Sae");
+		}else if (gn.estUnPortfolio(enseignement)) {
+			System.out.println("Port");
+		}
 	}
+
 
 
 	/**
@@ -400,11 +580,11 @@ public class Controlleur {
 			loader.setLocation(getClass().getResource("/application/vue/PageNotes.fxml"));
 			Parent nouvelleScene = loader.load();
 			Scene nouvelleSceneObjet = new Scene(nouvelleScene);
-			creerFiltres(nouvelleSceneObjet);
 			Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
 			stage.setScene(nouvelleSceneObjet); //Affichage de la nouvelle scene
 			nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
-
+			GridPane grilleRessources = (GridPane)((ScrollPane) ((Pane)((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(4)).getContent();
+			afficherEnseignements(true, grilleRessources, gn.getSemestreGestionNotes().getEnseignementsSemestre(), nouvelleSceneObjet);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -790,56 +970,6 @@ public class Controlleur {
 		}
 	}
 
-	/**
-	 * 
-	 * @param sceneActuelle
-	 */
-	public static void creerFiltres(Scene sceneActuelle) {
-		GridPane gridPaneRessources = (GridPane)((ScrollPane) ((Pane)((BorderPane) sceneActuelle.getRoot()).getChildren().get(1)).getChildren().get(4)).getContent();
-
-		Label labelToutes = new Label("Toutes");
-		labelToutes.setPrefSize(185,30);
-		labelToutes.setStyle("-fx-background-color: #E6E9F0; -fx-text-fill:#354B85; -fx-font-size: 14px; -fx-font-weight: bold;");
-
-		Pane ligneToutes = new Pane();
-		ligneToutes.setPrefSize(185,30);
-		ligneToutes.setId("Toutes");
-		ligneToutes.getChildren().add(labelToutes);
-
-		gridPaneRessources.add(ligneToutes,0,0);
-	}
-	private void filtrerRessource(Pane ressourceSelectionnée) {
-		if (ressourceSelectionnée.getId() == "Toutes") {
-
-		}else {
-
-		}
-	}
-
-
-	/**
-	 * Crée un TextFormatter pour valider et filtrer les saisies dans un TextField.
-	 * Ce TextFormatter garantit que les saisies correspondent à un modèle spécifique.
-	 * @return TextFormatter pour le TextField
-	 */
-	private TextFormatter<Object> patternNote() {
-		// Modèle avec une expression régulière
-		Pattern pattern = Pattern.compile("^1000$|^\\d{1,3}(\\.\\d{0,2})?$");
-
-		// Filtre pour valider et filtrer les saisies selon le modèle défini
-		UnaryOperator<TextFormatter.Change> filter = change -> {
-			String newText = change.getControlNewText();
-			// Vérifie si le nouveau texte correspond au motif défini ou s'il est vide
-			if (pattern.matcher(newText).matches() || newText.isEmpty()) {
-				return change; // Autorise la saisie
-			} else {
-				return null; // Rejette la saisie
-			}
-		};
-
-		// Retourne un TextFormatter configuré avec le filtre défini
-		return new TextFormatter<>(filter);
-	}
 
 
 
@@ -848,9 +978,10 @@ public class Controlleur {
 	 * Ce TextFormatter garantit que les saisies correspondent à un modèle spécifique.
 	 * @return TextFormatter pour le TextField
 	 */
-	private TextFormatter<Object> patternDenominateur() {
+	private TextFormatter<Object> pattern(String regex) {
 		// Modèle avec une expression régulière
-		Pattern pattern = Pattern.compile("^1000$|^\\d{1,3}?$");
+		Pattern pattern = Pattern.compile(regex);
+
 
 		// Filtre pour valider et filtrer les saisies selon le modèle défini
 		UnaryOperator<TextFormatter.Change> filter = change -> {
@@ -879,7 +1010,7 @@ public class Controlleur {
 		explorateurFichier.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv"));
 		// Affiche la boîte de dialogue et attend que l'utilisateur sélectionne un fichier
 		Stage stageActuel = (Stage) rootPane.getScene().getWindow();
-		java.io.File fichierChoisi = explorateurFichier.showOpenDialog(stageActuel);
+		File fichierChoisi = explorateurFichier.showOpenDialog(stageActuel);
 		// Si l'utilisateur a sélectionné un fichier, affiche son chemin
 		if (fichierChoisi != null) {
 			String nomFichier = fichierChoisi.getAbsolutePath();

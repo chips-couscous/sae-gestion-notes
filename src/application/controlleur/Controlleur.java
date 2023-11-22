@@ -195,18 +195,30 @@ public class Controlleur {
      * Met en attente l'application pour recevoir un fichier d'un autre utilisateur
      */
     private void recevoirFichier() {
-            
+        int port;
+        
+        if (!saisiePortServeur.getText().equals("")) {
+            port = Integer.parseInt(saisiePortServeur.getText());
+        } else {
+            port = 0;
+        }
             try {
-                Alert alertEnvoi = new Alert(AlertType.CONFIRMATION);
-                alertEnvoi.setTitle("Envoi du fichier");
+                Alert alertEnvoi = new Alert(AlertType.INFORMATION);
+                alertEnvoi.setTitle("Réception de fichier");
+                alertEnvoi.setHeaderText("Attente de connexion ...");
                 alertEnvoi.show();
-                gn.recevoirFichier(Integer.parseInt(saisiePortServeur.getText()));
+                gn.recevoirFichier(port);
                 alertEnvoi.close();
                 
-                Alert alertEnvoye = new Alert(AlertType.CONFIRMATION);
+                Alert alertEnvoye = new Alert(AlertType.INFORMATION);
                 alertEnvoye.setTitle("Fichier envoyé");
                 alertEnvoye.showAndWait(); 
             } catch (PortReseauException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Reception impossible");
+                alert.setHeaderText(e.getMessage());
+                alert.showAndWait(); 
+            } catch (IOException e) {
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Reception impossible");
                 alert.setHeaderText(e.getMessage());
@@ -235,7 +247,7 @@ public class Controlleur {
         
         try {
             gn.envoyerFichier(ipServeur, port, cheminFichier);
-            Alert alert = new Alert(AlertType.CONFIRMATION);
+            Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Fichier récupéré");
             alert.setContentText("Nom du fichier : fichierRecu.txt");
             alert.showAndWait(); 
@@ -253,6 +265,11 @@ public class Controlleur {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Envoi impossible");
             alert.setHeaderText(e.getMessage());
+            alert.showAndWait();
+        } catch (IOException e) {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Envoi impossible");
+            alert.setHeaderText("Serveur introuvable, vérifiez l'adresse IP et le port");
             alert.showAndWait();
         }
     }

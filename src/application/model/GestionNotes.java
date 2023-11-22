@@ -12,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import application.model.exception.CompetenceInvalideException;
 import application.model.exception.ControleInvalideException;
@@ -374,66 +375,6 @@ public class GestionNotes {
         }
         return instance;
     }
-    
-    /** 
-     * Execution de scipts de test 
-     * @param args non utilisé
-     */
-    public static void main(String[] args) {
-        GestionNotes gn = new GestionNotes();
-//        
-//        try {
-//            gn.importerParametrageSemestre(".\\csv\\ParametresSemestre(AImporter).csv");
-//            gn.importerParametrageEnseignement(".\\csv\\ParametresRessource(AImporter).csv");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//      
-        
-        try {
-            gn.deserializerDonnees();
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-        try {
-            Ressource ressourceControles;
-            ressourceControles = (Ressource) gn.trouverEnseignement("R2.01");
-            System.out.println(ressourceControles.getControleToString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-//        
-//        try {
-//            gn.ajouterNoteAControle("R2.01.00", 12.2, 20, "");
-//            gn.ajouterNoteAControle("R2.01.01", 8, 10, "");
-//            gn.ajouterNoteAControle("R2.01.02", 15, 40, "");
-//            gn.ajouterNoteAControle("R2.01.03", 15.5, 20, "");
-//        } catch (NoteInvalideException e) {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            gn.calculerMoyenneEnseignement("R2.01");
-//        } catch (MoyenneRessourceException e) {
-//            e.printStackTrace();
-//        } catch (NoteInvalideException e) {
-//            e.printStackTrace();
-//        }
-//        
-//        try {
-//            gn.serializerDonnees();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        System.out.println(gn.getValeurNoteDeControle("R2.01.01"));
-//        System.out.println(gn.moyenneEnseignemnt("R2.01").getValeurNote());
-    }
 
     /** 
      * Vérifie la conformité du port de connexion avant de lancer le serveur 
@@ -441,8 +382,9 @@ public class GestionNotes {
      * 
      * @param port port de connexion (compris entre 1024 et 60000)
      * @throws PortReseauException si le port est invalide
+     * @throws IOException si il y eu un problème lors de la connexion avec le client
      */
-    public static void recevoirFichier(int port) throws PortReseauException {
+    public static void recevoirFichier(int port) throws PortReseauException, IOException {
         
         if (port < 1024 || port > 60000) {
             throw new PortReseauException("Le port est incorrect");
@@ -459,13 +401,16 @@ public class GestionNotes {
      * @throws PortReseauException  si le port est invalide
      * @throws IpException si l'adresse IP est invalide
      * @throws cheminFichierException si le chemin est invalide
+     * @throws IOException si le serveur est introuvable
      */
-    public static void envoyerFichier(String ipServeur, int port, String cheminFichier) throws PortReseauException, IpException, cheminFichierException {
+    public static void envoyerFichier(String ipServeur, int port, String cheminFichier) throws PortReseauException, IpException, cheminFichierException, IOException {
+        String patternIP = "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\\.(?!$)|$)){4}$";
+        
+        if (!Pattern.matches(patternIP, ipServeur)) {
+            throw new IpException("L'adresse IP est incorrect");
+        }
         if (port < 1024 || port > 60000) {
             throw new PortReseauException("Le port est incorrect");
-        }
-        if (ipServeur.equals("")) { // TODO matche un regex
-            throw new IpException("L'adresse IP est incorrect");
         }
         if (cheminFichier.equals("")) { // Pas besoin de vérifier plus, la vue impose un chemin correct
             throw new cheminFichierException("Le fichier est incorrect");

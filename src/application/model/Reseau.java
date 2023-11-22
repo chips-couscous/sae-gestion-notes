@@ -31,13 +31,18 @@ public class Reseau {
     /* Dictionnaire utilisé pour le chiffrement des données */
     final static HashMap<Character,Integer> dictionnaireCryptage = new HashMap<>();    
     
-//    /**
-//     * Méthode utilisé pour les test, fait office de serveur
-//     * @param args
-//     */
-//    public static void main(String[] args) {
-//        recevoir(8064);
-//    }
+    /**
+     * Méthode utilisé pour les test, fait office de serveur
+     * @param args
+     */
+    public static void main(String[] args) {
+        try {
+            recevoir(8064);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
     
     /** 
      * Méthode d'envoie d'un fichier
@@ -49,8 +54,9 @@ public class Reseau {
      * @param ip IP de la machine qui prend le rôle de serveur 
      * @param port port sur lequel le client se connecte au serveur
      * @param cheminFichier chemin du fichier a envoyer
+     * @throws IOException si le serveur est introuvable
      */
-    public static void envoyer(String ip, int port, String cheminFichier) {
+    public static void envoyer(String ip, int port, String cheminFichier) throws IOException {
         
         final int TAILLE_BLOC_DONNEES = 1024; 
         
@@ -90,6 +96,7 @@ public class Reseau {
         } catch (IOException e) {
             System.err.println("Client : Connexion au serveur impossible "
                     + e.getMessage());
+            throw e;
         }
     }
    
@@ -102,8 +109,9 @@ public class Reseau {
      * 
      * @param port port sur lequel le serveur attend une connection
      * @param cheminFichier chemin du fichier a envoyer
+     * @throws IOException si il y a un problème de connexion avec le client
      */
-    public static void recevoir(int port) {
+    public static void recevoir(int port) throws IOException {
         
         final int TAILLE_BLOC_DONNEES = 1024;
         
@@ -150,6 +158,7 @@ public class Reseau {
         } catch (IOException e) {
             System.out.println("Serveur : connexion avec le client impossible "
                     + e.getMessage());
+            throw e;
         }
     }
     
@@ -166,12 +175,19 @@ public class Reseau {
         
         /* Parcours des données a crypter */ 
         for (int i = 0; i < donnees.length && donnees[i] != 0; i++) {
+            /* Commentaires = affichage des caractères de diverses informations 
+             * nécessaire a la vérification de la validité du cryptage 
+             */
+//            System.out.print("Donnees = " + donnees[i] + " code = "     
+//                    + dictionnaireCryptage.get((char)donnees[i]) + " cle = " 
+//                    + cle.charAt(i%cle.length()) + " code "                  
+//                    + dictionnaireCryptage.get(cle.charAt(i%cle.length())));
             /* Chiffrement */
-            System.out.print("Donnees = " + donnees[i] + " code = " + dictionnaireCryptage.get((char)donnees[i]) + " cle = " + cle.charAt(i%cle.length()) + " code " + dictionnaireCryptage.get(cle.charAt(i%cle.length())));
             caractere = (byte) ((dictionnaireCryptage.get((char)donnees[i]) 
                     + dictionnaireCryptage.get(cle.charAt(i%cle.length())))
                     % dictionnaireCryptage.size());
-            System.out.println(" cryptage = " + toCaractere(caractere));
+            
+//            System.out.println(" cryptage = " + toCaractere(caractere));
           
             donnees[i] = (byte)toCaractere(caractere);
         }
@@ -189,18 +205,15 @@ public class Reseau {
     private static byte[] decrypter(String cle, byte[] donneesCryptees) {
         byte caractere;
         
-        /* Parcours des données a crypter */ 
+        /* Parcours des données a décrypter */ 
         for (int i = 0; i < donneesCryptees.length && donneesCryptees[i] != 0; i++) {
-            /* Chiffrement */
-            System.out.print("Donnees = " + (char)donneesCryptees[i] + " code = " + dictionnaireCryptage.get((char)donneesCryptees[i]) + " cle = " + cle.charAt(i%cle.length()) + " code " + dictionnaireCryptage.get(cle.charAt(i%cle.length())));
+            /* Déchiffrement */
             caractere = (byte) (dictionnaireCryptage.get((char)donneesCryptees[i]) 
                       - dictionnaireCryptage.get(cle.charAt(i%cle.length())));
             /* Effectue le modulo */
             if (caractere < 0) {
                 caractere += dictionnaireCryptage.size();
             }
-              
-            System.out.println(" cryptage = " + toCaractere(caractere));
               
             donneesCryptees[i] = (byte)toCaractere(caractere);
         }
@@ -264,7 +277,7 @@ public class Reseau {
                 cle += caractere;
             }
             
-            System.out.println("Client : " + cle);
+            System.out.println("Client : clé = " + cle);
         } catch (IOException e) {
             System.err.println("Communication avec le serveur impossible");
             cle = null;
@@ -316,7 +329,7 @@ public class Reseau {
                 cle += caractere;
             }
             
-            System.out.println("Serveur : " + cle);
+            System.out.println("Serveur : clé = " + cle);
         } catch (IOException e) {
             System.err.println("Communication avec le serveur impossible");
             cle = null;
@@ -420,15 +433,24 @@ public class Reseau {
         dictionnaireCryptage.put((char)-96, 65); // Chiffrage du à
         dictionnaireCryptage.put((char)-89, 66); // Chiffrage du ç
         dictionnaireCryptage.put((char)-71, 67); // Chiffrage du ù
-        dictionnaireCryptage.put('/', 68);
-        dictionnaireCryptage.put('\'', 69);
-        dictionnaireCryptage.put(' ', 70);
-        dictionnaireCryptage.put('.', 71);
-        dictionnaireCryptage.put(';', 72);
-        dictionnaireCryptage.put('-', 73);
-        /* caractères composant un retour à la ligne */
-        dictionnaireCryptage.put((char)10, 74); // Chiffrage du saut de ligne
-        dictionnaireCryptage.put((char)13, 75); // Chiffrage du retour chariot
+        dictionnaireCryptage.put((char)-76, 68); // Chiffrage du ô
+        dictionnaireCryptage.put('/', 69);
+        dictionnaireCryptage.put('\'', 70);
+        dictionnaireCryptage.put(' ', 71);
+        dictionnaireCryptage.put('.', 72);
+        dictionnaireCryptage.put(';', 73);
+        dictionnaireCryptage.put('-', 74);
+        dictionnaireCryptage.put('(', 75);
+        dictionnaireCryptage.put(')', 76);
+        dictionnaireCryptage.put((char)-30, 77); // chiffrage du caractère ’
+        dictionnaireCryptage.put((char)-128, 78); // chiffrage du caractère ’
+        dictionnaireCryptage.put((char)-103, 79); // chiffrage du caractère ’
+        dictionnaireCryptage.put((char)10, 80); // Chiffrage du saut de ligne
+        dictionnaireCryptage.put((char)13, 81); // Chiffrage du retour chariot
+        
+        dictionnaireCryptage.put((char)-65, 82); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier
+        dictionnaireCryptage.put((char)-17, 83); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier
+        dictionnaireCryptage.put((char)-69, 84); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier
     }
     
     /** 

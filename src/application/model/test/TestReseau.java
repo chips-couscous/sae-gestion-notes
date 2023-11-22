@@ -4,6 +4,8 @@
  */
 package application.model.test;
 
+import java.io.IOException;
+
 import application.model.Reseau;
 
 /** 
@@ -68,6 +70,11 @@ public class TestReseau {
     public static void main(String[] args) {
 //        testEstPremier();
 //        testEstGenerateur();
-        Reseau.envoyer("127.0.0.1", 8064, "testReseau.txt");
+        try {
+            Reseau.envoyer("127.0.0.1", 8064, "csv/ParametresSemestre(AImporter).csv");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

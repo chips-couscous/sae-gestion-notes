@@ -381,15 +381,20 @@ public class GestionNotes {
      * pour recevoir un fichier d'un autre utilisateur
      * 
      * @param port port de connexion (compris entre 1024 et 60000)
+     * @param cheminReceptionFichier chemin ou sera créer le fichier recu
      * @throws PortReseauException si le port est invalide
      * @throws IOException si il y eu un problème lors de la connexion avec le client
+     * @throws cheminFichierException si cheminReceptionFichier est null ou vide
      */
-    public static void recevoirFichier(int port) throws PortReseauException, IOException {
+    public static void recevoirFichier(int port, String cheminReceptionFichier) throws PortReseauException, IOException, cheminFichierException {
         
         if (port < 1024 || port > 60000) {
             throw new PortReseauException("Le port est incorrect");
         }
-        Reseau.recevoir(port);
+        if (cheminReceptionFichier == null || cheminReceptionFichier.equals("")) {
+            throw new cheminFichierException("Le chemin de reception est incorrect");
+        }
+        Reseau.recevoir(port, cheminReceptionFichier);
     }
 
     /** 

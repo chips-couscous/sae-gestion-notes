@@ -89,7 +89,7 @@
 					</font>
 				</Label>
 				<Pane layoutX="513.0" prefHeight="602.0" prefWidth="4.0" style="-fx-background-color: #354B85;" />
-				<Button fx:id="boutonSelectionFichierPartager" layoutX="158.0" layoutY="301.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #354B85;" text="Sélectionner un fichier" textFill="#e6e9f0">
+				<Button fx:id="boutonSelectionFichierPartager" layoutX="158.0" layoutY="301.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #354B85;" text="Sélectionner le fichier" textFill="#e6e9f0">
 					<font>
 						<Font size="14.0" />
 					</font>
@@ -119,6 +119,12 @@
             <Label fx:id="cheminFichierExport" alignment="CENTER" layoutX="1.0" layoutY="350.0" prefHeight="17.0" prefWidth="512.0" />
             <Label alignment="CENTER" layoutX="513.0" layoutY="256.0" prefHeight="17.0" prefWidth="520.0" text="Le port doit être compris entre 1024 et 60000" />
             <Label alignment="CENTER" layoutX="-2.0" layoutY="256.0" prefHeight="17.0" prefWidth="520.0" text="Le port doit être compris entre 1024 et 60000" />
+            <Button fx:id="boutonSelectionDossierReception" layoutX="652.0" layoutY="301.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="242.0" style="-fx-background-color: #354B85;" text="Sélectionner le dossier de reception" textFill="#e6e9f0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Label fx:id="cheminDossierReception" alignment="CENTER" layoutX="517.0" layoutY="350.0" prefHeight="17.0" prefWidth="512.0" />
 			</children>
 		</Pane>
 	</center>

@@ -35,14 +35,14 @@ public class Reseau {
      * Méthode utilisé pour les test, fait office de serveur
      * @param args
      */
-    public static void main(String[] args) {
-        try {
-            recevoir(8064);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+//    public static void main(String[] args) {
+//        try {
+//            recevoir(8064);
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//    }
     
     /** 
      * Méthode d'envoie d'un fichier
@@ -108,10 +108,11 @@ public class Reseau {
      * Le serveur doit être lancé avant le client
      * 
      * @param port port sur lequel le serveur attend une connection
+     * @param cheminReceptionFichier chemin ou sera écrit le fichier reçu
      * @param cheminFichier chemin du fichier a envoyer
      * @throws IOException si il y a un problème de connexion avec le client
      */
-    public static void recevoir(int port) throws IOException {
+    public static void recevoir(int port, String cheminReceptionFichier) throws IOException {
         
         final int TAILLE_BLOC_DONNEES = 1024;
         
@@ -132,7 +133,7 @@ public class Reseau {
             BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream());
 
             // Création d'un fichier pour stocker le fichier CSV reçu
-            File receivedFile = new File("fichierRecu.csv");
+            File receivedFile = new File(cheminReceptionFichier);
             FileOutputStream fileOut = new FileOutputStream(receivedFile);
 
             /* Reception et écriture du fichier
@@ -242,7 +243,7 @@ public class Reseau {
         String cle = ""; 
         
         try {
-            System.out.println("Client : Génération de la clé");
+            System.out.println("Client : Génération de la clé de chiffrement");
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(serveur.getInputStream()));
             PrintStream out = new PrintStream(serveur.getOutputStream());
@@ -277,7 +278,7 @@ public class Reseau {
                 cle += caractere;
             }
             
-            System.out.println("Client : clé = " + cle);
+//            System.out.println("Client : clé = " + cle);
         } catch (IOException e) {
             System.err.println("Communication avec le serveur impossible");
             cle = null;
@@ -301,7 +302,7 @@ public class Reseau {
         String cle = "";
         int tailleCle; // généré et transmis par le client
         
-        System.out.println("Génération de la clé");
+        System.out.println("Génération de la clé de chiffrement");
         try {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(client.getInputStream()));
@@ -329,7 +330,7 @@ public class Reseau {
                 cle += caractere;
             }
             
-            System.out.println("Serveur : clé = " + cle);
+//            System.out.println("Serveur : clé = " + cle);
         } catch (IOException e) {
             System.err.println("Communication avec le serveur impossible");
             cle = null;

@@ -5,9 +5,12 @@
 package application.controlleur;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -43,6 +46,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -93,6 +97,8 @@ public class Controlleur {
 	@FXML
 	Button boutonSelectionFichierPartager;
 	@FXML
+        Button boutonSelectionDossierReception;
+	@FXML
 	Button btnEnvoyerFichier;
 	@FXML
 	Button btnRecevoirFichier;
@@ -100,6 +106,8 @@ public class Controlleur {
 	Label ipUtilisateur;
 	@FXML
 	Label cheminFichierExport;
+	@FXML
+        Label cheminDossierReception;      
 	@FXML
 	TextField saisieIpServeur;
 	@FXML
@@ -181,8 +189,10 @@ public class Controlleur {
 		        && saisieIpServeur != null && btnEnvoyerFichier != null
 		        && btnRecevoirFichier != null && cheminFichierExport != null
 		        && saisieIpServeur != null && saisiePortClient != null
-		        && saisiePortServeur != null) {
+		        && saisiePortServeur != null && boutonSelectionDossierReception != null
+		        && cheminDossierReception != null) {
                     boutonSelectionFichierPartager.setOnAction(event -> selectionnerFichier(boutonSelectionFichierPartager));
+                    boutonSelectionDossierReception.setOnAction(event -> selectionnerDossierReception());
                     btnEnvoyerFichier.setOnAction(event -> envoyerFichier());
                     btnRecevoirFichier.setOnAction(event -> recevoirFichier());
                     saisiePortClient.setTextFormatter(pattern("^\\d{1,5}?$"));
@@ -192,10 +202,50 @@ public class Controlleur {
 	}
 
     /** 
+     * Selectionne un dossier où recevoir le fichier exporté par un autre utilisateur
+     * Demande également à l'utilisateur le nom du fichier souhaité
+     */
+    private void selectionnerDossierReception() {
+        
+        final String NOM_FICHIER_DEFAUT = "fichierReçu.csv";
+        
+        /* Déclaration d'un objet DirectoryChooser pour ouvrir un explorateur */
+        DirectoryChooser explorateurDossier = new DirectoryChooser();
+        explorateurDossier.setTitle("Selectionnez le dossier de reception");
+        Stage stageActuel = (Stage) rootPane.getScene().getWindow();
+        
+        /* Récupération du dossier et de son chemin */
+        File dossierSelectionne = explorateurDossier.showDialog(stageActuel);
+        String cheminDossier = dossierSelectionne.getAbsolutePath();
+        
+        /* Choix du nom a donner au fichier reçu */
+        TextInputDialog choixNom = new TextInputDialog("fichierRecu");
+        choixNom.setTitle("Nom fichier");
+        choixNom.setHeaderText("Choisissez le nom du fichier");
+        choixNom.setContentText("Nom du fichier :");
+        choixNom.showAndWait();
+        String nomFichier = choixNom.getResult();
+        
+        if(nomFichier == null ||nomFichier.equals("")) {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Nom du fichier");
+            alert.setHeaderText("Le nom saisi est incorrect");
+            alert.setContentText("Nom par défaut choisi (\""+ NOM_FICHIER_DEFAUT +"\")");
+            alert.showAndWait();
+            nomFichier = NOM_FICHIER_DEFAUT;
+        } else {
+            nomFichier += ".csv";
+        }
+        
+        cheminDossierReception.setText("Dossier : " + cheminDossier + "\\" + nomFichier);
+    }
+
+    /** 
      * Met en attente l'application pour recevoir un fichier d'un autre utilisateur
      */
     private void recevoirFichier() {
         int port;
+        String cheminReceptionFichier = cheminDossierReception.getText();
         
         if (!saisiePortServeur.getText().equals("")) {
             port = Integer.parseInt(saisiePortServeur.getText());
@@ -207,18 +257,26 @@ public class Controlleur {
                 alertEnvoi.setTitle("Réception de fichier");
                 alertEnvoi.setHeaderText("Attente de connexion ...");
                 alertEnvoi.show();
-                gn.recevoirFichier(port);
-                alertEnvoi.close();
                 
-                Alert alertEnvoye = new Alert(AlertType.INFORMATION);
-                alertEnvoye.setTitle("Fichier envoyé");
-                alertEnvoye.showAndWait(); 
+                gn.recevoirFichier(port,cheminReceptionFichier);
+                
+                alertEnvoi.close();
+                /* Affichage d'un popup pour informer du succès de la reception */
+                Alert alertRecu = new Alert(AlertType.INFORMATION);
+                alertRecu.setTitle("Fichier reçu");
+                alertRecu.setContentText("Nom du fichier : fichierRecu.csv");
+                alertRecu.showAndWait(); 
             } catch (PortReseauException e) {
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Reception impossible");
                 alert.setHeaderText(e.getMessage());
                 alert.showAndWait(); 
             } catch (IOException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Reception impossible");
+                alert.setHeaderText(e.getMessage());
+                alert.showAndWait(); 
+            } catch (cheminFichierException e) {
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Reception impossible");
                 alert.setHeaderText(e.getMessage());
@@ -247,9 +305,9 @@ public class Controlleur {
         
         try {
             gn.envoyerFichier(ipServeur, port, cheminFichier);
+            /* Affichage d'un popup pour informer du succès de l'envoi */
             Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Fichier récupéré");
-            alert.setContentText("Nom du fichier : fichierRecu.txt");
+            alert.setTitle("Fichier envoyé");
             alert.showAndWait(); 
         } catch (IpException e) {
             Alert alert = new Alert(AlertType.ERROR);
@@ -985,7 +1043,7 @@ public class Controlleur {
 		explorateurFichier.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv"));
 		// Affiche la boîte de dialogue et attend que l'utilisateur sélectionne un fichier
 		Stage stageActuel = (Stage) rootPane.getScene().getWindow();
-		java.io.File fichierChoisi = explorateurFichier.showOpenDialog(stageActuel);
+		File fichierChoisi = explorateurFichier.showOpenDialog(stageActuel);
 		// Si l'utilisateur a sélectionné un fichier, affiche son chemin
 		if (fichierChoisi != null) {
 			String nomFichier = fichierChoisi.getAbsolutePath();

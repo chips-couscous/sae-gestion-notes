@@ -230,10 +230,10 @@ public class GestionNotes {
     /**
      * Import d'un fichier csv contenant le parametrage d'un semestre
      * @param chemin du fichier à importer
-     * @throws ExtensionFichierException
-     * @throws SemestreInvalideExecption
-     * @throws CompetenceInvalideException
-     * @throws EnseignementInvalideException
+     * @throws ExtensionFichierException si l'extension est incorrecte
+     * @throws SemestreInvalideExecption si le semestre est invalide
+     * @throws CompetenceInvalideException si une compétence est invalide
+     * @throws EnseignementInvalideException si un enseignement est invalide
      */
     public void importerParametrageSemestre(String chemin) throws ExtensionFichierException, SemestreInvalideExecption, CompetenceInvalideException, EnseignementInvalideException {
 

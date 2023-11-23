@@ -330,26 +330,13 @@ public class Controlleur {
             alertRecu.setTitle("Fichier reçu");
             alertRecu.setHeaderText("Chemin : " + cheminReceptionFichier);
             alertRecu.showAndWait(); 
-        } catch (PortReseauException e) {
+        } catch (PortReseauException | IOException | cheminFichierException e) {
             alertReception.close();
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Reception impossible");
             alert.setHeaderText(e.getMessage());
             alert.showAndWait(); 
-        } catch (IOException e) {
-            alertReception.close();
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Reception impossible");
-            alert.setHeaderText(e.getMessage());
-            alert.showAndWait(); 
-        } catch (cheminFichierException e) {
-            alertReception.close();
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Reception impossible");
-            alert.setHeaderText(e.getMessage());
-            alert.showAndWait(); 
-        }
-
+        } 
     }
 
     /** 
@@ -377,26 +364,11 @@ public class Controlleur {
             alert.setTitle("Fichier envoyé");
             alert.setHeaderText("Le fichier a été envoyé avec succés");
             alert.showAndWait(); 
-        } catch (IpException e) {
+        } catch (IpException | PortReseauException | cheminFichierException | IOException e) {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Envoi impossible");
             alert.setHeaderText(e.getMessage());
             alert.showAndWait(); 
-        } catch (PortReseauException e) {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Envoi impossible");
-            alert.setHeaderText(e.getMessage());
-            alert.showAndWait(); 
-        } catch (cheminFichierException e) {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Envoi impossible");
-            alert.setHeaderText(e.getMessage());
-            alert.showAndWait();
-        } catch (IOException e) {
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Envoi impossible");
-            alert.setHeaderText("Serveur introuvable, vérifiez l'adresse IP et le port");
-            alert.showAndWait();
         }
     }
 
@@ -1329,19 +1301,29 @@ public class Controlleur {
                 try {
                     System.out.println("J'importe semestre");
                     gn.importerParametrageSemestre(nomFichier);
+                    Alert importationReussi = new Alert(AlertType.INFORMATION);
+                    importationReussi.setTitle("Importation réussi");
+                    importationReussi.setHeaderText("Importation réussi");
                 } catch (ExtensionFichierException | SemestreInvalideExecption | CompetenceInvalideException
                         | EnseignementInvalideException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    Alert importationErreur = new Alert(AlertType.ERROR);
+                    importationErreur.setTitle("Erreur d'importation");
+                    importationErreur.setHeaderText(e.getMessage());
+                    importationErreur.showAndWait();
                 }
 
             } else if (boutonClique == boutonImporterFichierRessource) {
                 try {
                     gn.importerParametrageEnseignement(nomFichier);
                     System.out.println("J'importe ressources");
+                    Alert importationReussi = new Alert(AlertType.INFORMATION);
+                    importationReussi.setTitle("Importation réussi");
+                    importationReussi.setHeaderText("Importation réussi");
                 } catch (ExtensionFichierException | ControleInvalideException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    Alert importationErreur = new Alert(AlertType.ERROR);
+                    importationErreur.setTitle("Erreur d'importation");
+                    importationErreur.setHeaderText(e.getMessage());
+                    importationErreur.showAndWait();
                 }
             } else if (boutonClique == boutonSelectionFichierPartager) {
                 cheminFichierExport.setText("Fichier : " + nomFichier);

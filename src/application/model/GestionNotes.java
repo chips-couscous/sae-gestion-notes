@@ -150,8 +150,9 @@ public class GestionNotes {
      * Modifie les valeurs de l'utilisateur pour remplacer le nom et/ou le prénom
      * @param nom de l'utilisateur à remplacer
      * @param prenom nom de l'utilisateur à remplacer
+     * @throws UtilisateurInvalideException si le prénom ou le nom est incorrect
      */
-    public void setUtilisateurGestionNotes(String nom, String prenom) {
+    public void setUtilisateurGestionNotes(String nom, String prenom) throws UtilisateurInvalideException {
         utilisateurGestionNotes.setNomUtilisateur(nom);
         utilisateurGestionNotes.setPrenomUtilisateur(prenom);
     }

@@ -35,14 +35,14 @@ public class Reseau {
      * Méthode utilisé pour les test, fait office de serveur
      * @param args
      */
-//    public static void main(String[] args) {
-//        try {
-//            recevoir(8064);
-//        } catch (IOException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//    }
+    public static void main(String[] args) {
+        try {
+            recevoir(8064, "Z:\\SAE\\WorkspaceEclipseSae\\GestionNotes\\csv\\fichierRecu.csv");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
     
     /** 
      * Méthode d'envoie d'un fichier
@@ -179,16 +179,16 @@ public class Reseau {
             /* Commentaires = affichage des caractères de diverses informations 
              * nécessaire a la vérification de la validité du cryptage 
              */
-//            System.out.print("Donnees = " + donnees[i] + " code = "     
-//                    + dictionnaireCryptage.get((char)donnees[i]) + " cle = " 
-//                    + cle.charAt(i%cle.length()) + " code "                  
-//                    + dictionnaireCryptage.get(cle.charAt(i%cle.length())));
+            System.out.print("Donnees = " + donnees[i] + " code = "     
+                    + dictionnaireCryptage.get((char)donnees[i]) + " cle = " 
+                    + cle.charAt(i%cle.length()) + " code "                  
+                    + dictionnaireCryptage.get(cle.charAt(i%cle.length())));
             /* Chiffrement */
             caractere = (byte) ((dictionnaireCryptage.get((char)donnees[i]) 
                     + dictionnaireCryptage.get(cle.charAt(i%cle.length())))
                     % dictionnaireCryptage.size());
             
-//            System.out.println(" cryptage = " + toCaractere(caractere));
+            System.out.println(" cryptage = " + toCaractere(caractere));
           
             donnees[i] = (byte)toCaractere(caractere);
         }
@@ -449,9 +449,12 @@ public class Reseau {
         dictionnaireCryptage.put((char)10, 80); // Chiffrage du saut de ligne
         dictionnaireCryptage.put((char)13, 81); // Chiffrage du retour chariot
         
-        dictionnaireCryptage.put((char)-65, 82); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier
-        dictionnaireCryptage.put((char)-17, 83); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier
-        dictionnaireCryptage.put((char)-69, 84); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier
+        dictionnaireCryptage.put((char)-65, 82); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
+        dictionnaireCryptage.put((char)-17, 83); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
+        dictionnaireCryptage.put((char)-69, 84); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
+        dictionnaireCryptage.put((char)-23, 85); // Chiffrage des caractères accentués dans un autre encodage 
+        dictionnaireCryptage.put((char)-67, 86); // Chiffrage du é dans un autre encodage 
+        dictionnaireCryptage.put((char)-12, 87); // Chiffrage du ô dans un autre encodage 
     }
     
     /** 

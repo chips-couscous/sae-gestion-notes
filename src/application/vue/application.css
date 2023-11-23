@@ -108,3 +108,6 @@
 	-fx-border-width: 2px; 
 	-fx-border-radius: 2px;
  }
+ .combo-box .list-cell:selected {
+    -fx-text-fill: #E6E9F0; /* Couleur du texte */
+}

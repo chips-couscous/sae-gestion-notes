@@ -33,6 +33,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -41,6 +43,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
@@ -93,6 +96,14 @@ public class Controlleur {
 	@FXML
 	Button boutonAide;
 	@FXML
+	ComboBox<String> ressourcesCombo;
+	@FXML
+	ComboBox<String> controleCombo;
+	@FXML
+	Label controle;
+	@FXML
+	Label etoile;
+	@FXML
 	Button boutonSauvegarder;
 	String prenomEtu;
 
@@ -108,7 +119,7 @@ public class Controlleur {
 
 
 	private GestionNotes gn = GestionNotes.getInstance();
-	
+
 
 	final String MESSAGE_AIDE = "Aide";
 	final String MESSAGE_SAUVEGARDE = "Sauvegarder";
@@ -116,13 +127,17 @@ public class Controlleur {
 	final String MESSAGE_AJOUT_CONTROLE = "Ajouter un contrôle";
 	final String MESSAGE_SUPPRIMER_NOTE = "Supprimer une note";
 	final String MESSAGE_MODIFIER_NOTE = "Modifier une note";
-	
+
 
 	/**
 	 * Méthode permmettant de lancer d'autres méthodes ou des attributs
 	 * directement au lancement de l'application
 	 */
 	public void initialize() {
+		if (ressourcesCombo != null) {
+			ajoutRessourcesCombo();
+			choixComboRessources(ressourcesCombo);
+		}
 		if (boutonSauvegarder != null) {
 			boutonSauvegarder.setOnAction(event -> sauvegarder());
 			//Récupération d'image pour nos boutons
@@ -186,28 +201,67 @@ public class Controlleur {
 		if (labelNomEtudiant != null) {
 			afficherNom(); // Affichage du nom
 		}
-		// Vérification de la présence des éléments fxml
-		if (note != null && commentaire != null && denominateur != null) {
-			// Appliquer un format de saisie spécifique aux TextField
-			note.setTextFormatter(pattern("^1000$|^\\d{1,3}(\\.\\d{0,2})?$"));
+	}
 
-			denominateur.setTextFormatter(pattern("^1000$|^\\d{1,3}?$"));
-			commentaire.setWrapText(true);
-			commentaire.textProperty().addListener((observable, ancienneValeur, nouvelleValeur) -> {
-				// Vérifier si la longueur du texte dépasse la limite
-				if (nouvelleValeur.length() > LONGUEUR_MAX_LIGNE) {
-					int dernierEspace = nouvelleValeur.lastIndexOf(" ", LONGUEUR_MAX_LIGNE);
-					if (dernierEspace > 0 && dernierEspace == LONGUEUR_MAX_LIGNE) {
-						commentaire.replaceText(dernierEspace, dernierEspace + 1, "\n"); // Insérer un retour à la ligne après le dernier espace avant la limite
-					}
+	private void affichageModifAjoutNote(TextField note, TextField denominateur, TextArea commentaire) {
+		// Appliquer un format de saisie spécifique aux TextField
+		note.setTextFormatter(pattern("^1000$|^\\d{1,3}(\\.\\d{0,2})?$"));
+		denominateur.setTextFormatter(pattern("^1000$|^\\d{1,3}?$"));
+		commentaire.setWrapText(true);
+		commentaire.textProperty().addListener((observable, ancienneValeur, nouvelleValeur) -> {
+			// Vérifier si la longueur du texte dépasse la limite
+			if (nouvelleValeur.length() > LONGUEUR_MAX_LIGNE) {
+				int dernierEspace = nouvelleValeur.lastIndexOf(" ", LONGUEUR_MAX_LIGNE);
+				if (dernierEspace > 0 && dernierEspace == LONGUEUR_MAX_LIGNE) {
+					commentaire.replaceText(dernierEspace, dernierEspace + 1, "\n"); // Insérer un retour à la ligne après le dernier espace avant la limite
 				}
-				if (nouvelleValeur.length() > LONGUEUR_MAX) {
-					commentaire.setText(ancienneValeur); // Revenir à la valeur précédente si la limite est dépassée
-				}
-			});
+			}
+			if (nouvelleValeur.length() > LONGUEUR_MAX) {
+				commentaire.setText(ancienneValeur); // Revenir à la valeur précédente si la limite est dépassée
+			}
+		});
+	}
+
+	private void ajoutRessourcesCombo() {
+		ressourcesCombo.getItems().clear();
+		List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
+		for (Enseignement enseignement : listeEnseignement) {
+			ressourcesCombo.getItems().add(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
 		}
 	}
-	
+
+	private void choixComboRessources(ComboBox<String> combo) {
+		combo.valueProperty().addListener((observable, oldValue, newValue) -> {
+			String choix = combo.getValue().substring(0,5);
+			if (!gn.estUneRessource(gn.trouverEnseignement(choix))) {
+				controleCombo.setVisible(false);
+				etoile.setVisible(false);
+				controle.setVisible(false);
+			} else {
+				controleCombo.setVisible(true);
+				etoile.setVisible(true);
+				controle.setVisible(true);
+				ajoutComboControle(controleCombo, choix);
+			}
+		});
+	}
+
+	/*
+	 * 
+	 */
+	private void ajoutComboControle(ComboBox<String> combo, String ressources) {
+		combo.getItems().clear();
+		Enseignement enseignement = gn.trouverEnseignement(ressources);
+		Ressource ressource = (Ressource) enseignement;
+		List<Controle> listeControles = ressource.getControlesRessource();
+		for (Controle controle: listeControles) {
+			// TODO changer l'affichage dans la comboBox avec les 2 derniers chiffres de l'identifiant, le type et la date
+			String affichageComboControle = controle.getIndentifiantControle().substring(controle.getIndentifiantControle().length() - 2);
+			affichageComboControle += " " + controle.getTypeControle() + " " + controle.getDateControle();
+			combo.getItems().add(affichageComboControle);
+		}
+	}
+
 	private void sauvegarder() {
 		try {
 			gn.serializerDonnees();
@@ -215,9 +269,9 @@ public class Controlleur {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void afficherAide() {
-		
+
 	}
 
 	private void ajouterCompetence(List<Competence> listeCompetences, Scene scene) {
@@ -363,13 +417,12 @@ public class Controlleur {
 					labelPoids.getStyleClass().add("labelPoids");
 					labelRessources.getStyleClass().add("labelRessources");
 				}
-				*/
+				 */
 				afficherControle(scene, paneEnseignement, enseignement);
-				});
+			});
 			indiceEnseignement++;
 		}
 	}
-
 	/**
 	 * 
 	 */
@@ -379,7 +432,6 @@ public class Controlleur {
 			Ressource ressource = (Ressource) enseignement;
 			Integer rowIndex = GridPane.getRowIndex(enseignementSelectionne);
 			if (enseignementSelectionne.getId()=="Non Cliquée") {
-				System.out.println("Ici");
 				for (Node node : grilleEnseignement.getChildren()) {
 					Integer row = GridPane.getRowIndex(node);
 					if (row != null && row > rowIndex) {
@@ -417,26 +469,26 @@ public class Controlleur {
 					indiceControle++;
 				}
 			}else {
-					enseignementSelectionne.setId("Non Cliquée");
-					for (int indiceControle = 1;indiceControle <= ressource.getControlesRessource().size();indiceControle++) {
-						int indice = indiceControle;
-						grilleEnseignement.getChildren().removeIf(node ->
-						GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node).equals(rowIndex + indice));
-					}
-					for (Node node : grilleEnseignement.getChildren()) {
-						Integer row = GridPane.getRowIndex(node);
-						if (row != null && row > rowIndex+1) {
-							GridPane.setRowIndex(node, row - ressource.getControlesRessource().size());
-						}
-						indiceEnseignement--;
-					}
+				enseignementSelectionne.setId("Non Cliquée");
+				for (int indiceControle = 1;indiceControle <= ressource.getControlesRessource().size();indiceControle++) {
+					int indice = indiceControle;
+					grilleEnseignement.getChildren().removeIf(node ->
+					GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node).equals(rowIndex + indice));
 				}
-			}else if (gn.estUneSae(enseignement)) {
-				System.out.println("Sae");
-			}else if (gn.estUnPortfolio(enseignement)) {
-				System.out.println("Port");
+				for (Node node : grilleEnseignement.getChildren()) {
+					Integer row = GridPane.getRowIndex(node);
+					if (row != null && row > rowIndex+1) {
+						GridPane.setRowIndex(node, row - ressource.getControlesRessource().size());
+					}
+					indiceEnseignement--;
+				}
 			}
+		}else if (gn.estUneSae(enseignement)) {
+			System.out.println("Sae");
+		}else if (gn.estUnPortfolio(enseignement)) {
+			System.out.println("Port");
 		}
+	}
 
 
 
@@ -450,14 +502,26 @@ public class Controlleur {
 	 * @param denominateur de la note
 	 * @param index est l'index de la ligne à laquelle on ajoute la note
 	 */
-	private void ajouterNote(String note, String commentaire, String denominateur, int index) {
-
+	private void ajouterNote(String note, String commentaire, String denominateur, String ressource, String controle, int index) {
+		String afichageControle = controle.substring(2);
+		/*
+			String identifiantRessource = ressource.substring(0, 5);
+			Enseignement enseignement = gn.trouverEnseignement(identifiantRessource);
+			Ressource laRessource = (Ressource) enseignement;
+			List<Controle> listeControles = laRessource.getControlesRessource();
+			for (Controle leControle : listeControles) {
+				if (leControle.getIndentifiantControle() == null) {
+					String lePoids = leControle.getPoidsControle() + "";
+				}
+			}
+		 */
+		//TODO A FINIR JE DOIS AFFICHER LE POIDS JE CROIS JE MY PREND MAL A REVOIR DEMAIN JEN PEUX PLUS LA MAIS SINON LE RESTE MARCHE WOLA
 		//Création des Label que l'on va afficher dans notre page
 		Pane ligneNote = new Pane();
 		Label labelNote = new Label(note+ " / " + denominateur);
-		Label labelType = new Label("Type");
+		Label labelType = new Label(afichageControle);
 		Label labelPoids = new Label("Poids");
-		Label labelRessources = new Label("Ressource");
+		Label labelRessources = new Label(ressource);
 
 
 		//Récupération d'image pour nos boutons
@@ -755,12 +819,15 @@ public class Controlleur {
 			Button boutonValider = (Button) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(4)).getChildren().get(0));
 			TextField note = (TextField)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(0);
 			TextArea commentaire = (TextArea)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(3)).getChildren().get(0);
-			//TextField date = (TextField) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(4)).getChildren().get(0));
+			ComboBox<String> ressource = (ComboBox<String>) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(2)).getChildren().get(0));
+			ComboBox<String> controle = (ComboBox<String>) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(5)).getChildren().get(0));
 			TextField denominateur = (TextField)(((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(2));
+			affichageModifAjoutNote(note, denominateur, commentaire);
 
 			boutonValider.setOnAction(e -> {
-				if (!note.getText().isEmpty() && !denominateur.getText().isEmpty() && Double.parseDouble(note.getText()) <= Double.parseDouble(denominateur.getText())) {
-					ajouterNote(note.getText(), commentaire.getText(), denominateur.getText(), indice);
+				if (!note.getText().isEmpty() && !denominateur.getText().isEmpty() && Double.parseDouble(note.getText()) <= Double.parseDouble(denominateur.getText())
+						&& ressource.getValue()!= null && controle.getValue() != null) {
+					ajouterNote(note.getText(), commentaire.getText(), denominateur.getText(), ressource.getValue(), controle.getValue(), indice);
 					popupStage.close();
 				}
 			});
@@ -798,7 +865,8 @@ public class Controlleur {
 			Button boutonValider = (Button) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(4)).getChildren().get(0));
 			TextField recupNote = (TextField)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(0);
 			TextArea recupCommentaire = (TextArea)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(3)).getChildren().get(0);
-			//TextField recupDate = (TextField) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(4)).getChildren().get(0));
+			ComboBox<String> ressource = (ComboBox<String>) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(2)).getChildren().get(0));
+			ComboBox<String> controle = (ComboBox<String>) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(5)).getChildren().get(0));
 			TextField recupDenominateur = (TextField)(((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(2));
 			//On affiche dans les TextField les informations déja saisies par l'utilisateur
 			recupNote.setText(note);
@@ -816,7 +884,7 @@ public class Controlleur {
 					//String nouvelleDate = recupDate.getText();
 					String nouveauDenominateur = recupDenominateur.getText();
 					// Modifier les informations dans la GridPane
-					modifierNote(gridPane, boutonModifier, nouvelleNote, nouveauCommentaire, nouveauDenominateur);
+					modifierNote(gridPane, boutonModifier, nouvelleNote, nouveauCommentaire, nouveauDenominateur, ressource.getValue(), controle.getValue());
 					// Fermeture du popUp
 					popupStage.close();
 				}
@@ -940,14 +1008,13 @@ public class Controlleur {
 	 * @param date est la nouvelle date à afficher 
 	 * @param denominateur est le nouveau dénominateur à afficher
 	 */
-	private void modifierNote(GridPane gridPane, Button boutonModifier, String note, String commentaire, String denominateur) {
+	private void modifierNote(GridPane gridPane, Button boutonModifier, String note, String commentaire, String denominateur, String ressource, String controle) {
 		/* Récupération de l'index de la ligne du bouton cliqué */
 		Integer rowIndex = GridPane.getRowIndex(boutonModifier);
 		/* Supression de la note mais pas suppression de la ligne */
 		supprimerNote(gridPane, boutonModifier, false);
 		/* Ajout d'une note à la place de l'ancienne */
-		System.out.println(note + "\n" + commentaire + "\n" + denominateur + "\n" + rowIndex);
-		ajouterNote(note, commentaire, denominateur, rowIndex);
+		ajouterNote(note, commentaire, denominateur, ressource, controle, rowIndex);
 	}
 
 	/**
@@ -975,7 +1042,7 @@ public class Controlleur {
 			TextField denominateur = (TextField)(((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(2));
 			boutonValider.setOnAction(e -> {
 				if (!note.getText().isEmpty() && !denominateur.getText().isEmpty() && Double.parseDouble(note.getText()) <= Double.parseDouble(denominateur.getText())) {
-					ajouterNote(note.getText(), commentaire.getText(), denominateur.getText(), indice);
+					//ajouterNote(note.getText(), commentaire.getText(), denominateur.getText(), indice);
 					popupStage.close();
 				}
 			});

@@ -257,7 +257,7 @@ public class GestionNotes {
 			}
 		}
 
-		System.out.println(semestreGestionNotes.toString());
+		//System.out.println(semestreGestionNotes.toString());
 	}
 
 	/**

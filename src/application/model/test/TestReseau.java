@@ -71,7 +71,7 @@ public class TestReseau {
 //        testEstPremier();
 //        testEstGenerateur();
         try {
-            Reseau.envoyer("127.0.0.1", 8064, "csv/ParametresSemestre(AImporter).csv");
+            Reseau.envoyer("127.0.0.1", 8064, "csv/ParametresRessource(AImporter).csv");
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

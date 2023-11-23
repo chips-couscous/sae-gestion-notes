@@ -32,6 +32,7 @@ import application.model.exception.ExtensionFichierException;
 import application.model.exception.IpException;
 import application.model.exception.PortReseauException;
 import application.model.exception.SemestreInvalideExecption;
+import application.model.exception.UtilisateurInvalideException;
 import application.model.exception.cheminFichierException;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -308,7 +309,7 @@ public class Controlleur {
     private void recevoirFichier() {
         int port;
         String cheminReceptionFichier = cheminDossierReception.getText();
-        Alert alertEnvoi = new Alert(AlertType.INFORMATION);
+        Alert alertReception = new Alert(AlertType.INFORMATION);
 
         if (!saisiePortServeur.getText().equals("")) {
             port = Integer.parseInt(saisiePortServeur.getText());
@@ -319,30 +320,30 @@ public class Controlleur {
             cheminReceptionFichier = cheminReceptionFichier.substring(10);
         }
         try {
-            alertEnvoi.setTitle("Réception de fichier");
-            alertEnvoi.setHeaderText("Attente de connexion ...");
-            alertEnvoi.show();
+            alertReception.setTitle("Réception de fichier");
+            alertReception.setHeaderText("Attente de connexion ...");
+            alertReception.show();
             gn.recevoirFichier(port,cheminReceptionFichier);
-            alertEnvoi.close();
+            alertReception.close();
             /* Affichage d'un popup pour informer du succès de la reception */
             Alert alertRecu = new Alert(AlertType.INFORMATION);
             alertRecu.setTitle("Fichier reçu");
             alertRecu.setHeaderText("Chemin : " + cheminReceptionFichier);
             alertRecu.showAndWait(); 
         } catch (PortReseauException e) {
-            alertEnvoi.close();
+            alertReception.close();
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Reception impossible");
             alert.setHeaderText(e.getMessage());
             alert.showAndWait(); 
         } catch (IOException e) {
-            alertEnvoi.close();
+            alertReception.close();
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Reception impossible");
             alert.setHeaderText(e.getMessage());
             alert.showAndWait(); 
         } catch (cheminFichierException e) {
-            alertEnvoi.close();
+            alertReception.close();
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Reception impossible");
             alert.setHeaderText(e.getMessage());
@@ -797,8 +798,20 @@ public class Controlleur {
      * @param prenom est le nouveau Prenom
      */
     public void modifierNom(TextField nom, TextField prenom) {
-        gn.setUtilisateurGestionNotes(nom.getText(), prenom.getText());
-        afficherNom();
+        String nomPrenomUtilisateurActuel = gn.getUtilisateurGestionNotes();
+        try {
+            gn.setUtilisateurGestionNotes(nom.getText(), prenom.getText());
+            Alert validerUtilisateur = new Alert(AlertType.INFORMATION);
+            validerUtilisateur.setTitle("Changement utilisateur");
+            validerUtilisateur.setHeaderText("L'utilisateur a bien été changé");
+            afficherNom();
+            validerUtilisateur.showAndWait();
+        } catch (UtilisateurInvalideException e) {
+           Alert erreurNomPrenom = new Alert(AlertType.ERROR);
+           erreurNomPrenom.setTitle("Utilisateur invalide");
+           erreurNomPrenom.setHeaderText(e.getMessage());
+           erreurNomPrenom.showAndWait();
+        }
     }
 
 

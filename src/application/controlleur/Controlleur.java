@@ -41,6 +41,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
@@ -94,6 +95,9 @@ public class Controlleur {
 	Button boutonAide;
 	@FXML
 	Button boutonSauvegarder;
+	@FXML
+	ComboBox comboRessourcesControle;
+	
 	String prenomEtu;
 
 	String nomEtu;
@@ -157,11 +161,10 @@ public class Controlleur {
 			boutonAide.setText(""); // Désactive le texte du bouton
 			boutonAide.getStyleClass().add("boutonSauvegarderAide");
 		}
-
-
-
-
-
+		if (comboRessourcesControle != null) {
+			ajoutRessourcesComboControle();
+			//choixComboRessourcesControle(comboRessourcesControle);
+		}
 		if (boutonAjouterNote != null) {
 			afficherMessageSurvol(boutonAjouterNote, MESSAGE_AJOUT_NOTE);
 		}
@@ -304,10 +307,12 @@ public class Controlleur {
 			grilleEnseignement.getRowConstraints().addAll(tailleEnseignement);
 			Pane paneEnseignement = new Pane();
 			paneEnseignement.setPrefSize(640, 40);
+			paneEnseignement.setMinSize(640, 40);
+			paneEnseignement.setMaxSize(640, 40);
 			GridPane.setColumnSpan(paneEnseignement, 4);
 			paneEnseignement.getStyleClass().add("paneCompetence");
+			paneEnseignement.setId("Non Cliquée");
 			Label labelEnseignement = new Label(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
-			paneEnseignement.setPrefSize(630, 40);
 			labelEnseignement.getStyleClass().add("labelCompetence");
 			labelEnseignement.setPadding(new Insets(0, 5, 0, 5));
 			paneEnseignement.getChildren().add(labelEnseignement);
@@ -337,11 +342,11 @@ public class Controlleur {
 			Pane paneEnseignement = new Pane();
 			paneEnseignement.setPrefSize(640, 40);
 			paneEnseignement.setMinSize(640, 40);
+			paneEnseignement.setMaxSize(640, 40);
 			GridPane.setColumnSpan(paneEnseignement, 4);
 			paneEnseignement.getStyleClass().add("paneEnseignement");
 			paneEnseignement.setId("Non Cliquée");
 			Label labelEnseignement = new Label(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
-			paneEnseignement.setPrefSize(630, 40);
 			labelEnseignement.getStyleClass().add("labelCompetence");
 			labelEnseignement.setPadding(new Insets(0, 5, 0, 5));
 			paneEnseignement.getChildren().add(labelEnseignement);
@@ -374,69 +379,99 @@ public class Controlleur {
 	 * 
 	 */
 	private void afficherControle(Scene scene, Pane enseignementSelectionne, Enseignement enseignement) {
-		GridPane grilleEnseignement = ((GridPane)((ScrollPane) ((Pane) ((BorderPane) scene.getRoot()).getChildren().get(1)).getChildren().get(0)).getContent());
-		if (gn.estUneRessource(enseignement)) {
-			Ressource ressource = (Ressource) enseignement;
-			Integer rowIndex = GridPane.getRowIndex(enseignementSelectionne);
-			if (enseignementSelectionne.getId()=="Non Cliquée") {
-				System.out.println("Ici");
-				for (Node node : grilleEnseignement.getChildren()) {
-					Integer row = GridPane.getRowIndex(node);
-					if (row != null && row > rowIndex) {
-						GridPane.setRowIndex(node, row + ressource.getControlesRessource().size());
-					}
-				}
-				int indiceControle = 1;
-				for (Controle controle : ressource.getControlesRessource()) {
-					enseignementSelectionne.setId("Cliquée");
-					Pane paneControle = new Pane();
-					GridPane.setColumnSpan(paneControle, 4);
-					Label labelType = new Label(controle.getTypeControle());
-					Label labelPoids = new Label("" + controle.getPoidsControle());
-					Label labelDate = new Label(controle.getDateControle());
-					paneControle.getChildren().add(labelType);
-					paneControle.getChildren().add(labelPoids);
-					paneControle.getChildren().add(labelDate);
-					paneControle.getStyleClass().add("paneControle");
-					paneControle.setPrefSize(640, 40);
-					paneControle.setMinSize(640, 40);
-					labelType.setLayoutX(0);
-					labelPoids.setLayoutX(130);
-					labelDate.setLayoutX(260);
-					labelType.getStyleClass().add("labelCompetence");
-					labelPoids.getStyleClass().add("labelCompetence");
-					labelDate.getStyleClass().add("labelCompetence");
-					labelType.setAlignment(Pos.CENTER);
-					labelPoids.setAlignment(Pos.CENTER);
-					labelDate.setAlignment(Pos.CENTER);
-					GridPane.setHalignment(labelType, javafx.geometry.HPos.CENTER);
-					GridPane.setHalignment(labelPoids, javafx.geometry.HPos.CENTER);
-					GridPane.setHalignment(labelDate, javafx.geometry.HPos.CENTER);
-					GridPane.setMargin(paneControle, new Insets(-10, 0, 0, 0));
-					grilleEnseignement.add(paneControle, 0, rowIndex + indiceControle);
-					indiceControle++;
-				}
-			}else {
-					enseignementSelectionne.setId("Non Cliquée");
-					for (int indiceControle = 1;indiceControle <= ressource.getControlesRessource().size();indiceControle++) {
-						int indice = indiceControle;
-						grilleEnseignement.getChildren().removeIf(node ->
-						GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node).equals(rowIndex + indice));
-					}
-					for (Node node : grilleEnseignement.getChildren()) {
-						Integer row = GridPane.getRowIndex(node);
-						if (row != null && row > rowIndex+1) {
-							GridPane.setRowIndex(node, row - ressource.getControlesRessource().size());
-						}
-						indiceEnseignement--;
-					}
-				}
-			}else if (gn.estUneSae(enseignement)) {
-				System.out.println("Sae");
-			}else if (gn.estUnPortfolio(enseignement)) {
-				System.out.println("Port");
-			}
-		}
+	    GridPane grilleEnseignement = ((GridPane)((ScrollPane)((Pane)((BorderPane) scene.getRoot()).getChildren().get(1)).getChildren().get(0)).getContent());
+	    if (gn.estUneRessource(enseignement)) {
+	        Ressource ressource = (Ressource) enseignement;
+	        Integer rowIndex = GridPane.getRowIndex(enseignementSelectionne);
+	        if ("Non Cliquée".equals(enseignementSelectionne.getId())) {
+	            for (Node node : grilleEnseignement.getChildren()) {
+	                Integer row = GridPane.getRowIndex(node);
+	                if (row != null && row > rowIndex) {
+	                    GridPane.setRowIndex(node, row + ressource.getControlesRessource().size() + 1);
+	                }
+	            }
+	            int indiceControle = 1;
+	            Pane paneInformations = new Pane();
+                GridPane.setColumnSpan(paneInformations, 4);
+                Label labelTypeInfo = new Label("Type");
+                Label labelPoidsInfo = new Label("Poids");
+                Label labelDateInfo = new Label("Date");
+                paneInformations.getChildren().add(labelTypeInfo);
+                paneInformations.getChildren().add(labelPoidsInfo);
+                paneInformations.getChildren().add(labelDateInfo);
+                paneInformations.getStyleClass().add("paneInformations");
+                paneInformations.setPrefSize(600, 40);
+                paneInformations.setMinSize(600, 40);
+                paneInformations.setMaxSize(600, 40);
+                paneInformations.setTranslateX(40);
+                labelTypeInfo.setLayoutX(0);
+                labelPoidsInfo.setLayoutX(130);
+                labelDateInfo.setLayoutX(260);
+                labelTypeInfo.getStyleClass().add("labelCompetence");
+                labelPoidsInfo.getStyleClass().add("labelCompetence");
+                labelDateInfo.getStyleClass().add("labelCompetence");
+                labelTypeInfo.setAlignment(Pos.CENTER);
+                labelPoidsInfo.setAlignment(Pos.CENTER);
+                labelDateInfo.setAlignment(Pos.CENTER);
+                GridPane.setHalignment(labelTypeInfo, javafx.geometry.HPos.CENTER);
+                GridPane.setHalignment(labelPoidsInfo, javafx.geometry.HPos.CENTER);
+                GridPane.setHalignment(labelDateInfo, javafx.geometry.HPos.CENTER);
+                GridPane.setMargin(paneInformations, new Insets(-10, 0, 0, 0));
+                grilleEnseignement.add(paneInformations, 0, rowIndex + indiceControle);
+                indiceControle++;
+	            for (Controle controle : ressource.getControlesRessource()) {
+	                enseignementSelectionne.setId("Cliquée");
+	                Pane paneControle = new Pane();
+	                GridPane.setColumnSpan(paneControle, 4);
+	                Label labelType = new Label(controle.getTypeControle());
+	                Label labelPoids = new Label("" + controle.getPoidsControle());
+	                Label labelDate = new Label(controle.getDateControle());
+	                paneControle.getChildren().add(labelType);
+	                paneControle.getChildren().add(labelPoids);
+	                paneControle.getChildren().add(labelDate);
+	                paneControle.getStyleClass().add("paneControle");
+	                paneControle.setPrefSize(600, 40);
+	                paneControle.setMinSize(600, 40);
+	                paneControle.setMaxSize(600, 40);
+	                paneControle.setTranslateX(40);
+	                labelType.setLayoutX(0);
+	                labelPoids.setLayoutX(130);
+	                labelDate.setLayoutX(260);
+	                labelType.getStyleClass().add("labelCompetence");
+	                labelPoids.getStyleClass().add("labelCompetence");
+	                labelDate.getStyleClass().add("labelCompetence");
+	                labelType.setAlignment(Pos.CENTER);
+	                labelPoids.setAlignment(Pos.CENTER);
+	                labelDate.setAlignment(Pos.CENTER);
+	                GridPane.setHalignment(labelType, javafx.geometry.HPos.CENTER);
+	                GridPane.setHalignment(labelPoids, javafx.geometry.HPos.CENTER);
+	                GridPane.setHalignment(labelDate, javafx.geometry.HPos.CENTER);
+	                //GridPane.setMargin(paneControle, new Insets(-10, 0, 0, 0));
+	                grilleEnseignement.add(paneControle, 0, rowIndex + indiceControle);
+	                indiceControle++;
+	            }
+	        } else {
+	            enseignementSelectionne.setId("Non Cliquée");
+	            for (int indiceControle = 1; indiceControle <= ressource.getControlesRessource().size() + 1; indiceControle++) {
+	                int indice = indiceControle;
+	                grilleEnseignement.getChildren().removeIf(node ->
+	                        GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node).equals(rowIndex + indice));
+	                indiceEnseignement--;
+	            }
+	            for (Node node : grilleEnseignement.getChildren()) {
+	                Integer row = GridPane.getRowIndex(node);
+	                if (row != null && row > rowIndex + 1) {
+	                    GridPane.setRowIndex(node, row - ressource.getControlesRessource().size() - 1);
+	                }
+	            }
+	        }
+	    } else if (gn.estUneSae(enseignement)) {
+	        System.out.println("Sae");
+	    } else if (gn.estUnPortfolio(enseignement)) {
+	        System.out.println("Port");
+	    }
+	}
+
 
 
 
@@ -946,7 +981,6 @@ public class Controlleur {
 		/* Supression de la note mais pas suppression de la ligne */
 		supprimerNote(gridPane, boutonModifier, false);
 		/* Ajout d'une note à la place de l'ancienne */
-		System.out.println(note + "\n" + commentaire + "\n" + denominateur + "\n" + rowIndex);
 		ajouterNote(note, commentaire, denominateur, rowIndex);
 	}
 
@@ -969,13 +1003,17 @@ public class Controlleur {
 			popupStage.setScene(popupScene);
 			/* Récupération des éléments FXML que l'on veut  */
 			Button boutonValider = (Button) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(4)).getChildren().get(0));
-			TextField note = (TextField)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(0);
-			TextArea commentaire = (TextArea)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(3)).getChildren().get(0);
-			//TextField date = (TextField) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(4)).getChildren().get(0));
-			TextField denominateur = (TextField)(((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(2));
+			TextField type = (TextField)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(2)).getChildren().get(0);
+			TextField poids = (TextField)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(5)).getChildren().get(2);
+			TextField date = (TextField)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(3)).getChildren().get(1);
+			ComboBox ressourceCombo = (ComboBox)(((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(0));
+			String[] choixCombo = new String[1];
+			ressourceCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+				choixCombo[0] = ((String) ressourceCombo.getValue()).substring(0, 5);
+		    });
 			boutonValider.setOnAction(e -> {
-				if (!note.getText().isEmpty() && !denominateur.getText().isEmpty() && Double.parseDouble(note.getText()) <= Double.parseDouble(denominateur.getText())) {
-					ajouterNote(note.getText(), commentaire.getText(), denominateur.getText(), indice);
+				if (!type.getText().isEmpty() && !poids.getText().isEmpty()) {
+					ajouterControle(type.getText(), poids.getText(), date.getText(),choixCombo[0]);
 					popupStage.close();
 				}
 			});
@@ -986,6 +1024,35 @@ public class Controlleur {
 		}
 	}
 
+	private void ajouterControle(String type, String poids, String date, String ressource) {
+		int valeurPoids = Integer.parseInt(poids);
+		try {
+			gn.ajouterControleAEnseignement(ressource, type, date, valeurPoids);
+			System.out.println(((Ressource) gn.trouverEnseignement(ressource)).getControlesRessource());
+		} catch (ControleInvalideException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void ajoutRessourcesComboControle() {
+		comboRessourcesControle.getItems().clear();
+		List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
+		for (Enseignement enseignement : listeEnseignement) {
+			comboRessourcesControle.getItems().add(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
+		}
+	}
+	/*
+	private String choixComboRessourcesControle(ComboBox<String> combo) {
+		String[] choixCombo = new String[1];
+	    combo.valueProperty().addListener((observable, oldValue, newValue) -> {
+	        choixCombo[0] = combo.getValue().substring(0, 5);
+	        System.out.println("Combo : " + combo.getValue());
+	    });
+	    System.out.println(choixCombo[0]);
+	    return choixCombo[0];
+	}
+	*/
 
 
 	/**
@@ -1096,7 +1163,6 @@ public class Controlleur {
 
 			if (boutonClique == boutonImporterFichierProgramme) {
 				try {
-					System.out.println("J'importe semestre");
 					gn.importerParametrageSemestre(nomFichier);
 				} catch (ExtensionFichierException | SemestreInvalideExecption | CompetenceInvalideException
 						| EnseignementInvalideException e) {
@@ -1107,7 +1173,6 @@ public class Controlleur {
 			} else if (boutonClique == boutonImporterFichierRessource) {
 				try {
 					gn.importerParametrageEnseignement(nomFichier);
-					System.out.println("J'importe ressources");
 				} catch (ExtensionFichierException | ControleInvalideException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

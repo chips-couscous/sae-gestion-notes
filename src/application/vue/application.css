@@ -104,6 +104,13 @@
  
  .paneControle {
 	-fx-background-color: #E6E9F0; 
+	-fx-border-color: #8E9ABB;
+	-fx-border-width: 2px; 
+	-fx-border-radius: 2px;
+ }
+ 
+ .paneInformations {
+	-fx-background-color: #EDEFF2; 
 	-fx-border-color: #354B85;
 	-fx-border-width: 2px; 
 	-fx-border-radius: 2px;

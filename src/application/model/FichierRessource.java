@@ -87,6 +87,7 @@ public class FichierRessource extends FichierCsv implements Serializable {
         
         ressourcesControles.put(ressourceADecomposer, controles);
         
+        System.out.println(ressourcesControles.toString());
         return ligneControle;
     }
 }

@@ -50,6 +50,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
@@ -187,11 +188,7 @@ public class Controlleur {
             boutonAide.setText(""); // Désactive le texte du bouton
             boutonAide.getStyleClass().add("boutonSauvegarderAide");
         }
-
-
-
-
-
+        
         if (boutonAjouterNote != null) {
             afficherMessageSurvol(boutonAjouterNote, MESSAGE_AJOUT_NOTE);
         }
@@ -207,6 +204,7 @@ public class Controlleur {
         if (boutonImporterFichierProgramme != null && boutonImporterFichierRessource != null) {
 
             boutonImporterFichierProgramme.setOnAction(event -> selectionnerFichier(boutonImporterFichierProgramme));
+            boutonImporterFichierRessource.setOnAction(event -> selectionnerFichier(boutonImporterFichierRessource));
         } 
 
         // Vérification de la présence des éléments fxml
@@ -249,17 +247,41 @@ public class Controlleur {
             afficherIP();
         }
     }
-
+    
+    /**
+     * Appelé par le bouton sauvegarder
+     * Demande la confirmation de la sauvegarde
+     * Si réponse affirmative, appel la méthode de sauvegarde de GestionNote
+     */
     private void sauvegarder() {
         try {
-            gn.serializerDonnees();
+            Alert verifSauvegarde = new Alert(AlertType.CONFIRMATION);
+            verifSauvegarde.setTitle("Sauvegarde");
+            verifSauvegarde.setHeaderText("Cette sauvegarde va écraser les anciennes données sauvegardés");
+            verifSauvegarde.setContentText("Voulez-vous vraiment sauvegarder ? ");
+            verifSauvegarde.getButtonTypes().setAll(ButtonType.YES,ButtonType.CANCEL);
+            verifSauvegarde.showAndWait();
+            if (verifSauvegarde.getResult() == ButtonType.YES) {
+                gn.serializerDonnees();
+                Alert sauvegardeReussi = new Alert(AlertType.INFORMATION);
+                sauvegardeReussi.setTitle("Sauvegarde réussi");
+                sauvegardeReussi.setHeaderText("Les modifications ont bien été sauvegardés");
+                sauvegardeReussi.showAndWait();
+            }
         } catch (IOException e) {
+            Alert erreurSauvegarde = new Alert(AlertType.ERROR);
+            erreurSauvegarde.setTitle("Sauvegarde impossible");
+            erreurSauvegarde.setHeaderText(e.getMessage());
+            erreurSauvegarde.showAndWait();
             e.printStackTrace();
         }
     }
 
     private void afficherAide() {
-
+        Alert boiteAide = new Alert(AlertType.INFORMATION);
+        boiteAide.setTitle("Aide");
+        boiteAide.setHeaderText("Les aides sont affichés");
+        boiteAide.showAndWait();
     }
 
     /** 
@@ -328,7 +350,8 @@ public class Controlleur {
             /* Affichage d'un popup pour informer du succès de la reception */
             Alert alertRecu = new Alert(AlertType.INFORMATION);
             alertRecu.setTitle("Fichier reçu");
-            alertRecu.setHeaderText("Chemin : " + cheminReceptionFichier);
+            alertRecu.setHeaderText("Fichier reçu avec succés");
+            alertRecu.setContentText("Chemin : " + cheminReceptionFichier);
             alertRecu.showAndWait(); 
         } catch (PortReseauException | IOException | cheminFichierException e) {
             alertReception.close();
@@ -364,11 +387,18 @@ public class Controlleur {
             alert.setTitle("Fichier envoyé");
             alert.setHeaderText("Le fichier a été envoyé avec succés");
             alert.showAndWait(); 
-        } catch (IpException | PortReseauException | cheminFichierException | IOException e) {
+        } catch (IpException | PortReseauException | cheminFichierException | 
+                IOException e) {
             Alert alert = new Alert(AlertType.ERROR);
             alert.setTitle("Envoi impossible");
             alert.setHeaderText(e.getMessage());
             alert.showAndWait(); 
+        } catch (NullPointerException e) {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Envoi impossible");
+            alert.setHeaderText("Le fichier ne peut pas être envoyé");
+            alert.setContentText("Le fichier ne respecte pas l'alphabet utilisable (Voir aide)");
+            alert.showAndWait();
         }
     }
 
@@ -1304,8 +1334,8 @@ public class Controlleur {
                     Alert importationReussi = new Alert(AlertType.INFORMATION);
                     importationReussi.setTitle("Importation réussi");
                     importationReussi.setHeaderText("Importation réussi");
-                } catch (ExtensionFichierException | SemestreInvalideExecption | CompetenceInvalideException
-                        | EnseignementInvalideException e) {
+                    importationReussi.showAndWait();
+                } catch (Exception e) {
                     Alert importationErreur = new Alert(AlertType.ERROR);
                     importationErreur.setTitle("Erreur d'importation");
                     importationErreur.setHeaderText(e.getMessage());
@@ -1319,7 +1349,8 @@ public class Controlleur {
                     Alert importationReussi = new Alert(AlertType.INFORMATION);
                     importationReussi.setTitle("Importation réussi");
                     importationReussi.setHeaderText("Importation réussi");
-                } catch (ExtensionFichierException | ControleInvalideException e) {
+                    importationReussi.showAndWait();
+                } catch (Exception e) {
                     Alert importationErreur = new Alert(AlertType.ERROR);
                     importationErreur.setTitle("Erreur d'importation");
                     importationErreur.setHeaderText(e.getMessage());

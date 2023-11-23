@@ -169,9 +169,10 @@ public class Reseau {
      * 
      * @param donnees tableau de byte a crypter
      * @param cle clé de chiffrement
+     * @throws NullPointerException si un caractère ne peut pas être chiffré 
      * @return le tableau de byte crypté
      */
-    private static byte[] crypter(byte[] donnees, String cle) {
+    private static byte[] crypter(byte[] donnees, String cle) throws NullPointerException {
         byte caractere;
         
         /* Parcours des données a crypter */ 
@@ -179,16 +180,16 @@ public class Reseau {
             /* Commentaires = affichage des caractères de diverses informations 
              * nécessaire a la vérification de la validité du cryptage 
              */
-            System.out.print("Donnees = " + donnees[i] + " code = "     
-                    + dictionnaireCryptage.get((char)donnees[i]) + " cle = " 
-                    + cle.charAt(i%cle.length()) + " code "                  
-                    + dictionnaireCryptage.get(cle.charAt(i%cle.length())));
+//            System.out.print("Donnees = " + donnees[i] + " code = "     
+//                    + dictionnaireCryptage.get((char)donnees[i]) + " cle = " 
+//                    + cle.charAt(i%cle.length()) + " code "                  
+//                    + dictionnaireCryptage.get(cle.charAt(i%cle.length())));
             /* Chiffrement */
             caractere = (byte) ((dictionnaireCryptage.get((char)donnees[i]) 
                     + dictionnaireCryptage.get(cle.charAt(i%cle.length())))
                     % dictionnaireCryptage.size());
             
-            System.out.println(" cryptage = " + toCaractere(caractere));
+//            System.out.println(" cryptage = " + toCaractere(caractere));
           
             donnees[i] = (byte)toCaractere(caractere);
         }

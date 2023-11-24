@@ -50,7 +50,7 @@ public class GestionNotes {
      */
     public GestionNotes() throws ClassNotFoundException, IOException {
         fichierSerialize = new File(".\\tmp\\gestion-notes.ser");
-        
+
         /* Récupération des données enregistré si il y a eu une sauvegarde */
         if (fichierSerialize.exists()) {
             deserializerDonnees();
@@ -406,7 +406,7 @@ public class GestionNotes {
             // désérialization de l'objet
             semestreGestionNotes = (Semestre) ois.readObject();
             utilisateurGestionNotes = (Utilisateur) ois.readObject();
-            
+
         }
     }
 
@@ -477,59 +477,59 @@ public class GestionNotes {
      * Execution de scipts de test
      * @param args non utilisé
      */
-//    public static void main(String[] args) {
-//        GestionNotes gn = new GestionNotes();
-//        //       
-//        //        try {
-//        //            gn.importerParametrageSemestre(".\\csv\\ParametresSemestre(AImporter).csv");
-//        //            gn.importerParametrageEnseignement(".\\csv\\ParametresRessource(AImporter).csv");
-//        //        } catch (Exception e) {
-//        //            e.printStackTrace();
-//        //        }
-//        //     
-//
-//        try {
-//            gn.deserializerDonnees();
-//        } catch (ClassNotFoundException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            Ressource ressourceControles;
-//            ressourceControles = (Ressource) gn.trouverEnseignement("R2.01");
-//            System.out.println(ressourceControles.getControleToString());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-        //       
-        //        try {
-        //            gn.ajouterNoteAControle("R2.01.00", 12.2, 20, "");
-        //            gn.ajouterNoteAControle("R2.01.01", 8, 10, "");
-        //            gn.ajouterNoteAControle("R2.01.02", 15, 40, "");
-        //            gn.ajouterNoteAControle("R2.01.03", 15.5, 20, "");
-        //        } catch (NoteInvalideException e) {
-        //            e.printStackTrace();
-        //        }
-        //
-        //        try {
-        //            gn.calculerMoyenneEnseignement("R2.01");
-        //        } catch (MoyenneRessourceException e) {
-        //            e.printStackTrace();
-        //        } catch (NoteInvalideException e) {
-        //            e.printStackTrace();
-        //        }
-        //       
-        //        try {
-        //            gn.serializerDonnees();
-        //        } catch (IOException e) {
-        //            e.printStackTrace();
-        //        }
-        //
-        //        System.out.println(gn.getValeurNoteDeControle("R2.01.01"));
-        //        System.out.println(gn.moyenneEnseignemnt("R2.01").getValeurNote());
-//    }
+    //    public static void main(String[] args) {
+    //        GestionNotes gn = new GestionNotes();
+    //        //       
+    //        //        try {
+    //        //            gn.importerParametrageSemestre(".\\csv\\ParametresSemestre(AImporter).csv");
+    //        //            gn.importerParametrageEnseignement(".\\csv\\ParametresRessource(AImporter).csv");
+    //        //        } catch (Exception e) {
+    //        //            e.printStackTrace();
+    //        //        }
+    //        //     
+    //
+    //        try {
+    //            gn.deserializerDonnees();
+    //        } catch (ClassNotFoundException e) {
+    //            // TODO Auto-generated catch block
+    //            e.printStackTrace();
+    //        } catch (IOException e) {
+    //            // TODO Auto-generated catch block
+    //            e.printStackTrace();
+    //        }
+    //
+    //        try {
+    //            Ressource ressourceControles;
+    //            ressourceControles = (Ressource) gn.trouverEnseignement("R2.01");
+    //            System.out.println(ressourceControles.getControleToString());
+    //        } catch (Exception e) {
+    //            e.printStackTrace();
+    //        }
+    //       
+    //        try {
+    //            gn.ajouterNoteAControle("R2.01.00", 12.2, 20, "");
+    //            gn.ajouterNoteAControle("R2.01.01", 8, 10, "");
+    //            gn.ajouterNoteAControle("R2.01.02", 15, 40, "");
+    //            gn.ajouterNoteAControle("R2.01.03", 15.5, 20, "");
+    //        } catch (NoteInvalideException e) {
+    //            e.printStackTrace();
+    //        }
+    //
+    //        try {
+    //            gn.calculerMoyenneEnseignement("R2.01");
+    //        } catch (MoyenneRessourceException e) {
+    //            e.printStackTrace();
+    //        } catch (NoteInvalideException e) {
+    //            e.printStackTrace();
+    //        }
+    //       
+    //        try {
+    //            gn.serializerDonnees();
+    //        } catch (IOException e) {
+    //            e.printStackTrace();
+    //        }
+    //
+    //        System.out.println(gn.getValeurNoteDeControle("R2.01.01"));
+    //        System.out.println(gn.moyenneEnseignemnt("R2.01").getValeurNote());
+    //    }
 }

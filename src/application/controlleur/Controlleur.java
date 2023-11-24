@@ -40,6 +40,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -96,7 +98,7 @@ public class Controlleur {
 	@FXML
 	Button boutonSauvegarder;
 	@FXML
-	ComboBox comboRessourcesControle;
+	ComboBox<String> comboRessourcesControle;
 	
 	String prenomEtu;
 
@@ -223,57 +225,172 @@ public class Controlleur {
 		
 	}
 
+	/**
+	 * Cette méthode permet d'afficher dans la ScrollPane de gauche
+	 * de la page Enseignements, les compétences actuellement importées.
+	 * On retrouve une option Toutes qui si cliquée affiche les 
+	 * ressources de toutes les compétences.
+	 * Chaque compétence est cliquable et afficheront si cliquée
+	 * la liste des ressources appartenant à cette compétence.
+	 * @param listeCompetences
+	 * @param scene
+	 */
 	private void ajouterCompetence(List<Competence> listeCompetences, Scene scene) {
+		/* Entier correspondant au numéro d'index de la ligne
+		 * à laquelle doit s'afficher la compétence actuelle.
+		 * Cet entier est initialisé à 1 car la ligne d'index 0 
+		 * est occupée par la ligne "Toutes". 
+		 */
 		int indiceCompetence = 1;
+		/* Nombre maximum de caractères par ligne*/
 		int maxCaractere = 25;
 		//Permet de mettre un taille à une ligne quand on l'ajoute
 		RowConstraints taille = new RowConstraints();
 		taille.setPrefHeight(50);
+		/* Récupération de la grille des compétences
+		 * soit la grille à gauche de la page Enseignements
+		 */
 		GridPane grilleCompetence = ((GridPane)((ScrollPane) ((Pane) ((BorderPane) scene.getRoot()).getChildren().get(1)).getChildren().get(4)).getContent());
+		/* Création d'un label pour la ligne "Toutes"*/
 		Label labelToutes = new Label("Toutes");
+		/* Ajustement de la taille et du style du Label/Texte*/
 		labelToutes.setPrefSize(185,30);
 		labelToutes.getStyleClass().add("labelCompetence");
+		/* Création d'une Pane cliquable qui contiendra le label Toutes*/
 		Pane ligneToutes = new Pane();
+		/* Ajustement de la taille et du style de la Pane*/
 		ligneToutes.getStyleClass().add("paneCompetence");
+		ligneToutes.getStyleClass().add("paneCompetenceNonCliquee");
 		ligneToutes.setPrefSize(185,30);
-		ligneToutes.setId("Toutes");
+		/* Modification de l'ID de cette Pane pour identifier
+		 * si elle est cliquée ou non
+		 */
+		ligneToutes.setId("Toutes Non Cliquée");
+		/* Ajout du Label à la Pane*/
 		ligneToutes.getChildren().add(labelToutes);
 		labelToutes.setAlignment(Pos.CENTER);
+		/* Récupération de la grille des Enseignements
+		 * soit la grille au milieu de la page Enseignements
+		 */
 		GridPane grilleEnseignement = ((GridPane)((ScrollPane) ((Pane) ((BorderPane) scene.getRoot()).getChildren().get(1)).getChildren().get(0)).getContent());
+		/* Ajout de la ligne "Toutes" à la ligne d'index 0*/
 		grilleCompetence.add(ligneToutes,0,0);
+		/* Récupération de la liste de tous les enseignements*/
 		List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
-		ligneToutes.setOnMouseClicked(event -> afficherEnseignements(false, grilleEnseignement, listeEnseignement , scene));
-
+		/* Ajout d'un évènement à la Pane "Toutes"
+		 * qui sera déclenché lorsque celle-çi sera cliquée
+		 * la méthode afficherEnseignements() sera déclenchée
+		 */
+		ligneToutes.setOnMouseClicked(event -> {
+			if (ligneToutes.getId().equals("Toutes Non Cliquée")) {
+				ligneToutes.setId("Toutes Cliquée");
+				for (Node competence : grilleCompetence.getChildren()) {
+					if (competence.getId().equals("Toutes Non Cliquée") || competence.getId().equals("Toutes Cliquée")) {
+						competence.getStyleClass().remove("paneCompetenceCliquee");
+						competence.getStyleClass().add("paneCompetenceNonCliquee");
+						//((Node) ((Pane) competence).getChildren()).getStyleClass().remove("labelCompetenceCliquee");
+						//((Node) ((Pane) competence).getChildren()).getStyleClass().add("labelCompetenceNonCliquee");
+						competence.setId("Toutes Non Cliquée");
+					} else {
+						competence.getStyleClass().remove("paneCompetenceCliquee");
+						competence.getStyleClass().add("paneCompetenceNonCliquee");
+						//((Node) ((Pane) competence).getChildren()).getStyleClass().remove("labelCompetenceNonCliquee");
+						//((Node) ((Pane) competence).getChildren()).getStyleClass().add("labelCompetenceCliquee");
+						competence.setId("Non Cliquée");
+					}
+				}
+				ligneToutes.getStyleClass().remove("paneCompetenceNonCliquee");
+				ligneToutes.getStyleClass().add("paneCompetenceCliquee");
+				//((Node) ligneToutes.getChildren()).getStyleClass().remove("labelCompetenceNonCliquee");
+				//((Node) ligneToutes.getChildren()).getStyleClass().add("labelCompetenceCliquee");
+			}else {
+				ligneToutes.getStyleClass().remove("paneCompetenceCliquee");
+				ligneToutes.getStyleClass().add("paneCompetenceNonCliquee");
+				//((Node) ligneToutes.getChildren()).getStyleClass().remove("labelCompetenceCliquee");
+				//((Node) ligneToutes.getChildren()).getStyleClass().add("labelCompetenceNonCliquee");
+				ligneToutes.setId("Toutes Non Cliquée");
+			}
+			afficherEnseignements(false, grilleEnseignement, listeEnseignement , scene);
+			});
+		
+		/* Parcours de la liste des compétence importées*/
 		for(Competence competence: gn.getSemestreGestionNotes().getCompetencesSemestre()) {
-
-			String texteCompetence = competence.getIdentifiantCompetence() + " " + competence.getIntituleCompetence(); // Votre texte long à afficher
+			/* Récupération du nom d'une compétence
+			 * Identifiant + Intitulé
+			 */
+			String texteCompetence = competence.getIdentifiantCompetence() + " " + competence.getIntituleCompetence();
+			/* Création d'un objet de type Text 
+			 * contenant le nom d'une compétence
+			 */
 			Text texte = new Text(texteCompetence);
 			texte.setWrappingWidth(maxCaractere * 7); // La largeur de l'espace pour un nombre de caractères
+			/* Création d'une Pane qui contiendra le texte*/
 			Pane paneCompetence = new Pane();
+			/* Ajout d'un id pour définir la compétence
+			 * comme non cliquée.
+			 */
+			paneCompetence.setId("Non Cliquée");
+			/* Ajout du texte à la Pane*/
 			paneCompetence.getChildren().add(texte);
+			/* Espacement du texte afn de le centrer*/
 			texte.setTranslateY(5);
+			/* Ajout de la contrainte de taille aux lignes*/
 			grilleCompetence.getRowConstraints().addAll(taille);
-
+			/* Modification de style et de taille*/
 			paneCompetence.getStyleClass().add("paneCompetence");
-
+			paneCompetence.getStyleClass().add("paneCompetenceNonCliquee");
 			paneCompetence.setPrefSize(185, 40);
-
+			
 			texte.getStyleClass().add("labelCompetence");
-
+			
+			/* Gestion d'alignement*/
 			texte.setLayoutY(10);
-
 			paneCompetence.setPadding(new Insets(0,5,0,5));
-
+			
 			GridPane.setHalignment(texte, javafx.geometry.HPos.CENTER);
-
 			texte.setTextAlignment(TextAlignment.CENTER);
-
 			GridPane.setHalignment(paneCompetence, javafx.geometry.HPos.CENTER);
 
+			/* Ajoute de la compétence à la grille*/
 			grilleCompetence.add(paneCompetence, 0, indiceCompetence);
-
+			/* Incrément de l'indice*/
 			indiceCompetence++;
-			paneCompetence.setOnMouseClicked(event -> ajouterEnseignements(paneCompetence, competence.getListeEnseignements(), scene));
+			/* Ajout d'un évènement à la pane de la compétence
+			 * qui sera déclenchée lorsque la pane sera cliquée.
+			 * Cet évenement appelle la méthode ajouterEnseignements
+			 * qui affiche les Enseignements appartenant à cette compétence.
+			 */
+			paneCompetence.setOnMouseClicked(event -> {
+				if (paneCompetence.getId().equals("Non Cliquée")) {
+					paneCompetence.setId("Cliquée");
+					for (Node competences : grilleCompetence.getChildren()) {
+						if (competences.getId().equals("Toutes Non Cliquée") || competences.getId().equals("Toutes Cliquée")) {
+							competences.getStyleClass().remove("paneCompetenceCliquee");
+							competences.getStyleClass().add("paneCompetenceNonCliquee");
+							//((Node) ((Pane) competences).getChildren()).getStyleClass().remove("labelCompetenceCliquee");
+							//((Node) ((Pane) competences).getChildren()).getStyleClass().add("labelCompetenceNonCliquee");
+							competences.setId("Toutes Non Cliquée");
+						} else {
+							competences.getStyleClass().remove("paneCompetenceCliquee");
+							competences.getStyleClass().add("paneCompetenceNonCliquee");
+							//((Node) ((Pane) competences).getChildren()).getStyleClass().remove("labelCompetenceNonCliquee");
+							//((Node) ((Pane) competences).getChildren()).getStyleClass().add("labelCompetenceCliquee");
+							competences.setId("Non Cliquée");
+						}
+					}
+					paneCompetence.getStyleClass().remove("paneCompetenceNonCliquee");
+					paneCompetence.getStyleClass().add("paneCompetenceCliquee");
+					//((Node) paneCompetence.getChildren()).getStyleClass().remove("labelCompetenceNonCliquee");
+					//((Node) paneCompetence.getChildren()).getStyleClass().add("labelCompetenceCliquee");
+				}else {
+					paneCompetence.getStyleClass().remove("paneCompetenceCliquee");
+					paneCompetence.getStyleClass().add("paneCompetenceNonCliquee");
+					//((Node) paneCompetence.getChildren()).getStyleClass().remove("labelCompetenceCliquee");
+					//((Node) paneCompetence.getChildren()).getStyleClass().add("labelCompetenceNonCliquee");
+					paneCompetence.setId("Non Cliquée");
+				}
+				ajouterEnseignements(paneCompetence, competence.getListeEnseignements(), scene);
+				});
 		}
 	}
 
@@ -384,6 +501,7 @@ public class Controlleur {
 	        Ressource ressource = (Ressource) enseignement;
 	        Integer rowIndex = GridPane.getRowIndex(enseignementSelectionne);
 	        if ("Non Cliquée".equals(enseignementSelectionne.getId())) {
+	        	enseignementSelectionne.setId("Cliquée");
 	            for (Node node : grilleEnseignement.getChildren()) {
 	                Integer row = GridPane.getRowIndex(node);
 	                if (row != null && row > rowIndex) {
@@ -420,7 +538,6 @@ public class Controlleur {
                 grilleEnseignement.add(paneInformations, 0, rowIndex + indiceControle);
                 indiceControle++;
 	            for (Controle controle : ressource.getControlesRessource()) {
-	                enseignementSelectionne.setId("Cliquée");
 	                Pane paneControle = new Pane();
 	                GridPane.setColumnSpan(paneControle, 4);
 	                Label labelType = new Label(controle.getTypeControle());
@@ -1006,14 +1123,19 @@ public class Controlleur {
 			TextField type = (TextField)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(2)).getChildren().get(0);
 			TextField poids = (TextField)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(5)).getChildren().get(2);
 			TextField date = (TextField)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(3)).getChildren().get(1);
-			ComboBox ressourceCombo = (ComboBox)(((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(0));
+			@SuppressWarnings("unchecked")
+			ComboBox<String> ressourceCombo = (ComboBox<String>)(((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(0));
 			String[] choixCombo = new String[1];
 			ressourceCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-				choixCombo[0] = ((String) ressourceCombo.getValue()).substring(0, 5);
+				choixCombo[0] = ((String) ressourceCombo.getValue ()).substring(0, 5);
 		    });
 			boutonValider.setOnAction(e -> {
 				if (!type.getText().isEmpty() && !poids.getText().isEmpty()) {
-					ajouterControle(type.getText(), poids.getText(), date.getText(),choixCombo[0]);
+					try {
+						ajouterControle(type.getText(), poids.getText(), date.getText(),choixCombo[0]);
+					} catch (ControleInvalideException e1) {
+						e1.printStackTrace();
+					}
 					popupStage.close();
 				}
 			});
@@ -1024,15 +1146,14 @@ public class Controlleur {
 		}
 	}
 
-	private void ajouterControle(String type, String poids, String date, String ressource) {
+	private void ajouterControle(String type, String poids, String date, String ressource) throws ControleInvalideException {
 		int valeurPoids = Integer.parseInt(poids);
-		try {
-			gn.ajouterControleAEnseignement(ressource, type, date, valeurPoids);
-			System.out.println(((Ressource) gn.trouverEnseignement(ressource)).getControlesRessource());
-		} catch (ControleInvalideException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if(!gn.ajouterControleAEnseignement(ressource, type, date, valeurPoids)) {
+			Alert erreurSauvegarde = new Alert(AlertType.ERROR);
+            erreurSauvegarde.setTitle("Ajout de controle Impossible");
+            erreurSauvegarde.setHeaderText("La somme des poids dépasse 100\nModifier le poids de ce controle\nOu modifier le poids de ceux existants");
+            erreurSauvegarde.showAndWait();
+		} 
 	}
 	
 	private void ajoutRessourcesComboControle() {

@@ -281,8 +281,9 @@ public class GestionNotes {
      * @param chemin du fichier à importer
      * @throws ExtensionFichierException
      * @throws ControleInvalideException
+     * @throws EnseignementInvalideException si le fichier ne contient pas de paramètres de ressources
      */
-    public void importerParametrageEnseignement(String chemin) throws ExtensionFichierException, ControleInvalideException {
+    public void importerParametrageEnseignement(String chemin) throws ExtensionFichierException, ControleInvalideException, EnseignementInvalideException {
 
         FichierRessource fichier = new FichierRessource(chemin);
 

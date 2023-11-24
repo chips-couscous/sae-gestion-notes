@@ -54,9 +54,17 @@
 					<children>
 						<Label alignment="CENTER" contentDisplay="CENTER"
 							layoutX="141.0" layoutY="28.0" prefHeight="37.0"
-							prefWidth="189.0" text="Modifier la note" textFill="#354b85">
+							prefWidth="189.0" text="Ajouter une note" textFill="#354b85">
 							<font>
 								<Font name="System Bold" size="18.0" />
+							</font>
+						</Label>
+						<Label alignment="CENTER" contentDisplay="CENTER"
+							layoutX="141.0" layoutY="57.0" prefHeight="37.0"
+							prefWidth="189.0" text="⚠ Note mal saisie" textFill="RED"
+							visible="false">
+							<font>
+								<Font name="System Bold" size="14.0" />
 							</font>
 						</Label>
 					</children>
@@ -79,10 +87,10 @@
 								<Font size="14.0" />
 							</font>
 						</Label>
-						<TextField fx:id="note" alignment="CENTER"
-							layoutX="255.0" layoutY="30.0" maxHeight="-Infinity"
-							maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-							prefHeight="40.0" prefWidth="80.0"
+						<TextField fx:id="denominateur" alignment="CENTER" layoutX="235.0"
+							layoutY="30.0" maxHeight="-Infinity" maxWidth="-Infinity"
+							minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
+							prefWidth="100.0"
 							style="-fx-border-color: #354b85; -fx-border-radius: 0 2 2 0; -fx-background-color: #354b85; -fx-text-fill: #E6E9F0;">
 							<font>
 								<Font size="14.0" />
@@ -110,17 +118,17 @@
 				<Pane prefHeight="200.0" prefWidth="200.0"
 					GridPane.columnSpan="2" GridPane.rowIndex="2">
 					<children>
-						<ComboBox fx:id="ressource" layoutX="135.0"
-							layoutY="30.0" prefHeight="40.0" prefWidth="200.0"
-							style="-fx-background-color: #354b85;" 
+						<ComboBox fx:id ="ressourcesCombo" layoutX="135.0" layoutY="30.0"
+							prefHeight="40.0" prefWidth="200.0"
+							style="-fx-background-color: #354b85;"
 							stylesheets="/application/vue/application.css"/>
 						<Label layoutX="135.0" layoutY="2.0" prefHeight="20.0"
-							prefWidth="74.0" text="Ressource" textFill="#354b85">
+							prefWidth="75.0" text="Ressource" textFill="#354b85">
 							<font>
 								<Font size="14.0" />
 							</font>
 						</Label>
-						<Label layoutX="202.0" layoutY="2.0" prefHeight="17.0"
+						<Label layoutX="203.0" layoutY="4.0" prefHeight="17.0"
 							prefWidth="14.0" text="*" textFill="RED">
 							<font>
 								<Font size="14.0" />
@@ -131,15 +139,15 @@
 				<Pane prefHeight="200.0" prefWidth="200.0"
 					GridPane.columnSpan="2" GridPane.rowIndex="4">
 					<children>
-						<TextArea fx:id="commentaire" layoutX="40.0"
-							layoutY="50.0" prefHeight="80.0" prefWidth="390.0"
+						<TextArea layoutX="40.0" fx:id="commentaire" layoutY="56.0" prefHeight="80.0"
+							prefWidth="390.0"
 							style="-fx-background-color: #e6e9f0; -fx-border-color: #354b85; -fx-border-radius: 2; -fx-text-fill: #354B85;">
 							<font>
 								<Font size="14.0" />
 							</font>
 						</TextArea>
 						<Label layoutX="40.0" layoutY="27.0" prefHeight="20.0"
-							prefWidth="91.0" text="Commentaire" textFill="#354b85">
+							prefWidth="99.0" text="Commentaire" textFill="#354b85">
 							<font>
 								<Font size="14.0" />
 							</font>
@@ -162,17 +170,17 @@
 				<Pane prefHeight="200.0" prefWidth="200.0"
 					GridPane.columnSpan="2" GridPane.rowIndex="3">
 					<children>
-						<ComboBox fx:id="ressource" layoutX="135.0"
-							layoutY="50.0" prefHeight="40.0" prefWidth="200.0"
-							style="-fx-background-color: #354b85;"
-							stylesheets="/application/vue/application.css" />
-						<Label layoutX="135.0" layoutY="24.0" prefHeight="20.0"
+						<ComboBox layoutX="135.0" layoutY="50.0"
+							prefHeight="40.0" prefWidth="200.0"
+							style="-fx-background-color: #354b85;" fx:id="controleCombo"
+							stylesheets="/application/vue/application.css"/>
+						<Label fx:id="controle" layoutX="135.0" layoutY="19.0" prefHeight="20.0"
 							prefWidth="60.0" text="Contrôle" textFill="#354b85">
 							<font>
 								<Font size="14.0" />
 							</font>
 						</Label>
-						<Label layoutX="188.0" layoutY="24.0" prefHeight="17.0"
+						<Label fx:id="etoile" layoutX="195.0" layoutY="19.0" prefHeight="17.0"
 							prefWidth="14.0" text="*" textFill="RED">
 							<font>
 								<Font size="14.0" />

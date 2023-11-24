@@ -1,57 +1,116 @@
 /*
- * Note.java                                      26 oct. 2023
- * IUT Rodez, info2 2022-2023, pas de copyright ni "copyleft" 
+ * Note.java                                                        15 nov. 2023
+ * IUT Rodez 2023-2024, soporifik, pas de copyright ni "copyleft" 
  */
 package application.model;
 
-/** TODO comment class responsibility (SRP)
+import java.io.Serializable;
+
+import application.model.exception.NoteInvalideException;
+
+/** 
+ * Représentation d'une note obtenue à un contrôle, au portfolio ou lors d'une saé.
  * @author tom.jammes
+ * @author tony.lapeyre
+ * @author thomas.lemaire
+ * @version 2.0
  */
-public class Note {
+public class Note implements Serializable {
+
+    /* valeur de la note (exemple : 10, 12, 50 ...) */
+    private double valeurNote;
     
-    private double valeur;
+    /* denominateur de la note, valeur sur laquelle est notée la note x (exemple : x/10, x/20, x/1000 ...) */
+    private int denominateurNote;
     
-    private int denominateur; 
-    
-    private Enseignement matiere;
-    
-    private int poids;
-    
-    private String forme;
-    
-    private String description;
-    
-    private String date;
+    /* commentaire d'une note (exemple : précision sur la note, liste des connaissances à revoir ...) */
+    private String commentaire;
     
     /**
-     * Constructeur de l'objet Note
-     * @param valeur valeur de la note 
-     * @param denominateur valeur sur la quelle la note est évalué. Ex: 10/20 ou
-     *          23/50 ...
-     * @param matiere enseignement dans le quel la note a été obtenue
-     * @param poids poids de la note dans l'enseignement auquel elle appartient
-     * @param forme type du contrôle. Ex: devoir sur table, tp noté, qcm, ...
-     * @param description description du contrôle donné par l'élève
-     * @param date date du contrôle. Peut être approximative, ex début janvier
+     * Constructeur d'une note
+     * @param valeur est la note obtenue (exemple : 10, 12, 50 ...)
+     * @param denominateur , valeur sur laquelle est notée la note x (exemple : x/10, x/20, x/1000 ...)
+     * @param commentaire d'une note (exemple : précision sur la note, liste des connaissances à revoir ...)
+     * @throws NoteInvalideException déclare une note invalide à la création
      */
-    public Note(double valeur, int denominateur, Enseignement matiere, 
-            int poids, String forme, String description, String date) {
-        if (!estValide(valeur,denominateur,poids)) {
-            throw new IllegalArgumentException("Arguments invalide");
+    public Note(double valeur, int denominateur, String commentaire) throws NoteInvalideException {
+        if(!estValide(valeur, denominateur)) {
+            throw new NoteInvalideException("Création de note impossible avec les valeurs renseignées");
         }
+        setValeurNote(valeur);
+        setDenominateurNote(denominateur);
+        setCommentaire(commentaire);
+    }
+    
+    /** 
+     * Constructeur d'une par chainage de constructeur
+     * @param valeur est la note obtenue (exemple : 10, 12, 50 ...)
+     * @param denominateur , valeur sur laquelle est notée la note x (exemple : x/10, x/20, x/1000 ...)
+     * @throws NoteInvalideException déclare une note invalide à la création 
+     */
+    public Note(double valeur, int denominateur) throws NoteInvalideException {
+        // Fait appel au constructeur Note avec tous les paramètres requis
+        this(valeur, denominateur, "");
+    }
+    
+    /**
+     * Modifier les valeurs d'une note
+     * @param valeur est la note obtenue (exemple : 10, 12, 50 ...)
+     * @param denominateur , valeur sur laquelle est notée la note x (exemple : x/10, x/20, x/1000 ...)
+     * @param commentaire d'une note (exemple : précision sur la note, liste des connaissances à revoir ...)
+     * @throws NoteInvalideException déclare une note invalide à la création
+     */
+    public void modifierNote(double valeur, int denominateur, String commentaire) throws NoteInvalideException {
+        if(!estValide(valeur, denominateur)) {
+            throw new NoteInvalideException("Création de note impossible avec les valeurs renseignées");
+        }
+        setValeurNote(valeur);
+        setDenominateurNote(denominateur);
+        setCommentaire(commentaire);
+    }
+    
+    /** @return valeur de valeurNote */
+    public double getValeurNote() {
+        return valeurNote;
+    }
+    
+    /** @return valeur de valeurNote sur 20 */
+    public double getValeurNoteSurVingt() {
+        return valeurNote * 20 / denominateurNote;
     }
 
-    /** 
-     * Vérifie que les paramètres rentrés dans le constructeur sont correct
-     * test seulement les valeurs numérique
-     * @param valeur valeur valeur de la note 
-     * @param denominateur valeur sur la quelle la note est évalué. Ex: 10/20 ou
-     *          23/50 ... 
-     * @param poids poids de la note dans l'enseignement auquel elle appartient
-     * @return true si les paramètres sont corrects
+    /** @param valeurNote nouvelle valeur de valeurNote */
+    public void setValeurNote(double valeurNote) {
+        this.valeurNote = valeurNote;
+    }
+
+    /** @return valeur de denominateurNote */
+    public int getDenominateurNote() {
+        return denominateurNote;
+    }
+    
+    /** @param denominateurNote nouvelle valeur de denominateurNote */
+    public void setDenominateurNote(int denominateurNote) {
+        this.denominateurNote = denominateurNote;
+    }
+
+    /** @return valeur de commentaire */
+    public String getCommentaire() {
+        return commentaire;
+    }
+
+    /** @param commentaire nouvelle valeur de commentaire */
+    public void setCommentaire(String commentaire) {
+        this.commentaire = commentaire;
+    }
+
+    /**
+     * Validation de la création de la note
+     * @param valeur est valide si elle est supérieure ou égale à 0 et inférieure ou égale au dénominateur
+     * @param denominateur est valide si il est strictement supérieur à 0 est inférieur ou égal à 1000
+     * @return true si la note est valide, false sinon
      */
-    private static boolean estValide(double valeur, int denominateur, int poids) {
-        return 0 <= valeur && valeur <= denominateur && 1 <= denominateur 
-                && denominateur <= 1000 && 0 < poids && poids <= 100;
+    private static boolean estValide(double valeur, int denominateur) {
+        return valeur >= 0 && valeur <= denominateur && denominateur > 0 && denominateur <= 1000;
     }
 }

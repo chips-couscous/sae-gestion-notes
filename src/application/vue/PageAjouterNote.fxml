@@ -172,7 +172,8 @@
 					<children>
 						<ComboBox layoutX="135.0" layoutY="50.0"
 							prefHeight="40.0" prefWidth="200.0"
-							style="-fx-background-color: #354b85;" fx:id="controleCombo"/>
+							style="-fx-background-color: #354b85;" fx:id="controleCombo"
+							stylesheets="/application/vue/application.css"/>
 						<Label fx:id="controle" layoutX="135.0" layoutY="19.0" prefHeight="20.0"
 							prefWidth="60.0" text="Contrôle" textFill="#354b85">
 							<font>

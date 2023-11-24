@@ -185,12 +185,18 @@ public class GestionNotes {
      * @param type du contrôle renseigné (exemple : oral, écrit ...)
      * @param date du contrôle renseigné (exemple : 12/10/2023, milieu octobre ...)
      * @param poids du contrôle renseigné (exemple : 12, 35 ...)
+     * @return true si le contrôle a bien été ajouté
      * @throws ControleInvalideException
      */
-    public void ajouterControleAEnseignement(String identifiant, String type, String date, int poids) throws ControleInvalideException {
+    public boolean ajouterControleAEnseignement(String identifiant, String type, String date, int poids) throws ControleInvalideException {
         Ressource enseignement = (Ressource) trouverEnseignement(identifiant);
-        Controle controleAAjouter = new Controle(type, date, poids);       
-        enseignement.ajouterControle(controleAAjouter);
+        try {
+            Controle controleAAjouter = new Controle(type, date, poids);       
+            enseignement.ajouterControle(controleAAjouter);
+            return true;
+        } catch (ControleInvalideException e) {
+            return false;
+        }
     }
 
     /**

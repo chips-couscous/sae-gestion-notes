@@ -112,7 +112,8 @@
 					<children>
 						<ComboBox fx:id="ressource" layoutX="135.0"
 							layoutY="30.0" prefHeight="40.0" prefWidth="200.0"
-							style="-fx-background-color: #354b85;" />
+							style="-fx-background-color: #354b85;" 
+							stylesheets="/application/vue/application.css"/>
 						<Label layoutX="135.0" layoutY="2.0" prefHeight="20.0"
 							prefWidth="74.0" text="Ressource" textFill="#354b85">
 							<font>
@@ -163,7 +164,8 @@
 					<children>
 						<ComboBox fx:id="ressource" layoutX="135.0"
 							layoutY="50.0" prefHeight="40.0" prefWidth="200.0"
-							style="-fx-background-color: #354b85;" />
+							style="-fx-background-color: #354b85;"
+							stylesheets="/application/vue/application.css" />
 						<Label layoutX="135.0" layoutY="24.0" prefHeight="20.0"
 							prefWidth="60.0" text="Contrôle" textFill="#354b85">
 							<font>

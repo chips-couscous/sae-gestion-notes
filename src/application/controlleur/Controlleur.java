@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -24,6 +25,7 @@ import application.model.Competence;
 import application.model.Controle;
 import application.model.Enseignement;
 import application.model.GestionNotes;
+import application.model.Note;
 import application.model.Ressource;
 import application.model.exception.CompetenceInvalideException;
 import application.model.exception.ControleInvalideException;
@@ -170,6 +172,10 @@ public class Controlleur {
      * directement au lancement de l'application
      */
     public void initialize() {
+        if (ressourcesCombo != null) {
+            ajoutRessourcesCombo();
+            choixComboRessources(ressourcesCombo);
+        }
         if (boutonSauvegarder != null) {
             boutonSauvegarder.setOnAction(event -> sauvegarder());
             //Récupération d'image pour nos boutons
@@ -483,7 +489,7 @@ public class Controlleur {
         tailleEnseignement.setPrefHeight(40);
         tailleEnseignement.setMaxHeight(40);
 
-        if (triRessources == true) {
+        if (triRessources) {
             Label labelToutes = new Label("Toutes");
             labelToutes.setPrefSize(185,30);
             labelToutes.getStyleClass().add("labelCompetence");
@@ -544,21 +550,21 @@ public class Controlleur {
             grilleEnseignement.add(paneEnseignement, 0, indiceEnseignement);
             paneEnseignement.setOnMouseClicked(event -> {
                 /*
-                            if (ligneNote.getId()=="Non Cliquée") {
-                                    labelType.getStyleClass().remove("labelType");
-                                    labelPoids.getStyleClass().remove("labelPoids");
-                                    labelRessources.getStyleClass().remove("labelRessources");
-                                    labelType.getStyleClass().add("labelTypeClique");
-                                    labelPoids.getStyleClass().add("labelPoidsClique");
-                                    labelRessources.getStyleClass().add("labelRessourcesClique");
-                            }else {
-                                    labelType.getStyleClass().remove("labelTypeClique");
-                                    labelPoids.getStyleClass().remove("labelPoidsClique");
-                                    labelRessources.getStyleClass().remove("labelRessourcesClique");
-                                    labelType.getStyleClass().add("labelType");
-                                    labelPoids.getStyleClass().add("labelPoids");
-                                    labelRessources.getStyleClass().add("labelRessources");
-                            }
+                        if (ligneNote.getId()=="Non Cliquée") {
+                                labelType.getStyleClass().remove("labelType");
+                                labelPoids.getStyleClass().remove("labelPoids");
+                                labelRessources.getStyleClass().remove("labelRessources");
+                                labelType.getStyleClass().add("labelTypeClique");
+                                labelPoids.getStyleClass().add("labelPoidsClique");
+                                labelRessources.getStyleClass().add("labelRessourcesClique");
+                        }else {
+                                labelType.getStyleClass().remove("labelTypeClique");
+                                labelPoids.getStyleClass().remove("labelPoidsClique");
+                                labelRessources.getStyleClass().remove("labelRessourcesClique");
+                                labelType.getStyleClass().add("labelType");
+                                labelPoids.getStyleClass().add("labelPoids");
+                                labelRessources.getStyleClass().add("labelRessources");
+                        }
                  */
                 afficherControle(scene, paneEnseignement, enseignement);
             });
@@ -618,10 +624,12 @@ public class Controlleur {
         Ressource ressource = (Ressource) enseignement;
         List<Controle> listeControles = ressource.getControlesRessource();
         for (Controle controle: listeControles) {
-            // TODO changer l'affichage dans la comboBox avec les 2 derniers chiffres de l'identifiant, le type et la date
-            String affichageComboControle = controle.getIndentifiantControle().substring(controle.getIndentifiantControle().length() - 2);
-            affichageComboControle += " " + controle.getTypeControle() + " " + controle.getDateControle();
-            combo.getItems().add(affichageComboControle);
+            System.out.println(controle.getNoteControle());
+            if (controle.getNoteControle() == null) {
+                String affichageComboControle = controle.getIndentifiantControle().substring(controle.getIndentifiantControle().length() - 2);
+                affichageComboControle += " " + controle.getTypeControle() + " " + controle.getDateControle();
+                combo.getItems().add(affichageComboControle);
+            }
         }
     }
 
@@ -769,6 +777,7 @@ public class Controlleur {
             Ressource ressource = (Ressource) enseignement;
             Integer rowIndex = GridPane.getRowIndex(enseignementSelectionne);
             if ("Non Cliquée".equals(enseignementSelectionne.getId())) {
+                enseignementSelectionne.setId("Cliquée");
                 for (Node node : grilleEnseignement.getChildren()) {
                     Integer row = GridPane.getRowIndex(node);
                     if (row != null && row > rowIndex) {
@@ -804,7 +813,6 @@ public class Controlleur {
                 GridPane.setMargin(paneInformations, new Insets(-10, 0, 0, 0));
                 grilleEnseignement.add(paneInformations, 0, rowIndex + indiceControle);
                 indiceControle++;
-
                 for (Controle controle : ressource.getControlesRessource()) {
                     Pane paneControle = new Pane();
                     GridPane.setColumnSpan(paneControle, 4);
@@ -866,163 +874,39 @@ public class Controlleur {
      * @param date de la note
      * @param denominateur de la note
      * @param index est l'index de la ligne à laquelle on ajoute la note
+     * @throws Exception si la note est invalide
      */
-    private void ajouterNote(String note, String commentaire, String denominateur, String ressource, String controle, int index) {
+    private void ajouterNote(String note, String commentaire, String denominateur, String ressource, String controle, int index) throws Exception {
 
-        String afichageControle = controle.substring(2);
-        String lePoids = "";
-        String identifiantControle[] = new String[1];
-        String[] date = new String[1];
+        String identifiantControle = "";
         String identifiantRessource = ressource.substring(0, 5);
         Enseignement enseignement = gn.trouverEnseignement(identifiantRessource);
-        Ressource laRessource = (Ressource) enseignement;
-        List<Controle> listeControles = laRessource.getControlesRessource();
-        for (Controle leControle : listeControles) {
-            if (leControle.getIndentifiantControle().substring(6).equals(controle.substring(0,2))) {
-                identifiantControle[0] = leControle.getIndentifiantControle();
-                lePoids = leControle.getPoidsControle() + "";
-                date[0] = leControle.getDateControle();
+        
+        if (enseignement instanceof Ressource) {
+            Ressource laRessource = (Ressource) enseignement;
+            List<Controle> listeControles = laRessource.getControlesRessource();
+            for (Controle leControle : listeControles) {
+                if (leControle.getIndentifiantControle().substring(6).equals(controle.substring(0,2))) {
+                    identifiantControle = leControle.getIndentifiantControle();
+                }
+            }
+
+            // Ajout de la note dans le model
+            try {
+                gn.ajouterNoteAControle(identifiantControle, Double.parseDouble(note), Integer.parseInt(denominateur), commentaire);
+                afficherNotes();
+            } catch (NumberFormatException | NoteInvalideException e) {
+                throw e;
+            }
+        } else {
+            // Ajout de la note dans le model
+            try {
+                gn.ajouterNoteASaePortfolio(enseignement, Double.parseDouble(note), Integer.parseInt(denominateur), commentaire);
+                afficherNotes();
+            } catch (NumberFormatException | NoteInvalideException e) {
+                throw e;
             }
         }
-        //Création des Label que l'on va afficher dans notre page
-        Pane ligneNote = new Pane();
-        Label labelNote = new Label(note+ " / " + denominateur);
-        Label labelType = new Label(afichageControle);
-        Label labelPoids = new Label(lePoids);
-        Label labelRessources = new Label(ressource);
-
-
-        //Récupération d'image pour nos boutons
-        Image imageModifier = new Image(getClass().getResourceAsStream("/application/controlleur/modifier.png"));
-        Image imageSupprimer = new Image(getClass().getResourceAsStream("/application/controlleur/supprimer.png"));
-        // On définit une ImageView afin de pouvoir mettre l'image dans le bouton
-        ImageView imageViewModifier = new ImageView(imageModifier);
-        ImageView imageViewSupprimer = new ImageView(imageSupprimer);
-
-        //Création des boutons avec leurs images
-        Button modifier = new Button();
-        modifier.setGraphic(imageViewModifier);
-        afficherMessageSurvol(modifier, MESSAGE_MODIFIER_NOTE);
-
-        Button supprimer = new Button();
-        supprimer.setGraphic(imageViewSupprimer);
-        afficherMessageSurvol(supprimer, MESSAGE_SUPPRIMER_NOTE);
-
-        // Ajout de la note dans le model
-        try {
-            gn.ajouterNoteAControle(identifiantControle[0], Double.parseDouble(note), Integer.parseInt(denominateur), commentaire);
-        } catch (NumberFormatException | NoteInvalideException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-
-        //Récupération de la grille à laquelle on veut ajouter les notes
-        GridPane mainGridPane = (GridPane) ((ScrollPane) ((Pane) ((BorderPane) listeNotes.getScene().getRoot()).getChildren().get(1)).getChildren().get(2)).getContent();
-        // Ajout des Labels créé precedemment dans la grille avec l'index correspondant
-        ligneNote.setPrefSize(640, 40);
-        mainGridPane.add(labelNote, 0, index);
-        mainGridPane.add(labelType, 1, index);
-        mainGridPane.add(labelPoids, 2, index);
-        mainGridPane.add(labelRessources, 3, index);
-        mainGridPane.add(modifier, 4, index);
-        mainGridPane.add(supprimer, 5, index);
-        mainGridPane.add(ligneNote, 0, index);
-        GridPane.setColumnSpan(ligneNote, 4);
-        ligneNote.setOpacity(0); // La ligneNote est transparente
-        ligneNote.setMouseTransparent(false); // La ligneNote réagira aux événements de souris
-        //Ligne non cliquée par défaut donc en rouge
-        ligneNote.setId("Non Cliquée");
-        ligneNote.setOnMouseClicked(event -> {
-            if (ligneNote.getId()=="Non Cliquée") {
-                labelType.getStyleClass().remove("labelType");
-                labelPoids.getStyleClass().remove("labelPoids");
-                labelRessources.getStyleClass().remove("labelRessources");
-
-                labelType.getStyleClass().add("labelTypeClique");
-                labelPoids.getStyleClass().add("labelPoidsClique");
-                labelRessources.getStyleClass().add("labelRessourcesClique");
-            }else {
-                labelType.getStyleClass().remove("labelTypeClique");
-                labelPoids.getStyleClass().remove("labelPoidsClique");
-                labelRessources.getStyleClass().remove("labelRessourcesClique");
-
-                labelType.getStyleClass().add("labelType");
-                labelPoids.getStyleClass().add("labelPoids");
-                labelRessources.getStyleClass().add("labelRessources");
-            }
-            afficherCommentaire(mainGridPane, ligneNote, commentaire, date[0]);
-        });
-
-
-        //Permet de mettre un taille à une ligne quand on l'ajoute
-        RowConstraints taille = new RowConstraints();
-        taille.setPrefHeight(40);
-        mainGridPane.getRowConstraints().addAll(taille);
-        // Taille des boutons
-        modifier.setMaxSize(30, 30);
-        supprimer.setMaxSize(30, 30);
-        // Action des boutons
-        supprimer.setOnAction(event -> sceneSupprimerNote(mainGridPane, supprimer, identifiantControle[0]));
-        modifier.setOnAction(event -> sceneModifierNote(mainGridPane,modifier,note,denominateur,commentaire, ressource, controle, identifiantControle[0]));
-        //In crement de l'indice (correspondant à l'index afin d'ajout la ligne en dessous de la dernière
-        indice ++;
-
-        // Alignement des Label au centre de leur emplacement
-        GridPane.setHalignment(labelNote, javafx.geometry.HPos.CENTER);
-        GridPane.setHalignment(modifier, javafx.geometry.HPos.CENTER);
-        GridPane.setHalignment(supprimer, javafx.geometry.HPos.CENTER);
-
-        // Gestion du style de nos Labels et boutons
-        labelNote.getStyleClass().add("labelNote");
-        labelType.getStyleClass().add("labelType");
-        labelPoids.getStyleClass().add("labelPoids");
-        labelRessources.getStyleClass().add("labelRessources");
-
-        labelNote.setMaxSize(130, 40);
-        labelType.setMaxSize(130, 40);
-        labelPoids.setMaxSize(130, 40);
-        labelRessources.setMaxSize(250, 40);
-
-        labelNote.setAlignment(Pos.CENTER);
-        labelType.setAlignment(Pos.CENTER);
-        labelPoids.setAlignment(Pos.CENTER);
-        labelRessources.setAlignment(Pos.CENTER);
-
-        modifier.setMaxSize(30, 30);
-        supprimer.setMaxSize(30, 30);
-
-        modifier.getStyleClass().add("boutonSupprimerModifier");
-        supprimer.getStyleClass().add("boutonSupprimerModifier");
-
-
-        // Permet de changer la couleur des boutons au survol
-        supprimer.setOnMouseEntered(event -> {
-            imageViewSupprimer.setBlendMode(BlendMode.SRC_OVER);
-            imageViewSupprimer.setOpacity(0.4); // Choisir le niveau d'opacité pour obtenir la couleur désirée
-            supprimer.setStyle("-fx-background-color: #354B85; -fx-text-fill: #e6e9f0; -fx-background-radius: 100%; ");
-            imageViewSupprimer.setStyle("-fx-effect: innershadow(gaussian, #ffffff, 10, 1.0, 0, 0);");
-        });
-        supprimer.setOnMouseExited(event -> {
-            imageViewSupprimer.setBlendMode(null);
-            imageViewSupprimer.setOpacity(1.0);
-            imageViewSupprimer.setStyle(""); // Retirer le style ajouté précédemment
-            supprimer.setStyle("-fx-background-color: #e6e9f0; -fx-text-fill: #354B85; -fx-background-radius: 100%;");
-        });
-
-
-        modifier.setOnMouseEntered(event -> {
-            imageViewModifier.setBlendMode(BlendMode.SRC_OVER);
-            imageViewModifier.setOpacity(0.4); // Choisir le niveau d'opacité pour obtenir la couleur désirée
-            imageViewModifier.setStyle("-fx-effect: innershadow(gaussian, #ffffff, 10, 1.0, 0, 0);");
-            modifier.setStyle("-fx-background-color: #354B85; -fx-text-fill: #e6e9f0; -fx-background-radius: 100%;");
-        });
-        modifier.setOnMouseExited(event -> {
-            imageViewModifier.setBlendMode(null);
-            imageViewModifier.setOpacity(1.0);
-            imageViewModifier.setStyle(""); // Retirer le style ajouté précédemment
-            modifier.setStyle("-fx-background-color: #e6e9f0; -fx-text-fill: #354B85; -fx-background-radius: 100%;");
-        });
 
     }
 
@@ -1116,9 +1000,55 @@ public class Controlleur {
             nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
             GridPane grilleRessources = (GridPane)((ScrollPane) ((Pane)((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(4)).getContent();
             afficherEnseignements(true, grilleRessources, gn.getSemestreGestionNotes().getEnseignementsSemestre(), nouvelleSceneObjet);
+            afficherNotes();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /** 
+     * Affiche les notes saisie par l'utilisateur lorsque celui-ci se trouve sur
+     * la page notes
+     * 
+     */
+    private void afficherNotes() {
+        ArrayList<Object> listeNotes = gn.getNotes(); // Contient tous les contrôles, SAE, Portfolio ayant une note
+        
+        for (Object note : listeNotes) {
+             System.out.println(note);
+        }
+        // TODO aller voir github poour récupérer le code de ajouterNote
+//        for (Object note : listeNotes) {
+//            /* Récupération des infos de la note */
+//            if (note instanceof Controle) {
+//                Controle controle = (Controle)note;
+//            }
+//            
+//            //Création des Label que l'on va afficher dans notre page
+//            Pane ligneNote = new Pane();
+//            Label labelNote = new Label(note+ " / " + denominateur);
+//            Label labelType = new Label(affichageControle);
+//            Label labelPoids = new Label();
+//            Label labelRessources = new Label(ressource);
+//
+//
+//            //Récupération d'image pour nos boutons
+//            Image imageModifier = new Image(getClass().getResourceAsStream("/application/controlleur/modifier.png"));
+//            Image imageSupprimer = new Image(getClass().getResourceAsStream("/application/controlleur/supprimer.png"));
+//            // On définit une ImageView afin de pouvoir mettre l'image dans le bouton
+//            ImageView imageViewModifier = new ImageView(imageModifier);
+//            ImageView imageViewSupprimer = new ImageView(imageSupprimer);
+//
+//            //Création des boutons avec leurs images
+//            Button modifier = new Button();
+//            modifier.setGraphic(imageViewModifier);
+//            afficherMessageSurvol(modifier, MESSAGE_MODIFIER_NOTE);
+//
+//            Button supprimer = new Button();
+//            supprimer.setGraphic(imageViewSupprimer);
+//            afficherMessageSurvol(supprimer, MESSAGE_SUPPRIMER_NOTE);
+//        }
+
     }
 
     /**
@@ -1213,11 +1143,12 @@ public class Controlleur {
             affichageModifAjoutNote(note, denominateur, commentaire);
 
             boutonValider.setOnAction(e -> {
-                if (!note.getText().isEmpty() && !denominateur.getText().isEmpty() && Double.parseDouble(note.getText()) <= Double.parseDouble(denominateur.getText())
-                        && ressource.getValue()!= null && controle.getValue() != null) {
-                    ajouterNote(note.getText(), commentaire.getText(), denominateur.getText(), ressource.getValue(), controle.getValue(), indice);
-                    popupStage.close();
-                }
+                    try {
+                        ajouterNote(note.getText(), commentaire.getText(), denominateur.getText(), ressource.getValue(), controle.getValue(), indice);
+                        popupStage.close();
+                    } catch (Exception e1) {
+                        System.err.println("Impossible d'ajouter la note, veuillez remplir tous les champs");
+                    }
             });
             /* Ouvre le popUp et attend sa fermeture */
             popupStage.showAndWait();

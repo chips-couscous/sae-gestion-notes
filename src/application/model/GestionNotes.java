@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -52,7 +53,7 @@ public class GestionNotes {
         fichierSerialize = new File(".\\tmp\\gestion-notes.ser");
 
         /* Récupération des données enregistré si il y a eu une sauvegarde */
-        if (fichierSerialize.exists()) {
+        if (false) {
             deserializerDonnees();
         } else { // Si aucune sauvegarde : initialise l'application
             try {
@@ -477,6 +478,52 @@ public class GestionNotes {
         }
 
         Reseau.envoyer(ipServeur, port, cheminFichier);
+    }
+
+    /** 
+     * @return la liste des contrôles, ou SAE, ou Portfolio ayant une note
+     */
+    public ArrayList<Object> getNotes() {
+        ArrayList<Object> listeNotes = new ArrayList<>();
+        for (Enseignement enseignement : getSemestreGestionNotes().getEnseignementsSemestre()) {
+            if (enseignement instanceof Ressource ) {
+                List<Controle> listeControle = ((Ressource) enseignement).getControlesRessource();
+                for (Controle controle : listeControle) {
+                    if (controle.aUneNote()) {
+                        listeNotes.add(controle);
+                    }
+                }
+            } else if (enseignement instanceof Sae) {
+                if (((Sae)enseignement).aUneNote()) {
+                    listeNotes.add(enseignement);
+                }
+            } else if (enseignement instanceof Portfolio) {
+                if (((Portfolio)enseignement).aUneNote()) {
+                    listeNotes.add(enseignement);
+                }
+            }
+        }
+        
+        return listeNotes;
+    }
+
+    /** 
+     * Ajoute une note à une SAE ou un Portfolio
+     * @param enseignement
+     * @param note 
+     * @param denominateur 
+     * @param commentaire
+     * @throws NoteInvalideException 
+     */
+    public static void ajouterNoteASaePortfolio(Enseignement enseignement, double note, int denominateur,
+            String commentaire) throws NoteInvalideException {
+        if (enseignement instanceof Sae) {
+            ((Sae)enseignement).setNoteSae(new Note(note, denominateur, commentaire));
+        } else if (enseignement instanceof Portfolio) {
+            ((Portfolio)enseignement).setNotePortfolio(new Note(note, denominateur, commentaire));
+        } else {
+            throw new NoteInvalideException("La note est invalide");
+        }
     }
 
     /**

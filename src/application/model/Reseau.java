@@ -449,18 +449,11 @@ public class Reseau {
         dictionnaireCryptage.put('-', 74);
         dictionnaireCryptage.put('(', 75);
         dictionnaireCryptage.put(')', 76);
-        dictionnaireCryptage.put((char)-30, 77); // chiffrage du caractère ’
-        dictionnaireCryptage.put((char)-128, 78); // chiffrage du caractère ’
-        dictionnaireCryptage.put((char)-103, 79); // chiffrage du caractère ’
-        dictionnaireCryptage.put((char)10, 80); // Chiffrage du saut de ligne
-        dictionnaireCryptage.put((char)13, 81); // Chiffrage du retour chariot
-        
-        dictionnaireCryptage.put((char)-65, 82); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
-        dictionnaireCryptage.put((char)-17, 83); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
-        dictionnaireCryptage.put((char)-69, 84); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
-        dictionnaireCryptage.put((char)-23, 85); // Chiffrage des caractères accentués dans un autre encodage 
-        dictionnaireCryptage.put((char)-67, 86); // Chiffrage du é dans un autre encodage 
-        dictionnaireCryptage.put((char)-12, 87); // Chiffrage du ô dans un autre encodage 
+        dictionnaireCryptage.put((char)10, 77); // Chiffrage du saut de ligne
+        dictionnaireCryptage.put((char)13, 78); // Chiffrage du retour chariot
+        dictionnaireCryptage.put((char)-65, 79); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
+        dictionnaireCryptage.put((char)-17, 80); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
+        dictionnaireCryptage.put((char)-69, 81); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
     }
     
     /** 

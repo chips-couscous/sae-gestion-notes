@@ -357,6 +357,7 @@ public class Controlleur {
 			ligneToutes.setPrefSize(185,30);
 			ligneToutes.setId("Toutes");
 			ligneToutes.getStyleClass().add("paneCompetence");
+			ligneToutes.getChildren().add(labelToutes);
 			grilleEnseignement.add(ligneToutes,0,0);
 			indiceEnseignement = 1;
 		}

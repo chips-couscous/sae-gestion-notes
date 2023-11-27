@@ -15,6 +15,8 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -123,6 +125,7 @@ public class Reseau {
             ServerSocket serverSocket = new ServerSocket(port);
 
             System.out.println("Serveur : Attente de connexion...");
+            serverSocket.setSoTimeout(15000);
 
             // Attente d'une connexion client
             Socket clientSocket = serverSocket.accept();
@@ -156,10 +159,12 @@ public class Reseau {
             clientSocket.close();
             serverSocket.close();
 
-        } catch (IOException e) {
-            System.out.println("Serveur : connexion avec le client impossible "
-                    + e.getMessage());
-            throw e;
+        } catch (SocketTimeoutException e) {
+            System.err.println("Serveur : Aucun client trouvé");
+            throw new SocketTimeoutException("Aucun client trouvé");
+        } catch (SocketException e) {
+            System.err.println("Serveur : Le client a quitté l'échange");
+            throw new SocketException("Le client a quitté l'échange, aucun fichier transmis");
         }
     }
     

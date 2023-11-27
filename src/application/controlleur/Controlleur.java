@@ -172,6 +172,12 @@ public class Controlleur {
      * directement au lancement de l'application
      */
     public void initialize() {
+        if (listeNotes != null) {
+            Scene sceneActuelle = rootPane.getScene();
+            GridPane grilleRessources = (GridPane)((ScrollPane) ((Pane)(rootPane).getChildren().get(1)).getChildren().get(4)).getContent();
+            afficherEnseignements(true, grilleRessources, gn.getSemestreGestionNotes().getEnseignementsSemestre(), sceneActuelle);
+            afficherNotes();
+        }
         if (ressourcesCombo != null) {
             ajoutRessourcesCombo();
             choixComboRessources(ressourcesCombo);
@@ -497,6 +503,7 @@ public class Controlleur {
             ligneToutes.setPrefSize(185,30);
             ligneToutes.setId("Toutes");
             ligneToutes.getStyleClass().add("paneCompetence");
+            ligneToutes.getChildren().add(labelToutes);
             grilleEnseignement.add(ligneToutes,0,0);
             indiceEnseignement = 1;
         }
@@ -998,9 +1005,6 @@ public class Controlleur {
             Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
             stage.setScene(nouvelleSceneObjet); //Affichage de la nouvelle scene
             nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
-            GridPane grilleRessources = (GridPane)((ScrollPane) ((Pane)((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(4)).getContent();
-            afficherEnseignements(true, grilleRessources, gn.getSemestreGestionNotes().getEnseignementsSemestre(), nouvelleSceneObjet);
-            afficherNotes();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1012,13 +1016,13 @@ public class Controlleur {
      * 
      */
     private void afficherNotes() {
-        ArrayList<Object> listeNotes = gn.getNotes(); // Contient tous les contrôles, SAE, Portfolio ayant une note
+        ArrayList<Object> notes = gn.getNotes(); // Contient tous les contrôles, SAE, Portfolio ayant une note
         
-        for (Object note : listeNotes) {
+        for (Object note : notes) {
              System.out.println(note);
         }
         // TODO aller voir github poour récupérer le code de ajouterNote
-//        for (Object note : listeNotes) {
+//        for (Object note : notes) {
 //            /* Récupération des infos de la note */
 //            if (note instanceof Controle) {
 //                Controle controle = (Controle)note;

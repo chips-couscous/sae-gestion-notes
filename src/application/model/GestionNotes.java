@@ -53,7 +53,7 @@ public class GestionNotes {
         fichierSerialize = new File(".\\tmp\\gestion-notes.ser");
 
         /* Récupération des données enregistré si il y a eu une sauvegarde */
-        if (false) {
+        if (fichierSerialize.exists()) {
             deserializerDonnees();
         } else { // Si aucune sauvegarde : initialise l'application
             try {

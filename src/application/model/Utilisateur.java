@@ -48,8 +48,14 @@ public class Utilisateur implements Serializable {
         return nomUtilisateur;
     }
 
-    /** @param nom nouvelle valeur de nomUtilisateur */
-    public void setNomUtilisateur(String nom) {
+    /** 
+     * @param nom nouvelle valeur de nomUtilisateur 
+     * @throws UtilisateurInvalideException  si le nom est invalide
+     */
+    public void setNomUtilisateur(String nom) throws UtilisateurInvalideException {
+        if (nom == null || nom.equals("")) {
+            throw new UtilisateurInvalideException("Le nom est incorrect");
+        }
         this.nomUtilisateur = nom;
     }
 
@@ -58,8 +64,14 @@ public class Utilisateur implements Serializable {
         return prenomUtilisateur;
     }
 
-    /** @param prenom nouvelle valeur de prenomUtilisateur */
-    public void setPrenomUtilisateur(String prenom) {
+    /** 
+     * @param prenom nouvelle valeur de prenomUtilisateur 
+     * @throws UtilisateurInvalideException 
+     */
+    public void setPrenomUtilisateur(String prenom) throws UtilisateurInvalideException {
+        if (prenom == null || prenom.equals("")) {
+            throw new UtilisateurInvalideException("Le prénom est incorrect");
+        }
         this.prenomUtilisateur = prenom;
     }
     

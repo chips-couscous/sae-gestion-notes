@@ -6,10 +6,20 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
+import application.controlleur.Controlleur;
+
+/** TODO comment class responsibility (SRP)
+ * @author tom.jammes
+ * @author thomas.izard
+ * @author constant.nguyen
+ */
 public class Vue extends Application {
 
 	private Stage primaryStage;
 
+	/** TODO comment method role
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -22,6 +32,9 @@ public class Vue extends Application {
 		initRootLayout();
 	}
 
+	/** TODO comment method role
+	 * 
+	 */
 	public void initRootLayout() {
 
 		try {
@@ -30,8 +43,8 @@ public class Vue extends Application {
 			BorderPane PageNotes = loader.load();
 			Scene PageNoteScene = new Scene(PageNotes);
 			 // Ajoutez un logo à la barre de titre
-            Image logo = new Image(getClass().getResourceAsStream("logo.png"));
-            primaryStage.getIcons().add(logo);
+                        Image logo = new Image(getClass().getResourceAsStream("logo.png"));
+                        primaryStage.getIcons().add(logo);
 			primaryStage.setScene(PageNoteScene);
 			primaryStage.show();
 			PageNoteScene.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
@@ -39,5 +52,4 @@ public class Vue extends Application {
 			e.printStackTrace();
 		}
 	}
-
 }

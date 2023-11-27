@@ -114,4 +114,9 @@ public class Controle implements Serializable {
     public String toString() {
         return getIndentifiantControle() + " " + getTypeControle() + " " + getDateControle() + " " + getPoidsControle() + "\n";
     }
+
+    /** @return true si le contrôle a une note */
+    public boolean aUneNote() {
+        return noteControle != null;
+    }
 }

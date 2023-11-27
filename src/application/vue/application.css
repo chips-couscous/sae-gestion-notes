@@ -107,7 +107,7 @@
  }
  
  .paneCompetenceCliquee {
- 	-fx-background-color: #F4F4F4;
+ 	-fx-background-color: #354B85;
  }
  
  .paneEnseignement {
@@ -116,19 +116,32 @@
 	-fx-border-width: 2px; 
 	-fx-border-radius: 2px;
  }
+ .labelEnseignement {
+	-fx-text-fill: #354B85;
+	-fx-fill: #354B85;	
+	-fx-font-weight: bold;
+}
  
  .paneControle {
 	-fx-background-color: #E6E9F0; 
-	-fx-border-color: #8E9ABB;
+	-fx-border-color: #354B85;
 	-fx-border-width: 2px; 
 	-fx-border-radius: 2px;
  }
  
  .paneInformations {
-	-fx-background-color: #EDEFF2; 
+	-fx-background-color: #354B85; 
 	-fx-border-color: #354B85;
 	-fx-border-width: 2px; 
 	-fx-border-radius: 2px;
+ }
+ .labelInfo{
+ 	-fx-fill: #E6E9F0;
+ 	-fx-text-fill: #E6E9F0;
+ }
+ .labelControle{
+ 	-fx-fill: #354B85;
+ 	-fx-text-fill: #354B85;
  }
  .combo-box .list-cell:selected {
     -fx-text-fill: #E6E9F0; /* Couleur du texte */

@@ -60,4 +60,8 @@ public class Sae extends Enseignement implements Serializable {
     public boolean aUneNote() {
         return noteSae != null;
     }
+    
+    public Note getNoteSae() {
+        return noteSae;
+    }
 }

@@ -102,6 +102,12 @@
 	-fx-border-radius: 2px;
  }
  
+ .paneEnseignement { 
+	-fx-border-color: #354B85;
+	-fx-border-width: 2px; 
+	-fx-border-radius: 2px;
+ }
+ 
  .paneCompetenceNonCliquee {
  	-fx-background-color: #E6E9F0;
  }
@@ -110,12 +116,6 @@
  	-fx-background-color: #354B85;
  }
  
- .paneEnseignement {
-	-fx-background-color: #E6E9F0; 
-	-fx-border-color: #354B85;
-	-fx-border-width: 2px; 
-	-fx-border-radius: 2px;
- }
  .labelEnseignement {
 	-fx-text-fill: #354B85;
 	-fx-fill: #354B85;	

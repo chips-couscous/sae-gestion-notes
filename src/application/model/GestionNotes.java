@@ -235,12 +235,55 @@ public class GestionNotes {
     }
 
     /**
-     * Supprime la note d'un contrôle
-     * @param identifiant du controle dont on veut supprimer la note
+     * Supprime la note d'un contrôle, d'une SAE ou d'un Portfolio
+     * @param est un objet qui correspond à la note que l'on veut supprimer
      */
-    public void supprimerNoteAControle(String identifiant) {
-        Controle controle = trouverControle(identifiant);
-        controle.setNoteControle(null);
+    public void supprimerNote(Object noteASupprimer) {
+    	if (noteASupprimer instanceof Sae) {
+			Sae noteSae = (Sae) noteASupprimer;
+			noteSae.setNoteSae(null);
+		} else if (noteASupprimer instanceof Portfolio) {
+			Portfolio notePortfolio = (Portfolio) noteASupprimer;
+			notePortfolio.setNotePortfolio(null);
+		} else {
+			Controle controle = (Controle) noteASupprimer;
+			controle.setNoteControle(null);
+		}
+    }
+    
+    /**
+     * Modifie la note d'un contrôle, d'une SAE ou d'un Portfolio
+     * @param est un objet qui correspond à la note que l'on veut supprimer
+     */
+    public void modifierNote(Object noteAModifier, Double note, int denominateur, String commentaire) {
+    	if (noteAModifier instanceof Sae) {
+    		Sae notePortfolio = (Sae) noteAModifier;
+			try {
+				Note nouvelleNote = new Note(note, denominateur, commentaire);
+				notePortfolio.setNoteSae(nouvelleNote);
+			} catch (NoteInvalideException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if (noteAModifier instanceof Portfolio) {
+			Portfolio notePortfolio = (Portfolio) noteAModifier;
+			try {
+				Note nouvelleNote = new Note(note, denominateur, commentaire);
+				notePortfolio.setNotePortfolio(nouvelleNote);
+			} catch (NoteInvalideException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		} else {
+			Controle controle = (Controle) noteAModifier;
+			try {
+				modifierNoteAControle(controle.getIndentifiantControle(), note, denominateur, commentaire);
+			} catch (NoteInvalideException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
     }
 
     /**

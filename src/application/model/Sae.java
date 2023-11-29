@@ -43,6 +43,11 @@ public class Sae extends Enseignement implements Serializable {
     public void setNoteSae(Note noteSae) {
         this.noteSae = noteSae;
     }
+   
+    
+    /**
+     * @return 
+     */
     
     /** noteSae nouvelle valeur de moyenneSae */
     @Override

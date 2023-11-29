@@ -84,15 +84,30 @@
  }
 .labelCompetence {
 	-fx-font-size: 12px; 
-	-fx-font-weight: bold; 
+	-fx-font-weight: bold; 	
 	-fx-text-fill: #354B85;
 	-fx-fill: #354B85;	
 }
-.paneCompetence {
-	-fx-background-color: #E6E9F0; 
+.labelCompetenceNonCliquee {
+	-fx-text-fill: #354B85;
+	-fx-fill: #354B85;	
+}
+.labelCompetenceCliquee {
+	-fx-text-fill: #E6E9F0;
+	-fx-fill: #E6E9F0;	
+}
+.paneCompetence { 
 	-fx-border-color: #354B85;
 	-fx-border-width: 2px; 
 	-fx-border-radius: 2px;
+ }
+ 
+ .paneCompetenceNonCliquee {
+ 	-fx-background-color: #E6E9F0;
+ }
+ 
+ .paneCompetenceCliquee {
+ 	-fx-background-color: #F4F4F4;
  }
  
  .paneEnseignement {
@@ -117,4 +132,11 @@
  }
  .combo-box .list-cell:selected {
     -fx-text-fill: #E6E9F0; /* Couleur du texte */
+}
+
+.labelPasDeNote {
+	-fx-font-size: 36px; 
+	-fx-font-weight: bold; 	
+	-fx-text-fill: #354B85;
+	-fx-fill: #354B85;	
 }

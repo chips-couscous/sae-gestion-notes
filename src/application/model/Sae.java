@@ -43,6 +43,14 @@ public class Sae extends Enseignement implements Serializable {
     public void setNoteSae(Note noteSae) {
         this.noteSae = noteSae;
     }
+   
+    
+    /**
+     * @return 
+     */
+    public Note getNoteSae() {
+        return noteSae;
+    }
     
     /** noteSae nouvelle valeur de moyenneSae */
     @Override
@@ -54,5 +62,10 @@ public class Sae extends Enseignement implements Serializable {
     @Override
     protected Note getMoyenne() {
         return moyenneSae;
+    }
+    
+    /** @return true si la SAE a une note */
+    public boolean aUneNote() {
+        return noteSae != null;
     }
 }

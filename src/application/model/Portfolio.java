@@ -44,6 +44,13 @@ public class Portfolio extends Enseignement implements Serializable {
         this.notePortfolio = notePortfolio;
     }
     
+    /** @param notePortfolio nouvelle valeur de notePortfolio 
+     * @return
+     */
+    public Note getNotePortfolio() {
+        return notePortfolio;
+    }
+    
     /** notePortfolio nouvelle valeur de moyennePortfolio */
     @Override
     protected void setMoyenne() {
@@ -54,5 +61,10 @@ public class Portfolio extends Enseignement implements Serializable {
     @Override
     protected Note getMoyenne() {
         return moyennePortfolio;
+    }
+    
+    /** @return true si le portfiolio a une note */
+    public boolean aUneNote() {
+        return notePortfolio != null;
     }
 }

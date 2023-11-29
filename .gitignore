@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-.classpath
-.project
-.settings/
-bin/
-<<<<<<< HEAD
-build.fxbuild
-=======
-build.fxbuild
->>>>>>> 8b5741c98c8d1a0cf54230fc41c25bbe473b8c5e
-=======
 .settings/
 .project
 .classpath
@@ -20,4 +9,4 @@ bin/
 src/module-info.java
 README.md
 /.metadata/
->>>>>>> 771911681175643d997c4f4ca3e2458afce675d1
+csv/

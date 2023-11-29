@@ -37,11 +37,13 @@ public class FichierSemestre extends FichierCsv implements Serializable {
     }
 
     /**
-     * TODO comment method role
+     * Décompose le fichier contenant les paramètres du semestre pour ajouter 
+     * dans une hashMap toutes les données nécessaires au paramétrage de l'application
      * @return les données du fichier importé
-     * @throws ParametresSemestreException 
+     * @throws ParametresSemestreException si le fichier ouvert ne contient
+     *           pas les paramètres du semestre
      */
-    public HashMap<String[], List<String[]>> decomposerFichier() {
+    public HashMap<String[], List<String[]>> decomposerFichier() throws ParametresSemestreException {
         for (int i = 0; i < contenuFichier.size(); i++) {
             if (contenuFichier.get(i).length > 0) {
                 
@@ -63,7 +65,9 @@ public class FichierSemestre extends FichierCsv implements Serializable {
                 }
             }
         }
-        
+        if (competencesEnseignements.isEmpty()) {
+            throw new ParametresSemestreException("Le fichier ne contient pas de paramètres de semestre valide");
+        }
         return competencesEnseignements;
     }
 

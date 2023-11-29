@@ -83,12 +83,12 @@
    <center>
       <Pane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <Label contentDisplay="TOP" layoutX="32.0" layoutY="144.0" prefHeight="73.0" prefWidth="967.0" text="Toutes les données de l'application seront effacés, comprenant les notes inscrites manuellement et les paramètres actuels  " textAlignment="CENTER" textFill="#354b85">
+            <Label alignment="CENTER" contentDisplay="TOP" layoutX="90.0" layoutY="195.0" prefHeight="73.0" prefWidth="851.0" text="La réinitialisation supprimera toutes les données sauvegardées dans l'application" textAlignment="CENTER" textFill="#354b85" wrapText="true">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <Button layoutX="423.0" layoutY="380.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="185.0" style="-fx-background-color: #354B85;" text="Réinitialiser" textFill="WHITE" />
+            <Button fx:id="boutonReinitialisation" layoutX="423.0" layoutY="308.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="185.0" style="-fx-background-color: #354B85;" text="Réinitialiser" textFill="WHITE" />
          </children>
       </Pane>
    </center>

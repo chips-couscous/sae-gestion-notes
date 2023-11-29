@@ -55,4 +55,9 @@ public class Portfolio extends Enseignement implements Serializable {
     protected Note getMoyenne() {
         return moyennePortfolio;
     }
+    
+    /** @return true si le portfiolio a une note */
+    public boolean aUneNote() {
+        return notePortfolio != null;
+    }
 }

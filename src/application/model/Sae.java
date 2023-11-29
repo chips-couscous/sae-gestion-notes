@@ -55,4 +55,9 @@ public class Sae extends Enseignement implements Serializable {
     protected Note getMoyenne() {
         return moyenneSae;
     }
+    
+    /** @return true si la SAE a une note */
+    public boolean aUneNote() {
+        return noteSae != null;
+    }
 }

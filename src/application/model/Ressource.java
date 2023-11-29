@@ -4,6 +4,7 @@
  */
 package application.model;
 
+import application.model.exception.ControleInvalideException;
 import application.model.exception.EnseignementInvalideException;
 import application.model.exception.MoyenneRessourceException;
 import application.model.exception.NoteInvalideException;
@@ -55,8 +56,9 @@ public class Ressource extends Enseignement implements Serializable {
      * Ajoute un contrôle à l'enseignement
      * @param controle à ajouter à la ressource 
      * @return true si le controle a pu être ajouté, false sinon
+     * @throws ControleInvalideException 
      */
-    public boolean ajouterControle(Controle controle) {
+    public boolean ajouterControle(Controle controle) throws ControleInvalideException {
         if(verifierPoidsTotauxDansRessource(controle)) {
             controlesRessource.add(controle);
             
@@ -70,7 +72,7 @@ public class Ressource extends Enseignement implements Serializable {
             
             return true;
         }
-        return false;
+        throw new ControleInvalideException();
     }
     
     /**

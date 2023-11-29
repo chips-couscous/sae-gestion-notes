@@ -3,15 +3,19 @@
  * IUT Rodez 2023-2024, soporifik, pas de copyright ni "copyleft"
  */
 package application.model;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
+
 import application.model.exception.CompetenceInvalideException;
 import application.model.exception.ControleInvalideException;
 import application.model.exception.EnseignementInvalideException;
@@ -19,6 +23,7 @@ import application.model.exception.ExtensionFichierException;
 import application.model.exception.IpException;
 import application.model.exception.MoyenneRessourceException;
 import application.model.exception.NoteInvalideException;
+import application.model.exception.ParametresSemestreException;
 import application.model.exception.PortReseauException;
 import application.model.exception.SemestreInvalideExecption;
 import application.model.exception.UtilisateurInvalideException;
@@ -33,25 +38,35 @@ import application.model.exception.cheminFichierException;
  */
 public class GestionNotes {
 
+    /** Instance de l'application */
     private static GestionNotes instance = null;
-    /* Semestre en cours utilisé pour l'application */
+    
+    /** Semestre en cours utilisé pour l'application */
     private Semestre semestreGestionNotes;
 
-    /* Propriétaire de l'application */
+    /** Utilisateur de l'application */
     private Utilisateur utilisateurGestionNotes;
 
-    /* */
+    /** Fichier contenant la sauvegarde des paramètres et des notes */
     private File fichierSerialize;
 
-    /** Constructeur de la gestion des notes */
-    public GestionNotes() {
-        setSemestreGestionNotes(new Semestre());
+    /** Constructeur de la gestion des notes 
+     * @throws IOException si le fichier a chargé n'existe pas
+     * @throws ClassNotFoundException si les objets à charger sont inconnu
+     */
+    public GestionNotes() throws ClassNotFoundException, IOException {
         fichierSerialize = new File(".\\tmp\\gestion-notes.ser");
 
-        try {
-            setUtilisateurGestionNotes(new Utilisateur());
-        } catch (UtilisateurInvalideException e) {
-            e.printStackTrace();
+        /* Récupération des données enregistré si il y a eu une sauvegarde */
+        if (fichierSerialize.exists()) {
+            deserializerDonnees();
+        } else { // Si aucune sauvegarde : initialise l'application
+            try {
+                setSemestreGestionNotes(new Semestre());
+                setUtilisateurGestionNotes(new Utilisateur());
+            } catch (UtilisateurInvalideException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -114,7 +129,8 @@ public class GestionNotes {
      * @throws NoteInvalideException
      * @throws MoyenneRessourceException
      */
-    public void calculerMoyenneEnseignement(String identifiant) throws MoyenneRessourceException, NoteInvalideException{ 
+    public void calculerMoyenneEnseignement(String identifiant) 
+            throws MoyenneRessourceException, NoteInvalideException{ 
         Enseignement enseignement = trouverEnseignement(identifiant);
         enseignement.setMoyenne();
     }
@@ -124,7 +140,7 @@ public class GestionNotes {
      * @param identifiant de l'enseignement dont on veut connaître la moyenne
      * @return la note qui correspond à la moyenne de l'enseignement renseigné
      */
-    public Note moyenneEnseignemnt(String identifiant) {
+    public Note moyenneEnseignement(String identifiant) {
         Enseignement enseignement = trouverEnseignement(identifiant);
         Note moyenneEnseignement = null;
 
@@ -152,7 +168,8 @@ public class GestionNotes {
      * @param prenom nom de l'utilisateur à remplacer
      * @throws UtilisateurInvalideException si le prénom ou le nom est incorrect
      */
-    public void setUtilisateurGestionNotes(String nom, String prenom) throws UtilisateurInvalideException {
+    public void setUtilisateurGestionNotes(String nom, String prenom) 
+            throws UtilisateurInvalideException {
         utilisateurGestionNotes.setNomUtilisateur(nom);
         utilisateurGestionNotes.setPrenomUtilisateur(prenom);
     }
@@ -163,7 +180,9 @@ public class GestionNotes {
      * @param identifiantEnseignement identifiant de l'enseignement à ajouter
      * @param poids de l'enseignement dans la compétence
      */
-    public void ajouterEnseignementACompetence(String identifiantCompetence, String identifiantEnseignement, Integer poids) {
+    public void ajouterEnseignementACompetence(String identifiantCompetence, 
+                                               String identifiantEnseignement, 
+                                               Integer poids) {
         Competence competence = trouverCompetence(identifiantCompetence);
         Enseignement enseignement = trouverEnseignement(identifiantEnseignement);
 
@@ -176,23 +195,34 @@ public class GestionNotes {
      * @param type du contrôle renseigné (exemple : oral, écrit ...)
      * @param date du contrôle renseigné (exemple : 12/10/2023, milieu octobre ...)
      * @param poids du contrôle renseigné (exemple : 12, 35 ...)
+     * @return true si le contrôle a bien été ajouté
+     *         false sinon
      * @throws ControleInvalideException
      */
-    public void ajouterControleAEnseignement(String identifiant, String type, String date, int poids) throws ControleInvalideException {
+    public boolean ajouterControleAEnseignement(String identifiant, String type, 
+                                                String date, int poids) 
+                                                        throws ControleInvalideException {
         Ressource enseignement = (Ressource) trouverEnseignement(identifiant);
-        Controle controleAAjouter = new Controle(type, date, poids);       
-        enseignement.ajouterControle(controleAAjouter);
+        try {
+            Controle controleAAjouter = new Controle(type, date, poids);       
+            enseignement.ajouterControle(controleAAjouter);
+            return true;
+        } catch (ControleInvalideException e) {
+            return false;
+        }
     }
 
     /**
      * Ajoute la note à un controle
      * @param identifiant du controle dont on veut ajouter la note
-     * @param note , valeur de la note
+     * @param note valeur de la note
      * @param denominateur de la note
      * @param commentaire de la note
      * @throws NoteInvalideException
      */
-    public void ajouterNoteAControle(String identifiant, double note, int denominateur, String commentaire) throws NoteInvalideException {
+    public void ajouterNoteAControle(String identifiant, double note, 
+                                     int denominateur, String commentaire) 
+                                             throws NoteInvalideException {
         Note noteAAjouter;
 
         Controle controle = trouverControle(identifiant);
@@ -209,7 +239,9 @@ public class GestionNotes {
      * @param commentaire de la note
      * @throws NoteInvalideException
      */
-    public void modifierNoteAControle(String identifiant, double note, int denominateur, String commentaire) throws NoteInvalideException {
+    public void modifierNoteAControle(String identifiant, double note, 
+                                      int denominateur, String commentaire) 
+                                              throws NoteInvalideException {
         Note noteAModifier;
 
         Controle controle = trouverControle(identifiant);
@@ -230,13 +262,19 @@ public class GestionNotes {
     /**
      * Import d'un fichier csv contenant le parametrage d'un semestre
      * @param chemin du fichier à importer
-     * @throws ExtensionFichierException
-     * @throws SemestreInvalideExecption
-     * @throws CompetenceInvalideException
-     * @throws EnseignementInvalideException
+     * @throws ExtensionFichierException si l'extension est incorrecte
+     * @throws SemestreInvalideExecption si le semestre est invalide
+     * @throws CompetenceInvalideException si une compétence est invalide
+     * @throws EnseignementInvalideException si un enseignement est invalide
+     * @throws ParametresSemestreException si le fichier à importer ne contient
+     *         pas de paramètres valides
      */
-    public void importerParametrageSemestre(String chemin) throws ExtensionFichierException, SemestreInvalideExecption, CompetenceInvalideException, EnseignementInvalideException {
-
+    public void importerParametrageSemestre(String chemin) 
+            throws ExtensionFichierException, SemestreInvalideExecption, 
+                   CompetenceInvalideException, EnseignementInvalideException, 
+                   ParametresSemestreException {
+        
+        // Crée un fichier semestre
         FichierSemestre fichier = new FichierSemestre(chemin);
 
         fichier.setDelimiteurFichier(";");
@@ -270,8 +308,11 @@ public class GestionNotes {
      * @param chemin du fichier à importer
      * @throws ExtensionFichierException
      * @throws ControleInvalideException
+     * @throws EnseignementInvalideException si le fichier ne contient pas de paramètres de ressources
      */
-    public void importerParametrageEnseignement(String chemin) throws ExtensionFichierException, ControleInvalideException {
+    public void importerParametrageEnseignement(String chemin) 
+            throws ExtensionFichierException, ControleInvalideException, 
+                   EnseignementInvalideException {
 
         FichierRessource fichier = new FichierRessource(chemin);
 
@@ -294,9 +335,8 @@ public class GestionNotes {
     }
 
     /**
-     * Méthode de test
-     * @param identifiant
-     * @return 0
+     * @param identifiant 
+     * @return la note d'un controle
      */
     public double getValeurNoteDeControle(String identifiant) {
         Controle controle = trouverControle(identifiant);
@@ -322,9 +362,8 @@ public class GestionNotes {
     /**
      * Vérifie si l'Enseignement est une Ressource
      * @param enseignement 
-     * @return un booléen dont la valeur est vrai si
-     * 		l'enseignement est bien une ressource
-     * 		faux sinon
+     * @return true si l'enseignement est bien une ressource
+     * 	       false sinon
      */
     public boolean estUneRessource(Enseignement enseignement) {
         String initiale = enseignement.getIdentifiantEnseignement().substring(0,1);
@@ -334,9 +373,8 @@ public class GestionNotes {
     /**
      * Vérifie si l'Enseignement est une Sae
      * @param enseignement 
-     * @return un booléen dont la valeur est vrai si
-     * 		l'enseignement est bien une sae
-     * 		faux sinon
+     * @return true si l'enseignement est bien une sae
+     * 	       false sinon
      */
     public boolean estUneSae(Enseignement enseignement) {
         String initiale = enseignement.getIdentifiantEnseignement().substring(0,1);
@@ -346,9 +384,8 @@ public class GestionNotes {
     /**
      * Vérifie si l'Enseignement est un Portfolio
      * @param enseignement 
-     * @return un booléen dont la valeur est vrai si
-     * 		l'enseignement est bien un Portfolio
-     * 		faux sinon
+     * @return true si l'enseignement est bien un Portfolio
+     * 	       false sinon
      */
     public boolean estUnPortfolio(Enseignement enseignement) {
         String initiale = enseignement.getIdentifiantEnseignement().substring(0,1);
@@ -361,16 +398,16 @@ public class GestionNotes {
      * @throws IOException 
      * @throws ClassNotFoundException 
      */
-    public void reinitialiserGestionNotes() throws UtilisateurInvalideException, ClassNotFoundException, IOException {
-        setSemestreGestionNotes(new Semestre());
-        setUtilisateurGestionNotes(new Utilisateur());
-        deserializerDonnees();
-        serializerDonnees();
+    public void reinitialiserGestionNotes() throws UtilisateurInvalideException, 
+                                                   ClassNotFoundException, IOException {
+        fichierSerialize.delete();
+        instance = null;
     }
 
     /** 
-     * TODO comment method role
-     * @throws IOException
+     * Sérialise les objets semestreGestionNotes et utilisateurGestionNotes
+     * pour les sauvegarder dans un fichier
+     * @throws IOException si le fichier est introuvable
      */
     public void serializerDonnees() throws IOException {
         try (// ouverture d'un flux sur un fichier
@@ -382,9 +419,10 @@ public class GestionNotes {
     }
 
     /** 
-     * TODO comment method role
-     * @throws ClassNotFoundException
-     * @throws IOException
+     * Sérialise les objets semestreGestionNotes et utilisateurGestionNotes
+     * pour les sauvegarder dans un fichier
+     * @throws ClassNotFoundException si les objets sauvegardé sont inconnus
+     * @throws IOException si le fichier de sauvegarde est introuvable
      */
     public void deserializerDonnees() throws ClassNotFoundException, IOException {
         try (// ouverture d'un flux sur un fichier  
@@ -392,15 +430,19 @@ public class GestionNotes {
             // désérialization de l'objet
             semestreGestionNotes = (Semestre) ois.readObject();
             utilisateurGestionNotes = (Utilisateur) ois.readObject();
+
         }
     }
 
-    /** TODO comment method role
-     * @return instance
-     */
+    /** @return l'instance de GestionNotes non nulle */
     public static GestionNotes getInstance() {
         if (instance == null) {
-            instance = new GestionNotes();
+            try {
+                instance = new GestionNotes();
+            } catch (ClassNotFoundException | IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
         return instance;
     }
@@ -410,106 +452,155 @@ public class GestionNotes {
      * pour recevoir un fichier d'un autre utilisateur
      * 
      * @param port port de connexion (compris entre 1024 et 60000)
-     * @param cheminReceptionFichier chemin ou sera créer le fichier recu
+     * @param cheminReceptionFichier chemin ou sera crée le fichier reçu
      * @throws PortReseauException si le port est invalide
      * @throws IOException si il y eu un problème lors de la connexion avec le client
      * @throws cheminFichierException si cheminReceptionFichier est null ou vide
      */
-    public static void recevoirFichier(int port, String cheminReceptionFichier) throws PortReseauException, IOException, cheminFichierException {
+    public static void recevoirFichier(int port, String cheminReceptionFichier) 
+            throws PortReseauException, IOException, cheminFichierException {
 
         if (port < 1024 || port > 60000) {
-            throw new PortReseauException("Le port est incorrect");
+            throw new PortReseauException("Le port est incorrect.");
         }
         if (cheminReceptionFichier == null || cheminReceptionFichier.equals("")) {
-            throw new cheminFichierException("Le chemin de reception est incorrect");
+            throw new cheminFichierException("Le chemin de réception est incorrect.");
         }
         Reseau.recevoir(port, cheminReceptionFichier);
     }
 
     /** 
-     * Vérifie que la conformité des paramètres et lance le client 
-     * pour envoyer le fichier passé en paramètre à l'adresse IP communiqué en paramètre
-     * @param ipServeur IP de la machine a qui on envoi le fichier
+     * Vérifie la conformité des paramètres et lance le client 
+     * pour envoyer le fichier passé en paramètre à l'adresse IP communiquée en paramètre
+     * @param ipServeur IP de la machine a qui on envoie le fichier
      * @param port port de connexion 
-     * @param cheminFichier chemin du fichier a envoyer
+     * @param cheminFichier chemin du fichier à envoyer
      * @throws PortReseauException  si le port est invalide
      * @throws IpException si l'adresse IP est invalide
      * @throws cheminFichierException si le chemin est invalide
      * @throws IOException si le serveur est introuvable
      */
-    public static void envoyerFichier(String ipServeur, int port, String cheminFichier) throws PortReseauException, IpException, cheminFichierException, IOException {
+    public static void envoyerFichier(String ipServeur, int port, String cheminFichier) 
+            throws PortReseauException, IpException, cheminFichierException, IOException {
+        
         String patternIP = "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\\.(?!$)|$)){4}$";
 
         if (!Pattern.matches(patternIP, ipServeur)) {
-            throw new IpException("L'adresse IP est incorrect");
+            throw new IpException("L'adresse IP est incorrecte.");
         }
         if (port < 1024 || port > 60000) {
-            throw new PortReseauException("Le port est incorrect");
+            throw new PortReseauException("Le port est incorrect.");
         }
-        if (cheminFichier.equals("")) { // Pas besoin de vérifier plus, la vue impose un chemin correct
-            throw new cheminFichierException("Le fichier est incorrect");
+        if (cheminFichier.equals("")) { // On a fait assez de vérifications, la vue impose un chemin correct
+            throw new cheminFichierException("Le fichier est incorrect.");
         }
 
         Reseau.envoyer(ipServeur, port, cheminFichier);
+    }
+
+    /** 
+     * @return la liste des contrôles, ou SAE, ou Portfolio ayant une note
+     */
+    public ArrayList<Object> getNotes() {
+        ArrayList<Object> listeNotes = new ArrayList<>();
+        for (Enseignement enseignement : getSemestreGestionNotes().getEnseignementsSemestre()) {
+            if (enseignement instanceof Ressource ) {
+                List<Controle> listeControle = ((Ressource) enseignement).getControlesRessource();
+                for (Controle controle : listeControle) {
+                    if (controle.aUneNote()) {
+                        listeNotes.add(controle);
+                    }
+                }
+            } else if (enseignement instanceof Sae) {
+                if (((Sae)enseignement).aUneNote()) {
+                    listeNotes.add(enseignement);
+                }
+            } else if (enseignement instanceof Portfolio) {
+                if (((Portfolio)enseignement).aUneNote()) {
+                    listeNotes.add(enseignement);
+                }
+            }
+        }
+        
+        return listeNotes;
+    }
+
+    /** 
+     * Ajoute une note à une SAE ou un Portfolio
+     * @param enseignement
+     * @param note 
+     * @param denominateur 
+     * @param commentaire
+     * @throws NoteInvalideException 
+     */
+    public static void ajouterNoteASaePortfolio(Enseignement enseignement, double note, int denominateur,
+            String commentaire) throws NoteInvalideException {
+        if (enseignement instanceof Sae) {
+            ((Sae)enseignement).setNoteSae(new Note(note, denominateur, commentaire));
+        } else if (enseignement instanceof Portfolio) {
+            ((Portfolio)enseignement).setNotePortfolio(new Note(note, denominateur, commentaire));
+        } else {
+            throw new NoteInvalideException("La note est invalide");
+        }
     }
 
     /**
      * Execution de scipts de test
      * @param args non utilisé
      */
-    public static void main(String[] args) {
-        GestionNotes gn = new GestionNotes();
-        //       
-        //        try {
-        //            gn.importerParametrageSemestre(".\\csv\\ParametresSemestre(AImporter).csv");
-        //            gn.importerParametrageEnseignement(".\\csv\\ParametresRessource(AImporter).csv");
-        //        } catch (Exception e) {
-        //            e.printStackTrace();
-        //        }
-        //     
-
-        try {
-            gn.deserializerDonnees();
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        try {
-            Ressource ressourceControles;
-            ressourceControles = (Ressource) gn.trouverEnseignement("R2.01");
-            System.out.println(ressourceControles.getControleToString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //       
-        //        try {
-        //            gn.ajouterNoteAControle("R2.01.00", 12.2, 20, "");
-        //            gn.ajouterNoteAControle("R2.01.01", 8, 10, "");
-        //            gn.ajouterNoteAControle("R2.01.02", 15, 40, "");
-        //            gn.ajouterNoteAControle("R2.01.03", 15.5, 20, "");
-        //        } catch (NoteInvalideException e) {
-        //            e.printStackTrace();
-        //        }
-        //
-        //        try {
-        //            gn.calculerMoyenneEnseignement("R2.01");
-        //        } catch (MoyenneRessourceException e) {
-        //            e.printStackTrace();
-        //        } catch (NoteInvalideException e) {
-        //            e.printStackTrace();
-        //        }
-        //       
-        //        try {
-        //            gn.serializerDonnees();
-        //        } catch (IOException e) {
-        //            e.printStackTrace();
-        //        }
-        //
-        //        System.out.println(gn.getValeurNoteDeControle("R2.01.01"));
-        //        System.out.println(gn.moyenneEnseignemnt("R2.01").getValeurNote());
-    }
+    //    public static void main(String[] args) {
+    //        GestionNotes gn = new GestionNotes();
+    //        //       
+    //        //        try {
+    //        //            gn.importerParametrageSemestre(".\\csv\\ParametresSemestre(AImporter).csv");
+    //        //            gn.importerParametrageEnseignement(".\\csv\\ParametresRessource(AImporter).csv");
+    //        //        } catch (Exception e) {
+    //        //            e.printStackTrace();
+    //        //        }
+    //        //     
+    //
+    //        try {
+    //            gn.deserializerDonnees();
+    //        } catch (ClassNotFoundException e) {
+    //            // TODO Auto-generated catch block
+    //            e.printStackTrace();
+    //        } catch (IOException e) {
+    //            // TODO Auto-generated catch block
+    //            e.printStackTrace();
+    //        }
+    //
+    //        try {
+    //            Ressource ressourceControles;
+    //            ressourceControles = (Ressource) gn.trouverEnseignement("R2.01");
+    //            System.out.println(ressourceControles.getControleToString());
+    //        } catch (Exception e) {
+    //            e.printStackTrace();
+    //        }
+    //       
+    //        try {
+    //            gn.ajouterNoteAControle("R2.01.00", 12.2, 20, "");
+    //            gn.ajouterNoteAControle("R2.01.01", 8, 10, "");
+    //            gn.ajouterNoteAControle("R2.01.02", 15, 40, "");
+    //            gn.ajouterNoteAControle("R2.01.03", 15.5, 20, "");
+    //        } catch (NoteInvalideException e) {
+    //            e.printStackTrace();
+    //        }
+    //
+    //        try {
+    //            gn.calculerMoyenneEnseignement("R2.01");
+    //        } catch (MoyenneRessourceException e) {
+    //            e.printStackTrace();
+    //        } catch (NoteInvalideException e) {
+    //            e.printStackTrace();
+    //        }
+    //       
+    //        try {
+    //            gn.serializerDonnees();
+    //        } catch (IOException e) {
+    //            e.printStackTrace();
+    //        }
+    //
+    //        System.out.println(gn.getValeurNoteDeControle("R2.01.01"));
+    //        System.out.println(gn.moyenneEnseignement("R2.01").getValeurNote());
+    //    }
 }

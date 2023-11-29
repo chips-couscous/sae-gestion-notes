@@ -15,6 +15,8 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -123,6 +125,7 @@ public class Reseau {
             ServerSocket serverSocket = new ServerSocket(port);
 
             System.out.println("Serveur : Attente de connexion...");
+            serverSocket.setSoTimeout(15000);
 
             // Attente d'une connexion client
             Socket clientSocket = serverSocket.accept();
@@ -156,10 +159,12 @@ public class Reseau {
             clientSocket.close();
             serverSocket.close();
 
-        } catch (IOException e) {
-            System.out.println("Serveur : connexion avec le client impossible "
-                    + e.getMessage());
-            throw e;
+        } catch (SocketTimeoutException e) {
+            System.err.println("Serveur : Aucun client trouvé");
+            throw new SocketTimeoutException("Aucun client trouvé");
+        } catch (SocketException e) {
+            System.err.println("Serveur : Le client a quitté l'échange");
+            throw new SocketException("Le client a quitté l'échange, aucun fichier transmis");
         }
     }
     
@@ -169,9 +174,10 @@ public class Reseau {
      * 
      * @param donnees tableau de byte a crypter
      * @param cle clé de chiffrement
+     * @throws NullPointerException si un caractère ne peut pas être chiffré 
      * @return le tableau de byte crypté
      */
-    private static byte[] crypter(byte[] donnees, String cle) {
+    private static byte[] crypter(byte[] donnees, String cle) throws NullPointerException {
         byte caractere;
         
         /* Parcours des données a crypter */ 
@@ -179,16 +185,16 @@ public class Reseau {
             /* Commentaires = affichage des caractères de diverses informations 
              * nécessaire a la vérification de la validité du cryptage 
              */
-            System.out.print("Donnees = " + donnees[i] + " code = "     
-                    + dictionnaireCryptage.get((char)donnees[i]) + " cle = " 
-                    + cle.charAt(i%cle.length()) + " code "                  
-                    + dictionnaireCryptage.get(cle.charAt(i%cle.length())));
+//            System.out.print("Donnees = " + donnees[i] + " code = "     
+//                    + dictionnaireCryptage.get((char)donnees[i]) + " cle = " 
+//                    + cle.charAt(i%cle.length()) + " code "                  
+//                    + dictionnaireCryptage.get(cle.charAt(i%cle.length())));
             /* Chiffrement */
             caractere = (byte) ((dictionnaireCryptage.get((char)donnees[i]) 
                     + dictionnaireCryptage.get(cle.charAt(i%cle.length())))
                     % dictionnaireCryptage.size());
             
-            System.out.println(" cryptage = " + toCaractere(caractere));
+//            System.out.println(" cryptage = " + toCaractere(caractere));
           
             donnees[i] = (byte)toCaractere(caractere);
         }
@@ -443,18 +449,11 @@ public class Reseau {
         dictionnaireCryptage.put('-', 74);
         dictionnaireCryptage.put('(', 75);
         dictionnaireCryptage.put(')', 76);
-        dictionnaireCryptage.put((char)-30, 77); // chiffrage du caractère ’
-        dictionnaireCryptage.put((char)-128, 78); // chiffrage du caractère ’
-        dictionnaireCryptage.put((char)-103, 79); // chiffrage du caractère ’
-        dictionnaireCryptage.put((char)10, 80); // Chiffrage du saut de ligne
-        dictionnaireCryptage.put((char)13, 81); // Chiffrage du retour chariot
-        
-        dictionnaireCryptage.put((char)-65, 82); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
-        dictionnaireCryptage.put((char)-17, 83); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
-        dictionnaireCryptage.put((char)-69, 84); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
-        dictionnaireCryptage.put((char)-23, 85); // Chiffrage des caractères accentués dans un autre encodage 
-        dictionnaireCryptage.put((char)-67, 86); // Chiffrage du é dans un autre encodage 
-        dictionnaireCryptage.put((char)-12, 87); // Chiffrage du ô dans un autre encodage 
+        dictionnaireCryptage.put((char)10, 77); // Chiffrage du saut de ligne
+        dictionnaireCryptage.put((char)13, 78); // Chiffrage du retour chariot
+        dictionnaireCryptage.put((char)-65, 79); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
+        dictionnaireCryptage.put((char)-17, 80); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
+        dictionnaireCryptage.put((char)-69, 81); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
     }
     
     /** 

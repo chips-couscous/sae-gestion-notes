@@ -986,6 +986,7 @@ public class Controlleur {
 			afficherEnseignements(true, grilleRessources, gn.getSemestreGestionNotes().getEnseignementsSemestre(), nouvelleSceneObjet);
 			afficherNotes(grilleNotes);
 		} catch (IOException e) {
+			
 			e.printStackTrace();
 		}
 	}
@@ -1502,17 +1503,6 @@ public class Controlleur {
 			comboRessourcesControle.getItems().add(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
 		}
 	}
-	/*
-	private String choixComboRessourcesControle(ComboBox<String> combo) {
-		String[] choixCombo = new String[1];
-	    combo.valueProperty().addListener((observable, oldValue, newValue) -> {
-	        choixCombo[0] = combo.getValue().substring(0, 5);
-	        System.out.println("Combo : " + combo.getValue());
-	    });
-	    System.out.println(choixCombo[0]);
-	    return choixCombo[0];
-	}
-	 */
 	/**
 	 *
 	 * @param gridPane

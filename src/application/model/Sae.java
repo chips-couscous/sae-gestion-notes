@@ -48,9 +48,6 @@ public class Sae extends Enseignement implements Serializable {
     /**
      * @return 
      */
-    public Note getNoteSae() {
-        return noteSae;
-    }
     
     /** noteSae nouvelle valeur de moyenneSae */
     @Override
@@ -67,5 +64,9 @@ public class Sae extends Enseignement implements Serializable {
     /** @return true si la SAE a une note */
     public boolean aUneNote() {
         return noteSae != null;
+    }
+    
+    public Note getNoteSae() {
+        return noteSae;
     }
 }

@@ -67,4 +67,5 @@ public class Portfolio extends Enseignement implements Serializable {
     public boolean aUneNote() {
         return notePortfolio != null;
     }
+
 }

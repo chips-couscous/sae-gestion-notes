@@ -10,17 +10,17 @@ package application.model.exception;
  * @version 1.0
  */
 public class UtilisateurInvalideException extends Exception {
-    
-    /** Constructeur de l'exception */
-    public UtilisateurInvalideException() {
-        super();
-    }
-    
-    /** 
-     * Constructeur de l'exception avec un message d'erreur
-     * @param message d'erreur personnalisé
-     */
-    public UtilisateurInvalideException(String message) {
-        super(message);
-    }
+
+	/** Constructeur de l'exception */
+	public UtilisateurInvalideException() {
+		super();
+	}
+
+	/** 
+	 * Constructeur de l'exception avec un message d'erreur
+	 * @param message d'erreur personnalisé
+	 */
+	public UtilisateurInvalideException(String message) {
+		super(message);
+	}
 }

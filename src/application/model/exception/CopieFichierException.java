@@ -9,20 +9,20 @@ package application.model.exception;
  *
  */
 public class CopieFichierException extends Exception {
-    
-    /**
-     * TODO comment intial state
-     *
-     */
-    public CopieFichierException() {
-        super();
-    }
-    
-    /**
-     * TODO comment intial state
-     * @param message
-     */
-    public CopieFichierException(String message) {
-        super(message);
-    }
+
+	/**
+	 * TODO comment intial state
+	 *
+	 */
+	public CopieFichierException() {
+		super();
+	}
+
+	/**
+	 * TODO comment intial state
+	 * @param message
+	 */
+	public CopieFichierException(String message) {
+		super(message);
+	}
 }

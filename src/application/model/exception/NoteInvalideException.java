@@ -10,17 +10,17 @@ package application.model.exception;
  * @version 1.0
  */
 public class NoteInvalideException extends Exception {
-    
-    /** Constructeur de l'exception */
-    public NoteInvalideException() {
-        super();
-    }
-    
-    /** 
-     * Constructeur de l'exception avec un message d'erreur
-     * @param message d'erreur personnalisé
-     */
-    public NoteInvalideException(String message) {
-        super(message);
-    }
+
+	/** Constructeur de l'exception */
+	public NoteInvalideException() {
+		super();
+	}
+
+	/** 
+	 * Constructeur de l'exception avec un message d'erreur
+	 * @param message d'erreur personnalisé
+	 */
+	public NoteInvalideException(String message) {
+		super(message);
+	}
 }

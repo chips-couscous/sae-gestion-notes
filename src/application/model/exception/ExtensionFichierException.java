@@ -11,18 +11,18 @@ package application.model.exception;
  */
 public class ExtensionFichierException extends Exception {
 
-    /** 
-     * Constructeur de l'exception
-     */
-    public ExtensionFichierException() {
-        super();
-    }
-    
-    /** 
-     * Constructeur de l'exception
-     * @param message à afficher lors de l'exception
-     */
-    public ExtensionFichierException(String message) {
-        super(message);
-    }
+	/** 
+	 * Constructeur de l'exception
+	 */
+	public ExtensionFichierException() {
+		super();
+	}
+
+	/** 
+	 * Constructeur de l'exception
+	 * @param message à afficher lors de l'exception
+	 */
+	public ExtensionFichierException(String message) {
+		super(message);
+	}
 }

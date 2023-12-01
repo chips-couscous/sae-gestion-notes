@@ -10,17 +10,17 @@ package application.model.exception;
  * @version 1.0
  */
 public class ControleInvalideException extends Exception {
-    
-    /** Constructeur de l'exception */
-    public ControleInvalideException() {
-        super();
-    }
-    
-    /** 
-     * Constructeur de l'exception avec un message d'erreur
-     * @param message d'erreur personnalisé
-     */
-    public ControleInvalideException(String message) {
-        super(message);
-    }
+
+	/** Constructeur de l'exception */
+	public ControleInvalideException() {
+		super();
+	}
+
+	/** 
+	 * Constructeur de l'exception avec un message d'erreur
+	 * @param message d'erreur personnalisé
+	 */
+	public ControleInvalideException(String message) {
+		super(message);
+	}
 }

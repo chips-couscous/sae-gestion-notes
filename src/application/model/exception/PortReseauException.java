@@ -9,17 +9,17 @@ package application.model.exception;
  * @author tom.jammes
  */
 public class PortReseauException extends Exception {
-    
-    /** Constructeur de l'exception */
-    public PortReseauException() {
-        super();
-    }
-    
-    /** 
-     * Constructeur de l'exception avec un message d'erreur
-     * @param message d'erreur personnalisé
-     */
-    public PortReseauException(String message) {
-        super(message);
-    }
+
+	/** Constructeur de l'exception */
+	public PortReseauException() {
+		super();
+	}
+
+	/** 
+	 * Constructeur de l'exception avec un message d'erreur
+	 * @param message d'erreur personnalisé
+	 */
+	public PortReseauException(String message) {
+		super(message);
+	}
 }

@@ -145,7 +145,7 @@
 			BorderPane.alignment="CENTER">
 			<children>
 				<ScrollPane fx:id="listeRessources" layoutX="276.0"
-					layoutY="98.0" prefHeight="377.0" prefWidth="726.0"
+					layoutY="128.0" prefHeight="377.0" prefWidth="726.0"
 					style="-fx-background-color: transparent;">
 					<content>
 						<GridPane fx:id="grilleRessources" prefHeight="40.0"
@@ -171,7 +171,7 @@
 						</GridPane>
 					</content>
 				</ScrollPane>
-				<Pane layoutX="278.0" layoutY="26.0" prefHeight="40.0"
+				<Pane layoutX="278.0" layoutY="56.0" prefHeight="40.0"
 					prefWidth="640.0" style="-fx-background-color: #E6E9F0;">
 					<children>
 						<Label alignment="CENTER" prefHeight="40.0"
@@ -189,7 +189,7 @@
 					</children>
 				</Pane>
 				<Button fx:id="boutonAjouterControle" layoutX="50.0"
-					layoutY="520.0" mnemonicParsing="false"
+					layoutY="530.0" mnemonicParsing="false"
 					onAction="#sceneAjouterControle" prefHeight="40.0" prefWidth="40.0"
 					style="-fx-background-color: #354B85; -fx-rotate: 45; -fx-background-radius: 100%;"
 					text="✖" textFill="#e6e9f0">
@@ -197,7 +197,7 @@
 						<Font size="16.0" />
 					</font>
 				</Button>
-				<Pane layoutX="40.0" layoutY="26.0" prefHeight="40.0"
+				<Pane layoutX="40.0" layoutY="56.0" prefHeight="40.0"
 					prefWidth="200.0" style="-fx-background-color: #E6E9F0;">
 					<children>
 						<Label alignment="CENTER" prefHeight="40.0"
@@ -209,7 +209,7 @@
 					</children>
 				</Pane>
 				<ScrollPane fx:id="listeCompetenceTri" layoutX="40.0"
-					layoutY="98.0" prefHeight="377.0" prefWidth="200.0"
+					layoutY="128.0" prefHeight="377.0" prefWidth="200.0"
 					style="-fx-background-color: transparent;">
 					<content>
 						<GridPane vgap="10.0">
@@ -225,4 +225,5 @@
 			</children>
 		</Pane>
 	</center>
+
 </BorderPane>

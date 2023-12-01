@@ -1,0 +1,12 @@
+.settings/
+.project
+.classpath
+bin/
+.settings/
+.project
+.classpath
+bin/
+src/module-info.java
+README.md
+/.metadata/
+csv/

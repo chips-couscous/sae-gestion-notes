@@ -18,6 +18,7 @@ import application.model.exception.ControleInvalideException;
 import application.model.exception.EnseignementInvalideException;
 import application.model.exception.ExtensionFichierException;
 import application.model.exception.IpException;
+import application.model.exception.MoyenneCompetenceException;
 import application.model.exception.MoyenneRessourceException;
 import application.model.exception.NoteInvalideException;
 import application.model.exception.ParametresSemestreException;
@@ -140,6 +141,18 @@ public class GestionNotes {
 
         moyenneEnseignement = enseignement.getMoyenne();
         return moyenneEnseignement;
+    }
+    
+    /**
+     * Initialiser la moyenne d'une competence
+     * @param identifiant de la competence dont on veut connaître la moyenne
+     * @throws NoteInvalideException
+     * @throws MoyenneRessourceException
+     * @throws MoyenneCompetenceException 
+     */
+    public void calculerMoyenneCompetence(String identifiant) throws MoyenneCompetenceException, NoteInvalideException, MoyenneRessourceException{ 
+        Competence competence = trouverCompetence(identifiant);
+        competence.setMoyenneCompetence();
     }
 
     /**

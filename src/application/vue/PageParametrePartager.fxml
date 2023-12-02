@@ -2,12 +2,9 @@
 
 <!-- grid.fxml -->
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -15,7 +12,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1030.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controlleur.Controlleur">
+<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1030.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controlleur.Controlleur">
 	<top>
 		<GridPane BorderPane.alignment="CENTER">
 			<columnConstraints>
@@ -94,42 +91,36 @@
 					</font>
 				</Label>
 				<Pane layoutX="513.0" prefHeight="602.0" prefWidth="4.0" style="-fx-background-color: #354B85;" />
-				<Button fx:id="boutonSelectionFichierPartager" layoutX="158.0" layoutY="281.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #354B85;" text="Sélectionner un fichier" textFill="#e6e9f0">
+				<Button fx:id="btnEnvoyerFichier" layoutX="158.0" layoutY="462.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #354B85;" text="Envoyer" textFill="#e6e9f0">
 					<font>
 						<Font size="14.0" />
 					</font>
 				</Button>
-            <Button fx:id="btnEnvoyerFichier" layoutX="158.0" layoutY="462.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #354B85;" text="Envoyer" textFill="#e6e9f0">
+				<TextField fx:id="saisieIpServeur" layoutX="240.0" layoutY="157.0" />
+				<Label layoutX="133.0" layoutY="161.0" text="IP du receveur : " />
+				<Label layoutX="664.0" layoutY="161.0" text="Mon IP :" />
+				<Label fx:id="ipUtilisateur" layoutX="762.0" layoutY="153.0" prefHeight="33.0" prefWidth="119.0" text="0.0.0.0" textAlignment="CENTER">
+					<font>
+						<Font size="16.0" />
+					</font>
+				</Label>
+				<Button fx:id="btnRecevoirFichier" layoutX="673.0" layoutY="462.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #354B85;" text="Recevoir" textFill="#e6e9f0">
+					<font>
+						<Font size="14.0" />
+					</font>
+				</Button>
+				<Label fx:id="cheminFichierExport" alignment="CENTER" layoutX="1.0" layoutY="350.0" prefHeight="17.0" prefWidth="512.0" />
+				<Button fx:id="boutonSelectionDossierReception" layoutX="629.0" layoutY="301.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="287.0" style="-fx-background-color: #354B85;" text="Sélectionner le dossier de reception" textFill="#e6e9f0">
+					<font>
+						<Font size="14.0" />
+					</font>
+				</Button>
+				<Label fx:id="cheminDossierReception" alignment="CENTER" layoutX="517.0" layoutY="350.0" prefHeight="17.0" prefWidth="512.0" />
+            <Button fx:id="boutonGenererFichierPartager" layoutX="115.0" layoutY="301.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="287.0" style="-fx-background-color: #354B85;" text="Générer le fichier à envoyer" textFill="#e6e9f0">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
-            <TextField fx:id="saisiePortClient" layoutX="240.0" layoutY="229.0" />
-            <TextField fx:id="saisieIpServeur" layoutX="240.0" layoutY="157.0" />
-            <Label layoutX="148.0" layoutY="161.0" text="IP du receveur : " />
-            <Label layoutX="126.0" layoutY="233.0" text="Port de connection :" />
-            <Label layoutX="664.0" layoutY="161.0" text="Mon IP :" />
-            <Label fx:id="ipUtilisateur" layoutX="762.0" layoutY="153.0" prefHeight="33.0" prefWidth="119.0" text="0.0.0.0" textAlignment="CENTER">
-               <font>
-                  <Font size="16.0" />
-               </font>
-            </Label>
-            <Button fx:id="btnRecevoirFichier" layoutX="673.0" layoutY="462.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #354B85;" text="Recevoir" textFill="#e6e9f0">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Button>
-            <Label layoutX="641.0" layoutY="233.0" text="Port de connection :" />
-            <TextField fx:id="saisiePortServeur" layoutX="755.0" layoutY="229.0" />
-            <Label fx:id="cheminFichierExport" alignment="CENTER" layoutX="1.0" layoutY="350.0" prefHeight="17.0" prefWidth="512.0" />
-            <Label alignment="CENTER" layoutX="513.0" layoutY="256.0" prefHeight="17.0" prefWidth="520.0" text="Le port doit être compris entre 1024 et 60000" />
-            <Label alignment="CENTER" layoutX="-2.0" layoutY="256.0" prefHeight="17.0" prefWidth="520.0" text="Le port doit être compris entre 1024 et 60000" />
-            <Button fx:id="boutonSelectionDossierReception" layoutX="652.0" layoutY="301.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="242.0" style="-fx-background-color: #354B85;" text="Sélectionner le dossier de reception" textFill="#e6e9f0">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Button>
-            <Label fx:id="cheminDossierReception" alignment="CENTER" layoutX="517.0" layoutY="350.0" prefHeight="17.0" prefWidth="512.0" />
 			</children>
 		</Pane>
 	</center>

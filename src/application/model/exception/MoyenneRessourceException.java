@@ -11,16 +11,16 @@ package application.model.exception;
  */
 public class MoyenneRessourceException extends Exception {
 
-    /** Constructeur de l'exception */
-    public MoyenneRessourceException() {
-        super();
-    }
-    
-    /** 
-     * Constructeur de l'exception avec un message d'erreur
-     * @param message d'erreur personnalisé
-     */
-    public MoyenneRessourceException(String message) {
-        super(message);
-    }
+	/** Constructeur de l'exception */
+	public MoyenneRessourceException() {
+		super();
+	}
+
+	/** 
+	 * Constructeur de l'exception avec un message d'erreur
+	 * @param message d'erreur personnalisé
+	 */
+	public MoyenneRessourceException(String message) {
+		super(message);
+	}
 }

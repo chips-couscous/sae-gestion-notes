@@ -437,11 +437,10 @@ public class GestionNotes {
      * @throws IOException 
      * @throws ClassNotFoundException 
      */
-    public void reinitialiserGestionNotes() throws UtilisateurInvalideException, ClassNotFoundException, IOException {
-        setSemestreGestionNotes(new Semestre());
-        setUtilisateurGestionNotes(new Utilisateur());
-        deserializerDonnees();
-        serializerDonnees();
+    public void reinitialiserGestionNotes() throws UtilisateurInvalideException, 
+                                                   ClassNotFoundException, IOException {
+        fichierSerialize.delete();
+        instance = null;
     }
 
     /** 

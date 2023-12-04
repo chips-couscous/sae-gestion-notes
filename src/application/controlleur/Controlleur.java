@@ -1408,6 +1408,7 @@ public class Controlleur {
 		            try {
 						gn.calculerMoyenneEnseignement(enseignement.getIdentifiantEnseignement());
 					} catch (MoyenneRessourceException | NoteInvalideException e) {
+						
 					}
 		        }
 				String identifiant = competence.getIdentifiantCompetence();

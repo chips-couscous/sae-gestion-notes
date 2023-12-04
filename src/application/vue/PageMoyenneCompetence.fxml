@@ -106,7 +106,7 @@
                   </Label>
                </children>
             </Pane>
-            <ScrollPane layoutX="152.0" layoutY="128.0" prefHeight="377.0" prefWidth="726.0" style="-fx-background-color: transparent;">
+            <ScrollPane layoutX="152.0" layoutY="128.0" prefHeight="377.0" prefWidth="739.0" style="-fx-background-color: transparent;">
                <content>
                   <GridPane vgap="10.0">
                     <columnConstraints>

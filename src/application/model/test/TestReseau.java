@@ -15,6 +15,29 @@ import application.model.Reseau;
  *
  */
 public class TestReseau {
+    
+    /**
+     * Méthode de test de la classe puissanceModulo
+     * Vérifier les résultats à la main pour vérifier la validité du test
+     *
+     */
+    private static void testPuissanceModulo() {
+        System.out.println("======= TEST puissanceModulo() =======");
+        int nbTestOk = 0;
+        /* Test pour 2^6 dans l'ensemble Z/10Z */
+        if (Reseau.puissanceModulo(2,6,10) == 4) {
+            nbTestOk++;
+        }
+        /* Test pour 3^10 dans l'ensemble Z/8Z */
+        if (Reseau.puissanceModulo(3,10,8) == 1) {
+            nbTestOk++;
+        }
+        if (nbTestOk == 2) {
+            System.out.println("Test validé avec succès");
+        } else {
+            System.err.println("Test échoué");
+        }
+    }
 
     /**
      * Méthode de test de estPremier
@@ -40,17 +63,20 @@ public class TestReseau {
                 nbTestOk ++;
             }
         }
+        System.out.println("======= TEST estPremier() =======");
         if (nbTestOk == nbPremiers.length+nbNonPremiers.length) {
-            System.out.println("Test estPremier validé avec succès");
+            System.out.println("Test validé avec succès");
+        } else {
+            System.err.println("Test échoué");
         }
     }
 
     /**
      * Méthode de test de la classe estGenerateur
      * Vérifier les résultats à la main pour vérifier la validité du test
-     *
      */
     private static void testEstGenerateur() {
+        System.out.println("======= TEST estGenerateur() =======");
         for (int i = 2; i < 7; i++) {
             if (Reseau.estGenerateur(7,i)) {
                 System.out.println(i + " est un générateur de " + 7);
@@ -62,19 +88,21 @@ public class TestReseau {
             }
         }
     }
-
+    
     /**
      * Méthode principal, appelle les différentes méthodes de test
      * @param args
      */
     public static void main(String[] args) {
-        //        testEstPremier();
-        //        testEstGenerateur();
-        try {
-            Reseau.envoyer("127.0.0.1", "csv/ParametresRessource(AImporter).csv");
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        
+        testPuissanceModulo();
+        testEstPremier();
+        testEstGenerateur();
+        
+//        try {
+//            Reseau.envoyer("127.0.0.1", "csv/ParametresRessource(AImporter).csv");
+//        } catch (IOException e) {
+//           System.err.println("Echange impossible");
+//        }
     }
 }

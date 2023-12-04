@@ -139,6 +139,12 @@
  	-fx-fill: #E6E9F0;
  	-fx-text-fill: #E6E9F0;
  }
+  .labelInfoSaePortfolio{
+  	-fx-font-size: 14px;
+  	-fx-font-weight: bold;
+ 	-fx-fill: #E6E9F0;
+ 	-fx-text-fill: #E6E9F0;
+ }
  .labelControle{
  	-fx-fill: #354B85;
  	-fx-text-fill: #354B85;
@@ -167,3 +173,4 @@
 	-fx-text-fill: #E6E9F0;
 	-fx-background-color: #354B85;
 }
+	

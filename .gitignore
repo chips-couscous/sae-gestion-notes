@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .settings/
 .project
 .classpath
@@ -9,4 +10,17 @@ bin/
 src/module-info.java
 README.md
 /.metadata/
+=======
+.settings/
+.project
+.classpath
+bin/
+.settings/
+.project
+.classpath
+bin/
+src/module-info.java
+README.md
+/.metadata/
+>>>>>>> 54ee8ede7e477cc6612665f6d9738c131b816d7e
 csv/

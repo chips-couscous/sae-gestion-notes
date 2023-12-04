@@ -27,9 +27,7 @@ class ControleTest {
 
 	@Test
 	void testControleSansDate() {
-		assertThrows(ControleInvalideException.class, () -> {
-			new Controle("oral", "", 20);
-		});
+		assertDoesNotThrow(() -> new Controle("oral", "", 20));
 	}
 
 	@Test

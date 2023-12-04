@@ -33,6 +33,8 @@ public class Reseau {
     /* Dictionnaire utilisé pour le chiffrement des données */
     final static HashMap<Character,Integer> dictionnaireCryptage = new HashMap<>();    
     
+    final static int TAILLE_BLOC_DONNEES = 1024; 
+    
     /**
      * Méthode utilisé pour les test, fait office de serveur
      * @param args
@@ -60,18 +62,16 @@ public class Reseau {
      */
     public static void envoyer(String ip, int port, String cheminFichier) throws IOException {
         
-        final int TAILLE_BLOC_DONNEES = 1024; 
-        
         definirDictionnaire();
         
         try {
             
             // Connexion au serveur
-            Socket socket = new Socket(ip, port);
+            Socket serveur = new Socket(ip, port);
             System.out.println("Client : connecté au serveur");
 
             // Obtention du flux de sortie vers le serveur
-            BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
+            BufferedOutputStream out = new BufferedOutputStream(serveur.getOutputStream());
 
             // Sélection du fichier CSV à envoyer
             FileInputStream fileIn = new FileInputStream(cheminFichier);
@@ -82,7 +82,7 @@ public class Reseau {
              */
             byte[] buffer = new byte[TAILLE_BLOC_DONNEES];
             int tailleBlocEnvoye;
-            String cleChiffrement = generationCleClient(socket); // génération de la clé de chiffrement
+            String cleChiffrement = generationCleClient(serveur); // génération de la clé de chiffrement
             while ((tailleBlocEnvoye = fileIn.read(buffer)) != -1) {
                 out.write(crypter(buffer, cleChiffrement), 0, tailleBlocEnvoye);
                 System.out.println("Client : Envoie d'un bloc de " + tailleBlocEnvoye 
@@ -94,7 +94,7 @@ public class Reseau {
             // Fermeture des flux et de la socket
             out.close();
             fileIn.close();
-            socket.close();
+            serveur.close();
         } catch (IOException e) {
             System.err.println("Client : Connexion au serveur impossible "
                     + e.getMessage());
@@ -115,8 +115,6 @@ public class Reseau {
      * @throws IOException si il y a un problème de connexion avec le client
      */
     public static void recevoir(int port, String cheminReceptionFichier) throws IOException {
-        
-        final int TAILLE_BLOC_DONNEES = 1024;
         
         definirDictionnaire();
         
@@ -182,16 +180,18 @@ public class Reseau {
         
         /* Parcours des données a crypter */ 
         for (int i = 0; i < donnees.length && donnees[i] != 0; i++) {
-            /* Commentaires = affichage des caractères de diverses informations 
+            
+            /* Commentaires ci-dessous = affichage des caractères et diverses informations 
              * nécessaire a la vérification de la validité du cryptage 
              */
 //            System.out.print("Donnees = " + donnees[i] + " code = "     
 //                    + dictionnaireCryptage.get((char)donnees[i]) + " cle = " 
 //                    + cle.charAt(i%cle.length()) + " code "                  
 //                    + dictionnaireCryptage.get(cle.charAt(i%cle.length())));
+            
             /* Chiffrement */
-            caractere = (byte) ((dictionnaireCryptage.get((char)donnees[i]) 
-                    + dictionnaireCryptage.get(cle.charAt(i%cle.length())))
+            caractere = (byte) ((dictionnaireCryptage.get((char)donnees[i]) // Récupération du code du caractère a chiffrer
+                    + dictionnaireCryptage.get(cle.charAt(i%cle.length()))) //  Récupération du code du caractère de la clé
                     % dictionnaireCryptage.size());
             
 //            System.out.println(" cryptage = " + toCaractere(caractere));
@@ -218,7 +218,7 @@ public class Reseau {
             caractere = (byte) (dictionnaireCryptage.get((char)donneesCryptees[i]) 
                       - dictionnaireCryptage.get(cle.charAt(i%cle.length())));
             /* Effectue le modulo */
-            if (caractere < 0) {
+            while (caractere < 0) {
                 caractere += dictionnaireCryptage.size();
             }
               
@@ -232,7 +232,6 @@ public class Reseau {
      * Génère une clée pour un chiffrement de Vigenère
      * Génère la clé de manière aléatoire grâce a un échange de Diffie-Hellman
      * avec le serveur
-     * Le client détermine la longueur de la clé, entre 3 et 5 caractères
      *
      * @param socket du serveur avec qui l'échange de Diffie-Hellman est effectué
      * @return clé pour un chiffrement de Vigenère
@@ -245,7 +244,7 @@ public class Reseau {
         int a;
         int gPuissanceA;
         int gPuissanceB;
-        int tailleCle = (int)(3 + Math.random()*5);
+        int tailleCle = 8;
         String cle = ""; 
         
         try {
@@ -254,9 +253,6 @@ public class Reseau {
                     new InputStreamReader(serveur.getInputStream()));
             PrintStream out = new PrintStream(serveur.getOutputStream());
             
-            /* Envoie de la taille de la clé */
-            out.println(tailleCle);
-            
             /* Génération des différents caractères de la clé */
             for (int i = 0; i < tailleCle; i++) {
                 do {
@@ -264,7 +260,7 @@ public class Reseau {
                 } while (!estPremier(p));
                 
                 do {
-                    g = (int)(1000 + Math.random()*9000);
+                    g = (int)(Math.random()*p);
                 } while (!estGenerateur(p,g));
                 
                 a = (int)(1 + Math.random()*(p - 1));
@@ -284,7 +280,7 @@ public class Reseau {
                 cle += caractere;
             }
             
-//            System.out.println("Client : clé = " + cle);
+            System.out.println("Client : clé = " + cle);
         } catch (IOException e) {
             System.err.println("Communication avec le serveur impossible");
             cle = null;
@@ -306,15 +302,13 @@ public class Reseau {
         int g; // généré et transmis par le client
         int gPuissanceA; // généré et transmis par le client
         String cle = "";
-        int tailleCle; // généré et transmis par le client
+        int tailleCle = 8;
         
         System.out.println("Génération de la clé de chiffrement");
         try {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(client.getInputStream()));
             PrintStream out = new PrintStream(client.getOutputStream());
-            
-            tailleCle = Integer.parseInt(in.readLine());
             
             /* Génération des différents caractères de la clé */
             for (int i = 0; i < tailleCle; i++) {
@@ -336,9 +330,9 @@ public class Reseau {
                 cle += caractere;
             }
             
-//            System.out.println("Serveur : clé = " + cle);
+            System.out.println("Serveur : clé = " + cle);
         } catch (IOException e) {
-            System.err.println("Communication avec le serveur impossible");
+            System.err.println("Communication avec le client impossible");
             cle = null;
         }
         
@@ -412,6 +406,8 @@ public class Reseau {
     /**
      * Génère la HashMap contenant le dictionnaire de caractère utilisés
      * pour le chiffrement des données 
+     * dictionnaireCryptage contient en clé des caractère sous forme de char
+     * et en valeur des int
      */
     private static void definirDictionnaire() {
         
@@ -451,14 +447,14 @@ public class Reseau {
         dictionnaireCryptage.put(')', 76);
         dictionnaireCryptage.put((char)10, 77); // Chiffrage du saut de ligne
         dictionnaireCryptage.put((char)13, 78); // Chiffrage du retour chariot
-        dictionnaireCryptage.put((char)-65, 79); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
-        dictionnaireCryptage.put((char)-17, 80); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
-        dictionnaireCryptage.put((char)-69, 81); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
+        dictionnaireCryptage.put((char)-65, 79); // Chiffrage de trois caractères
+        dictionnaireCryptage.put((char)-17, 80); // invisible présent au tout e
+        dictionnaireCryptage.put((char)-69, 81); //début d'u fichier ParametreSemestre
     }
     
     /** 
-     * Renvoie le caractère associé à la valeur passé en paramètre en fonction 
-     * du dictionnaire de caractère utilisé pour le chiffrage de données
+     * Renvoie le caractère associé à la valeur du dictionnaire de caractère 
+     * utilisé pour le chiffrage de données
      * @param code code du caractère a récupérer
      * @return le caractère correspondant ou 0 si aucun caractère ne correspond
      */
@@ -472,5 +468,4 @@ public class Reseau {
         
         return 0;
     }
-
 }

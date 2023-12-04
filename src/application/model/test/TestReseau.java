@@ -11,10 +11,58 @@ import application.model.Reseau;
 /** 
  * Classe de test de la classe Reseau
  * 
- * @author tom
+ * @author tom.jammes
  *
  */
 public class TestReseau {
+    
+    /**
+     * Méthode de test de puissanceModulo
+     *
+     */
+    private static void testPuissanceModulo() {
+        System.out.println("===== TEST puissanceModulo =====");
+        int nbTestOk = 0;
+        /* test avec les valeur 3^6 dans Z/10Z */
+        if (Reseau.puissanceModulo(3,6,10) == 9) {
+            nbTestOk++;
+        } else { 
+            System.err.println("Test échoué pour 3^6 dans Z/10Z");
+        }
+        /* test avec les valeur 3^9 dans Z/10Z */
+        if (Reseau.puissanceModulo(3,9,10) == 3) {
+            nbTestOk++;
+        } else { 
+            System.err.println("Test échoué pour 3^9 dans Z/10Z");
+        }
+        /* test avec les valeur 3^6 dans Z/7Z */
+        if (Reseau.puissanceModulo(3,6,7) == 1) {
+            nbTestOk++;
+        } else { 
+            System.err.println("Test échoué pour 3^6 dans Z/7Z");
+        }
+        /* test avec les valeur 5^6 dans Z/8Z */
+        if (Reseau.puissanceModulo(5,6,8) == 1) {
+            nbTestOk++;
+        } else { 
+            System.err.println("Test échoué pour 5^6 dans Z/8Z");
+        }
+        /* test avec les valeur 7^5 dans Z/13Z */
+        if (Reseau.puissanceModulo(7,5,13) == 11) {
+            nbTestOk++;
+        } else { 
+            System.err.println("Test échoué pour 7^5 dans Z/13Z");
+        }
+        /* test avec les valeur 7^5 dans Z/13Z */
+        if (Reseau.puissanceModulo(7,5,13) != 12) {
+            nbTestOk++;
+        } else { 
+            System.err.println("Test échoué pour 7^5 dans Z/13Z");
+        }
+        if (nbTestOk == 6) {
+            System.out.println("Test validé avec succés");
+        }
+    }
 
     /**
      * Méthode de test de estPremier
@@ -40,8 +88,9 @@ public class TestReseau {
                 nbTestOk ++;
             }
         }
+        System.out.println("===== TEST estPremier =====");
         if (nbTestOk == nbPremiers.length+nbNonPremiers.length) {
-            System.out.println("Test estPremier validé avec succès");
+            System.out.println("Test validé avec succès");
         }
     }
 
@@ -51,6 +100,7 @@ public class TestReseau {
      *
      */
     private static void testEstGenerateur() {
+        System.out.println("===== TEST estGenerateur =====");
         for (int i = 2; i < 7; i++) {
             if (Reseau.estGenerateur(7,i)) {
                 System.out.println(i + " est un générateur de " + 7);
@@ -68,13 +118,13 @@ public class TestReseau {
      * @param args
      */
     public static void main(String[] args) {
-        //        testEstPremier();
-        //        testEstGenerateur();
-        try {
-            Reseau.envoyer("127.0.0.1", "csv/ParametresRessource(AImporter).csv");
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        testPuissanceModulo();
+        testEstPremier();
+        testEstGenerateur();
+//        try {
+//            Reseau.envoyer("127.0.0.1", "csv/ParametresRessource(AImporter).csv");
+//        } catch (IOException e) {
+//            System.err.println("Erreur de communication");
+//        }
     }
 }

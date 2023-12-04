@@ -25,7 +25,7 @@ import java.util.HashSet;
  * de fichier via le réseau
  * Les échanges fonctionnent via un système client / serveur
  * 
- * @author tom
+ * @author tom.jammes
  *
  */
 public class Reseau {

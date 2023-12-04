@@ -558,7 +558,7 @@ public class GestionNotes {
      * @param commentaire
      * @throws NoteInvalideException 
      */
-    public static void ajouterNoteASaePortfolio(Enseignement enseignement, double note, int denominateur,
+    public void ajouterNoteASaePortfolio(Enseignement enseignement, double note, int denominateur,
             String commentaire) throws NoteInvalideException {
         if (enseignement instanceof Sae) {
             ((Sae)enseignement).setNoteSae(new Note(note, denominateur, commentaire));

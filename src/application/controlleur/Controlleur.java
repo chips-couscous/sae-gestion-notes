@@ -1,8 +1,9 @@
 /*
- * Controlleur.java                                                   24/10/2024
+ * Controlleur.java                                               	24/10/2024
  * INFO2 2023-2024, pas de copyright ni droits d'auteurs
  */
 package application.controlleur;
+
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextInputDialog;
@@ -19,9 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
-
-import javax.swing.GroupLayout.Alignment;
-
 import application.model.Competence;
 import application.model.Controle;
 import application.model.Enseignement;
@@ -30,15 +28,11 @@ import application.model.Note;
 import application.model.Portfolio;
 import application.model.Ressource;
 import application.model.Sae;
-import application.model.exception.CompetenceInvalideException;
 import application.model.exception.ControleInvalideException;
-import application.model.exception.EnseignementInvalideException;
 import application.model.exception.ExtensionFichierException;
 import application.model.exception.IpException;
 import application.model.exception.NoteInvalideException;
-import application.model.exception.ParametresSemestreException;
 import application.model.exception.PortReseauException;
-import application.model.exception.SemestreInvalideExecption;
 import application.model.exception.UtilisateurInvalideException;
 import application.model.exception.cheminFichierException;
 import javafx.scene.layout.BorderPane;
@@ -47,8 +41,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
@@ -127,7 +119,7 @@ public class Controlleur {
 	@FXML
 	Label cheminFichierExport;
 	@FXML
-	Label cheminDossierReception;     
+	Label cheminDossierReception;	 
 	@FXML
 	TextField saisieIpServeur;
 	@FXML
@@ -173,10 +165,9 @@ public class Controlleur {
 	 */
 	public void initialize() {
 		if (listeNotes != null) {
-			Scene sceneActuelle = listeNotes.getScene();
 			GridPane grilleRessources = (GridPane)((ScrollPane) ((Pane)(rootPane).getChildren().get(1)).getChildren().get(4)).getContent();
 			GridPane grilleNotes = (GridPane)((ScrollPane) ((Pane)(rootPane).getChildren().get(1)).getChildren().get(2)).getContent();
-			afficherEnseignements(true, grilleRessources, gn.getSemestreGestionNotes().getEnseignementsSemestre(), grilleRessources);
+			afficherEnseignements(true, grilleRessources, gn.getSemestreGestionNotes().getEnseignementsSemestre(), grilleNotes);
 			afficherNotes(grilleNotes,null);
 		}
 		if (ressourcesCombo != null) {
@@ -280,7 +271,7 @@ public class Controlleur {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param note
 	 * @param denominateur
 	 * @param commentaire
@@ -342,7 +333,7 @@ public class Controlleur {
 	/**
 	 * Cette méthode permet d'afficher dans la ScrollPane de gauche
 	 * de la page Enseignements, les compétences actuellement importées.
-	 * On retrouve une option Toutes qui si cliquée affiche les 
+	 * On retrouve une option Toutes qui si cliquée affiche les
 	 * ressources de toutes les compétences.
 	 * Chaque compétence est cliquable et afficheront si cliquée
 	 * la liste des ressources appartenant à cette compétence.
@@ -352,8 +343,8 @@ public class Controlleur {
 	private void ajouterCompetence(List<Competence> listeCompetences, Scene scene) {
 		/* Entier correspondant au numéro d'index de la ligne
 		 * à laquelle doit s'afficher la compétence actuelle.
-		 * Cet entier est initialisé à 1 car la ligne d'index 0 
-		 * est occupée par la ligne "Toutes". 
+		 * Cet entier est initialisé à 1 car la ligne d'index 0
+		 * est occupée par la ligne "Toutes".
 		 */
 		int indiceCompetence = 1;
 		/* Nombre maximum de caractères par ligne*/
@@ -433,7 +424,7 @@ public class Controlleur {
 			 * Identifiant + Intitulé
 			 */
 			String texteCompetence = competence.getIdentifiantCompetence() + " " + competence.getIntituleCompetence();
-			/* Création d'un objet de type Text 
+			/* Création d'un objet de type Text
 			 * contenant le nom d'une compétence
 			 */
 			Text texte = new Text(texteCompetence);
@@ -574,7 +565,7 @@ public class Controlleur {
 				 * Identifiant + Intitulé
 				 */
 				String texteEnseignement = enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement();
-				/* Création d'un objet de type Text 
+				/* Création d'un objet de type Text
 				 * contenant le nom d'une compétence
 				 */
 				Text texte = new Text(texteEnseignement);
@@ -660,7 +651,7 @@ public class Controlleur {
 		}
 	}
 
-	private void ajouterNote(String note, String commentaire, String denominateur, String ressource, String controle, int index, Scene scene) throws Exception {
+	private void ajouterNote(String note, String commentaire, String denominateur, String ressource, String controle) throws Exception {
 		String identifiantControle = "";
 		String identifiantRessource = ressource.substring(0, 5);
 		Enseignement enseignement = gn.trouverEnseignement(identifiantRessource);
@@ -729,7 +720,7 @@ public class Controlleur {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 	private void ajoutRessourcesCombo() {
 		ressourcesCombo.getItems().clear();
@@ -751,8 +742,19 @@ public class Controlleur {
 		}
 	}
 
+	private String verifierRessource(String ressource) {
+		String touteLaRessource = null;
+		List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
+		for (Enseignement enseignement : listeEnseignement) {
+			if (ressource.equals(enseignement.getIntituleEnseignement())) {
+				touteLaRessource =  enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement();
+			}
+		}
+		return touteLaRessource;
+	}
+
 	/*
-	 * 
+	 *
 	 */
 	private void choixComboRessources(ComboBox<String> combo) {
 		combo.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -908,7 +910,7 @@ public class Controlleur {
 		}
 	}
 	/**
-	 * 
+	 *
 	 */
 	private void afficherControle(Scene scene, Pane enseignementSelectionne, Enseignement enseignement) {
 		GridPane grilleEnseignement = ((GridPane)((ScrollPane)((Pane)((BorderPane) scene.getRoot()).getChildren().get(1)).getChildren().get(0)).getContent());
@@ -1012,16 +1014,16 @@ public class Controlleur {
 	/**
 	 * Affiche les notes saisie par l'utilisateur lorsque celui-ci se trouve sur
 	 * la page notes
-	 * @param enseignement 
+	 * @param enseignement
 	 *
 	 */
 	private void afficherNotes(GridPane grille, Enseignement enseignement) {
 		if (enseignement == null) {
 			int indiceGrille = 0;
 			ArrayList<Object> notes = gn.getNotes(); // Contient tous les contrôles, SAE, Portfolio ayant une note
-			ArrayList<String[]> notesBien = new ArrayList<String[]>();
+			ArrayList<Object[]> notesBien = new ArrayList<Object[]>();
 			for (Object note : notes) {
-				String[] tabNote = new String[6];
+				Object[] tabNote = new String[9];
 				if (note instanceof Controle) {
 					tabNote = noteControle(note);
 				} else if (note instanceof Sae){
@@ -1033,14 +1035,14 @@ public class Controlleur {
 			}
 			afficherNotesSelectionne(notesBien,indiceGrille,grille);
 		}else {
-			ArrayList<String[]> notesBien = new ArrayList<String[]>();
+			ArrayList<Object[]> notesBien = new ArrayList<Object[]>();
 			int indiceGrille = 0;
 			if (gn.estUneRessource(enseignement)) {
 				String enseignementID = enseignement.getIdentifiantEnseignement();
 				Ressource ressource = (Ressource) gn.trouverEnseignement(enseignementID);
 				for (Controle controle : ressource.getControlesRessource()) {
 					if (controle.aUneNote()) {
-						String[] tabNote = noteControle(controle);
+						Object[] tabNote = noteControle(controle);
 						notesBien.add(tabNote);
 					}
 				}
@@ -1048,14 +1050,14 @@ public class Controlleur {
 				String enseignementID = enseignement.getIdentifiantEnseignement();
 				Sae sae = (Sae) gn.trouverEnseignement(enseignementID);
 				if (sae.aUneNote()) {
-					String[] tabNote = noteSae(sae);
+					Object[] tabNote = noteSae(sae);
 					notesBien.add(tabNote);
 				}
 			} else if (gn.estUnPortfolio(enseignement)) {
 				String enseignementID = enseignement.getIdentifiantEnseignement();
 				Portfolio portfolio = (Portfolio) gn.trouverEnseignement(enseignementID);
 				if (portfolio.aUneNote()) {
-					String[] tabNote = notePortfolio(portfolio);
+					Object[] tabNote = notePortfolio(portfolio);
 					notesBien.add(tabNote);
 				}
 			}
@@ -1063,13 +1065,14 @@ public class Controlleur {
 		}
 	}
 
-	private void afficherNotesSelectionne(ArrayList<String[]> notes, int indiceGrille, GridPane grille) {
+	private void afficherNotesSelectionne(ArrayList<Object[]> notes, int indiceGrille, GridPane grille) {
 		int[] indice = new int[1];
 		indice[0] = indiceGrille;
-		RowConstraints taille = new RowConstraints();
-		taille.setPrefHeight(50);
 		GridPane mainGridPane = grille;
+		RowConstraints taille = new RowConstraints();
 		mainGridPane.getChildren().clear();
+		mainGridPane.getRowConstraints().clear();
+		taille.setPrefHeight(50);
 		if (notes.isEmpty()) {
 			Pane panePasDeNote = new Pane();
 			panePasDeNote.setPrefSize(724, 375);
@@ -1090,16 +1093,16 @@ public class Controlleur {
 
 			mainGridPane.add(panePasDeNote, 0, indiceGrille);
 		} else {
-			for (String[] tabNote : notes) {
+			for (Object[] tabNote : notes) {
 				//Création des Label que l'on va afficher dans notre page
 				Pane ligneNote = new Pane();
-				Label labelNote = new Label(tabNote[0]);
-				Label labelType = new Label(tabNote[2]);
-				Label labelPoids = new Label(tabNote[1]);
-				Label labelRessources = new Label(tabNote[3]);
-				String date = tabNote[4];
-				String commentaire = tabNote[5];
-
+				Label labelNote = new Label((String) tabNote[0]);
+				Label labelType = new Label((String) tabNote[2]);
+				Label labelPoids = new Label((String) tabNote[1]);
+				Label labelRessources = new Label((String) tabNote[3]);
+				String date = (String) tabNote[4];
+				String commentaire = (String) tabNote[5];
+				Object identifiantControle = tabNote[7];
 				labelNote.getStyleClass().add("labelNote");
 				//Récupération d'image pour nos boutons
 				Image imageModifier = new Image(getClass().getResourceAsStream("/application/controlleur/modifier.png"));
@@ -1120,12 +1123,12 @@ public class Controlleur {
 				// Taille des boutons
 				modifier.setMaxSize(30, 30);
 				supprimer.setMaxSize(30, 30);
-				String[] parties = tabNote[0].split("/");
-				String[] noteParams = { parties[0].trim(), parties[1].trim(), tabNote[5], tabNote[3], tabNote[2] };
+				String[] parties = ((String) tabNote[0]).split("/");
+				String[] noteParams = { parties[0].trim(), parties[1].trim(), (String) tabNote[5], (String) tabNote[3], (String) tabNote[2] };
 
 				// Action des boutons
-				supprimer.setOnAction(event -> sceneSupprimerNote(mainGridPane, supprimer, note));
-				modifier.setOnAction(event -> sceneModifierNote(mainGridPane,modifier,noteParams, note));
+				supprimer.setOnAction(event -> sceneSupprimerNote(mainGridPane, supprimer, tabNote[6]));
+				modifier.setOnAction(event -> sceneModifierNote(mainGridPane,modifier,noteParams, tabNote[6], identifiantControle));
 				// Alignement des Label au centre de leur emplacement
 				GridPane.setHalignment(labelNote, javafx.geometry.HPos.CENTER);
 				GridPane.setHalignment(modifier, javafx.geometry.HPos.CENTER);
@@ -1194,8 +1197,8 @@ public class Controlleur {
 		}
 	}
 
-	private String[] noteControle(Object note) {
-		String[] tabNote = new String[6];
+	private Object[] noteControle(Object note) {
+		Object[] tabNote = new Object[8];
 		Controle controle = (Controle) note;
 		tabNote[0] = controle.getNoteControle().getValeurNote() + " / " + controle.getNoteControle().getDenominateurNote();
 		tabNote[1] = controle.getPoidsControle() + "";
@@ -1205,11 +1208,14 @@ public class Controlleur {
 		tabNote[3] = enseignement.getIntituleEnseignement();
 		tabNote[4] = controle.getDateControle();
 		tabNote[5] = controle.getNoteControle().getCommentaire();
+		tabNote[6] = note;
+		tabNote[7] = note;
+
 		return tabNote;
 	}
-	private String[] noteSae(Object note) {
-		String[] tabNote = new String[6];
-		Sae controle = (Sae) note; 
+	private Object[] noteSae(Object note) {
+		Object[] tabNote = new Object[8];
+		Sae controle = (Sae) note;
 		Note noteControle = controle.getNoteSae();
 		tabNote[0] = noteControle.getValeurNote() + " / " + noteControle.getDenominateurNote();
 		tabNote[1] = "100";
@@ -1217,11 +1223,13 @@ public class Controlleur {
 		tabNote[3] = controle.getIntituleEnseignement();
 		tabNote[4] = "";
 		tabNote[5] = noteControle.getCommentaire();
+		tabNote[6] = note;
+		tabNote[7] = note;
 		return tabNote;
 
 	}
-	private String[] notePortfolio(Object note) {
-		String[] tabNote = new String[6];
+	private Object[] notePortfolio(Object note) {
+		Object[] tabNote = new Object[8];
 		Portfolio controle = (Portfolio) note;
 		Note noteControle = controle.getNotePortfolio();
 		tabNote[0] = noteControle.getValeurNote() + " / " + noteControle.getDenominateurNote();
@@ -1230,41 +1238,9 @@ public class Controlleur {
 		tabNote[3] = controle.getIntituleEnseignement();
 		tabNote[4] = "";
 		tabNote[5] = noteControle.getCommentaire();
+		tabNote[6] = note;
+		tabNote[7] = note;
 		return tabNote;
-	}
-
-	/**
-	 * @throws Exception si la note est invalide
-	 */
-	private void ajouterNote(String note, String commentaire, String denominateur, String ressource, String controle, int index) throws Exception {
-		GridPane grilleNotes = (GridPane)((ScrollPane) ((Pane)(rootPane).getChildren().get(1)).getChildren().get(2)).getContent();
-		String identifiantControle = "";
-		String identifiantRessource = ressource.substring(0, 5);
-		Enseignement enseignement = gn.trouverEnseignement(identifiantRessource);
-		if (enseignement instanceof Ressource) {
-			Ressource laRessource = (Ressource) enseignement;
-			List<Controle> listeControles = laRessource.getControlesRessource();
-			for (Controle leControle : listeControles) {
-				if (leControle.getIndentifiantControle().substring(6).equals(controle.substring(0,2))) {
-					identifiantControle = leControle.getIndentifiantControle();
-				}
-			}
-			// Ajout de la note dans le model
-			try {
-				gn.ajouterNoteAControle(identifiantControle, Double.parseDouble(note), Integer.parseInt(denominateur), commentaire);
-				//afficherNotes(grilleNotes);
-			} catch (NumberFormatException | NoteInvalideException e) {
-				throw e;
-			}
-		} else {
-			// Ajout de la note dans le model
-			try {
-				gn.ajouterNoteASaePortfolio(enseignement, Double.parseDouble(note), Integer.parseInt(denominateur), commentaire);
-				//afficherNotes(grilleNotes);
-			} catch (NumberFormatException | NoteInvalideException e) {
-				throw e;
-			}
-		}
 	}
 
 	/**
@@ -1451,7 +1427,7 @@ public class Controlleur {
 			affichageModifAjoutNote(note, denominateur, commentaire);
 			boutonValider.setOnAction(e -> {
 				try {
-					ajouterNote(note.getText(), commentaire.getText(), denominateur.getText(), ressource.getValue(), controle.getValue(), indice);
+					ajouterNote(note.getText(), commentaire.getText(), denominateur.getText(), ressource.getValue(), controle.getValue());
 					popupStage.close();
 				} catch (Exception e1) {
 					System.err.println("Impossible d'ajouter la note, veuillez remplir tous les champs");
@@ -1476,12 +1452,12 @@ public class Controlleur {
 	 * @param commentaire à modifier
 	 * @param ressource
 	 * @param controle
-	 * @param identifiantControle
+	 * @param tabNote
 	 * @param date à modifier
 	 */
-	public void sceneModifierNote(GridPane gridPane, Button boutonModifier, String[] noteParams, Object noteAModifier) {
+	public void sceneModifierNote(GridPane gridPane, Button boutonModifier, String[] noteParams, Object noteAModifier, Object identifiant) {
 		try {
-			Scene scenePrincipale = rootPane.getScene();
+			String leControle = "";
 			/* Récupération du fichier qu'on veut charger */
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/vue/PageModifierNote.fxml"));
 			Parent root = loader.load();
@@ -1498,10 +1474,27 @@ public class Controlleur {
 			ComboBox<String> recupControle = (ComboBox<String>) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(5)).getChildren().get(0));
 			TextField recupDenominateur = (TextField)(((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(2));
 			//On affiche dans les TextField les informations déja saisies par l'utilisateur
+			if (identifiant instanceof Controle) {
+				
+				Controle controle = (Controle) identifiant;
+				String identifiantRessource = controle.getIndentifiantControle().substring(0, 5);
+				Enseignement enseignement = gn.trouverEnseignement(identifiantRessource);
+				leControle = controle.getIndentifiantControle().substring(controle.getIndentifiantControle().length() - 2);
+				leControle += " " + controle.getTypeControle() + " " + controle.getDateControle();
+				controle.setNoteControle(null);
+			} else if (identifiant instanceof Sae) {
+				Sae sae = (Sae) identifiant;
+				sae.setNoteSae(null);
+			} else if (identifiant instanceof Portfolio){
+				Portfolio portfolio = (Portfolio) identifiant;
+				portfolio.setNotePortfolio(null);
+			}
+
+
 			recupNote.setText(noteParams[0]);
 			recupCommentaire.setText(noteParams[2]);
-			recupRessource.setValue(noteParams[3]);
-			recupControle.setValue(noteParams[4]);
+			recupRessource.setValue(verifierRessource(noteParams[3])); 
+			recupControle.setValue(leControle);
 			recupDenominateur.setText(noteParams[1]);
 			affichageModifAjoutNote(recupNote, recupDenominateur, recupCommentaire);
 			boutonValider.setOnAction(e -> {
@@ -1515,8 +1508,16 @@ public class Controlleur {
 					//String nouvelleDate = recupDate.getText();
 					String nouveauDenominateur = recupDenominateur.getText();
 					// Modifier les informations dans la GridPane
-					modifierNote(gridPane, boutonModifier, nouvelleNote, nouveauCommentaire, nouveauDenominateur, noteAModifier, gridPane);
+					String nouvelleRessource = recupRessource.getValue();
+					String nouveauControle = recupControle.getValue();
+					//modifierNote(gridPane, boutonModifier, nouvelleNote, nouveauCommentaire, nouveauDenominateur, noteAModifier, gridPane);
 					// Fermeture du popUp
+					try {
+						ajouterNote(nouvelleNote, nouveauCommentaire, nouveauDenominateur, nouvelleRessource, nouveauControle);
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					popupStage.close();
 				}
 			});
@@ -1592,17 +1593,6 @@ public class Controlleur {
 					paneLigne = (Pane) node;
 				}
 			}
-			//			if (paneLigne.getId()=="Cliquée") {
-			//				gridPane.getChildren().removeIf(node ->
-			//				GridPane.getRowIndex(node)  != null && GridPane.getRowIndex(node).equals(rowIndex + 1));
-			//				indice--;
-			//				for (Node node : gridPane.getChildren()) {
-			//					Integer row = GridPane.getRowIndex(node);
-			//					if (row != null && row > rowIndex) {
-			//						GridPane.setRowIndex(node, row - 1);
-			//					}
-			//				}
-			//			}
 			gridPane.getChildren().removeIf(node ->
 			GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node).equals(rowIndex));
 			if (supprimerLigne) {
@@ -1617,18 +1607,19 @@ public class Controlleur {
 		}
 		afficherNotes(gridPane,null);
 	}
-	/**
-	 * @param date est la nouvelle date à afficher
-	 * @param denominateur est le nouveau dénominateur à afficher
-	 */
-	private void modifierNote(GridPane gridPane, Button boutonModifier, String note, String commentaire, String denominateur, Object noteASupprimer, GridPane grille) {
-		/* Récupération de l'index de la ligne du bouton cliqué */
-		Integer rowIndex = GridPane.getRowIndex(boutonModifier);
-		/* Supression de la note mais pas suppression de la ligne */
-		gn.modifierNote(noteASupprimer, Double.parseDouble(note), Integer.parseInt(denominateur), denominateur);
-		afficherNotes(gridPane, null);
 
-	}
+	//	/**
+	//	 * @param date est la nouvelle date à afficher
+	//	 * @param denominateur est le nouveau dénominateur à afficher
+	//	 */
+	//	private void modifierNote(GridPane gridPane, Button boutonModifier, String note, String commentaire, String denominateur, Object noteASupprimer, GridPane grille) {
+	//		/* Récupération de l'index de la ligne du bouton cliqué */
+	//		Integer rowIndex = GridPane.getRowIndex(boutonModifier);
+	//		/* Supression de la note mais pas suppression de la ligne */
+	//		gn.modifierNote(noteASupprimer, Double.parseDouble(note), Integer.parseInt(denominateur), denominateur);
+	//		afficherNotes(gridPane, null);
+	//
+	//	}
 
 	/**
 	 * Cette méthode permet d'afficher un popUp sur lequel on peut saisir plusieurs informations
@@ -1681,7 +1672,7 @@ public class Controlleur {
 			erreurSauvegarde.setTitle("Ajout de controle Impossible");
 			erreurSauvegarde.setHeaderText("La somme des poids dépasse 100\nModifier le poids de ce controle\nOu modifier le poids de ceux existants");
 			erreurSauvegarde.showAndWait();
-		} 
+		}
 	}
 
 
@@ -1694,7 +1685,7 @@ public class Controlleur {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param gridPane
 	 * @param ligneCliquée
 	 * @param commentaire
@@ -1829,3 +1820,5 @@ public class Controlleur {
 		javafx.scene.control.Tooltip.install(bouton, tooltip);
 	}
 }
+
+

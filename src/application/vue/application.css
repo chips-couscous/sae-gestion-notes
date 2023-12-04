@@ -153,3 +153,13 @@
 	-fx-text-fill: #354B85;
 	-fx-fill: #354B85;	
 }
+ .combo-box .list-cell:selected {
+    -fx-text-fill: #E6E9F0; /* Couleur du texte */
+}
+
+.labelPasDeNote {
+	-fx-font-size: 36px; 
+	-fx-font-weight: bold; 	
+	-fx-text-fill: #354B85;
+	-fx-fill: #354B85;	
+}

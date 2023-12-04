@@ -110,7 +110,7 @@
 				<Pane prefHeight="200.0" prefWidth="200.0"
 					GridPane.columnSpan="2" GridPane.rowIndex="2">
 					<children>
-						<ComboBox fx:id="ressource" layoutX="135.0"
+						<ComboBox fx:id="ressourcesCombo" layoutX="135.0"
 							layoutY="30.0" prefHeight="40.0" prefWidth="200.0"
 							style="-fx-background-color: #354b85;" 
 							stylesheets="/application/vue/application.css"/>
@@ -162,18 +162,18 @@
 				<Pane prefHeight="200.0" prefWidth="200.0"
 					GridPane.columnSpan="2" GridPane.rowIndex="3">
 					<children>
-						<ComboBox fx:id="ressource" layoutX="135.0"
+						<ComboBox fx:id="controleCombo" layoutX="135.0"
 							layoutY="50.0" prefHeight="40.0" prefWidth="200.0"
 							style="-fx-background-color: #354b85;"
 							stylesheets="/application/vue/application.css" />
 						<Label layoutX="135.0" layoutY="24.0" prefHeight="20.0"
-							prefWidth="60.0" text="Contrôle" textFill="#354b85">
+							prefWidth="60.0" text="Contrôle" textFill="#354b85" fx:id="controle">
 							<font>
 								<Font size="14.0" />
 							</font>
 						</Label>
 						<Label layoutX="188.0" layoutY="24.0" prefHeight="17.0"
-							prefWidth="14.0" text="*" textFill="RED">
+							prefWidth="14.0" text="*" textFill="RED" fx:id="etoile">
 							<font>
 								<Font size="14.0" />
 							</font>

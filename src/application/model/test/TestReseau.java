@@ -11,31 +11,56 @@ import application.model.Reseau;
 /** 
  * Classe de test de la classe Reseau
  * 
- * @author tom
+ * @author tom.jammes
  *
  */
 public class TestReseau {
     
     /**
-     * Méthode de test de la classe puissanceModulo
-     * Vérifier les résultats à la main pour vérifier la validité du test
+     * Méthode de test de puissanceModulo
      *
      */
     private static void testPuissanceModulo() {
-        System.out.println("======= TEST puissanceModulo() =======");
+        System.out.println("===== TEST puissanceModulo =====");
         int nbTestOk = 0;
-        /* Test pour 2^6 dans l'ensemble Z/10Z */
-        if (Reseau.puissanceModulo(2,6,10) == 4) {
+        /* test avec les valeur 3^6 dans Z/10Z */
+        if (Reseau.puissanceModulo(3,6,10) == 9) {
             nbTestOk++;
+        } else { 
+            System.err.println("Test échoué pour 3^6 dans Z/10Z");
         }
-        /* Test pour 3^10 dans l'ensemble Z/8Z */
-        if (Reseau.puissanceModulo(3,10,8) == 1) {
+        /* test avec les valeur 3^9 dans Z/10Z */
+        if (Reseau.puissanceModulo(3,9,10) == 3) {
             nbTestOk++;
+        } else { 
+            System.err.println("Test échoué pour 3^9 dans Z/10Z");
         }
-        if (nbTestOk == 2) {
-            System.out.println("Test validé avec succès");
-        } else {
-            System.err.println("Test échoué");
+        /* test avec les valeur 3^6 dans Z/7Z */
+        if (Reseau.puissanceModulo(3,6,7) == 1) {
+            nbTestOk++;
+        } else { 
+            System.err.println("Test échoué pour 3^6 dans Z/7Z");
+        }
+        /* test avec les valeur 5^6 dans Z/8Z */
+        if (Reseau.puissanceModulo(5,6,8) == 1) {
+            nbTestOk++;
+        } else { 
+            System.err.println("Test échoué pour 5^6 dans Z/8Z");
+        }
+        /* test avec les valeur 7^5 dans Z/13Z */
+        if (Reseau.puissanceModulo(7,5,13) == 11) {
+            nbTestOk++;
+        } else { 
+            System.err.println("Test échoué pour 7^5 dans Z/13Z");
+        }
+        /* test avec les valeur 7^5 dans Z/13Z */
+        if (Reseau.puissanceModulo(7,5,13) != 12) {
+            nbTestOk++;
+        } else { 
+            System.err.println("Test échoué pour 7^5 dans Z/13Z");
+        }
+        if (nbTestOk == 6) {
+            System.out.println("Test validé avec succés");
         }
     }
 
@@ -63,11 +88,10 @@ public class TestReseau {
                 nbTestOk ++;
             }
         }
-        System.out.println("======= TEST estPremier() =======");
+
+        System.out.println("===== TEST estPremier =====");
         if (nbTestOk == nbPremiers.length+nbNonPremiers.length) {
             System.out.println("Test validé avec succès");
-        } else {
-            System.err.println("Test échoué");
         }
     }
 
@@ -76,15 +100,24 @@ public class TestReseau {
      * Vérifier les résultats à la main pour vérifier la validité du test
      */
     private static void testEstGenerateur() {
-        System.out.println("======= TEST estGenerateur() =======");
+
+        System.out.println("===== TEST estGenerateur =====");
+        System.out.println("\t TEST 7");
         for (int i = 2; i < 7; i++) {
             if (Reseau.estGenerateur(7,i)) {
                 System.out.println(i + " est un générateur de " + 7);
             }
         }
+        System.out.println("\t TEST 11");
         for (int i = 2; i < 11; i++) {
             if (Reseau.estGenerateur(11,i)) {
                 System.out.println(i + " est un générateur de " + 11);
+            }
+        }
+        System.out.println("\t TEST 61");
+        for (int i = 2; i < 61; i++) {
+            if (Reseau.estGenerateur(61,i)) {
+                System.out.println(i + " est un générateur de " + 61);
             }
         }
     }
@@ -94,15 +127,17 @@ public class TestReseau {
      * @param args
      */
     public static void main(String[] args) {
+
+//        testPuissanceModulo();
+//        System.out.println();
+//        testEstPremier();
+//        System.out.println();
+//        testEstGenerateur();
         
-        testPuissanceModulo();
-        testEstPremier();
-        testEstGenerateur();
-        
-//        try {
-//            Reseau.envoyer("127.0.0.1", "csv/ParametresRessource(AImporter).csv");
-//        } catch (IOException e) {
-//           System.err.println("Echange impossible");
-//        }
+        try {
+            Reseau.envoyer("127.0.0.1", "csv/ParametresRessource(AImporter).csv");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

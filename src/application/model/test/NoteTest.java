@@ -1,5 +1,6 @@
 package application.model.test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -60,4 +61,8 @@ class NoteTest {
 			new Note(25, 1001, "Commentaire invalide");
 		});
 	}
+	@Test
+        void testNoteInvalideDenominateurEgal1000() {
+                assertDoesNotThrow(()-> new Note(25, 1000, "Commentaire invalide"));
+        }
 }

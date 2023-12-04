@@ -23,7 +23,7 @@ import java.util.HashSet;
  * de fichier via le réseau
  * Les échanges fonctionnent via un système client / serveur
  * 
- * @author tom
+ * @author tom.jammes
  *
  */
 public class Reseau {
@@ -41,7 +41,7 @@ public class Reseau {
      */
     public static void main(String[] args) {
         try {
-            recevoir("Z:\\SAE\\WorkspaceEclipseSae\\GestionNotes\\csv\\fichierRecu.csv");
+            recevoir("Z:\\SAE\\WorkspaceEclipseSae\\GestionNotes\\csv2\\fichierRecu.csv");
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -156,7 +156,7 @@ public class Reseau {
             serverSocket.close();
 
         } catch (IOException e) {
-            System.out.println("Serveur : connexion avec le client impossible "
+            System.err.println("Serveur : connexion avec le client impossible "
                     + e.getMessage());
             throw e;
         }
@@ -177,7 +177,7 @@ public class Reseau {
         /* Parcours des données a crypter */ 
         for (int i = 0; i < donnees.length && donnees[i] != 0; i++) {
             /* Commentaires = affichage des caractères de diverses informations 
-             * nécessaire a la vérification de la validité du cryptage 
+             * nécessaires afin de débuguer les erreurs de cryptages
              */
             //            System.out.print("Donnees = " + donnees[i] + " code = "     
             //                    + dictionnaireCryptage.get((char)donnees[i]) + " cle = " 
@@ -278,7 +278,7 @@ public class Reseau {
                 cle += caractere;
             }
 
-            //            System.out.println("Client : clé = " + cle);
+            System.out.println("Client : clé = " + cle);
         } catch (IOException e) {
             System.err.println("Communication avec le serveur impossible");
             cle = null;
@@ -302,7 +302,7 @@ public class Reseau {
         String cle = "";
         int tailleCle; // généré et transmis par le client
 
-        System.out.println("Génération de la clé de chiffrement");
+        System.out.println("Serveur : Génération de la clé de chiffrement");
         try {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(client.getInputStream()));
@@ -330,9 +330,9 @@ public class Reseau {
                 cle += caractere;
             }
 
-            //            System.out.println("Serveur : clé = " + cle);
+            System.out.println("Serveur : clé = " + cle);
         } catch (IOException e) {
-            System.err.println("Communication avec le serveur impossible");
+            System.err.println("Serveur : Communication avec le client impossible");
             cle = null;
         }
 

@@ -9,17 +9,17 @@ package application.model.exception;
  * @author tom.jammes
  */
 public class IpException extends Exception {
-    
-    /** Constructeur de l'exception */
-    public IpException() {
-        super();
-    }
-    
-    /** 
-     * Constructeur de l'exception avec un message d'erreur
-     * @param message d'erreur personnalisé
-     */
-    public IpException(String message) {
-        super(message);
-    }
+
+	/** Constructeur de l'exception */
+	public IpException() {
+		super();
+	}
+
+	/** 
+	 * Constructeur de l'exception avec un message d'erreur
+	 * @param message d'erreur personnalisé
+	 */
+	public IpException(String message) {
+		super(message);
+	}
 }

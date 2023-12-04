@@ -11,18 +11,18 @@ package application.model.exception;
  */
 public class ParametresSemestreException extends Exception {
 
-    /** 
-     * Constructeur de l'exception
-     */
-    public ParametresSemestreException() {
-        super();
-    }
-    
-    /** 
-     * Constructeur de l'exception
-     * @param message à afficher lors de l'exception
-     */
-    public ParametresSemestreException(String message) {
-        super(message);
-    }
+	/** 
+	 * Constructeur de l'exception
+	 */
+	public ParametresSemestreException() {
+		super();
+	}
+
+	/** 
+	 * Constructeur de l'exception
+	 * @param message à afficher lors de l'exception
+	 */
+	public ParametresSemestreException(String message) {
+		super(message);
+	}
 }

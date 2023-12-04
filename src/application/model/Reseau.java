@@ -15,8 +15,6 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -29,25 +27,27 @@ import java.util.HashSet;
  *
  */
 public class Reseau {
-    
+
     /* Dictionnaire utilisé pour le chiffrement des données */
-    final static HashMap<Character,Integer> dictionnaireCryptage = new HashMap<>();    
-    
+    final static HashMap<Character,Integer> dictionnaireCryptage = new HashMap<>();  
+
+    final static int PORT_CONNEXION = 55555;
+
     final static int TAILLE_BLOC_DONNEES = 1024; 
-    
+
     /**
      * Méthode utilisé pour les test, fait office de serveur
      * @param args
      */
     public static void main(String[] args) {
         try {
-            recevoir(8064, "Z:\\SAE\\WorkspaceEclipseSae\\GestionNotes\\csv\\fichierRecu.csv");
+            recevoir("Z:\\SAE\\WorkspaceEclipseSae\\GestionNotes\\csv\\fichierRecu.csv");
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-    
+
     /** 
      * Méthode d'envoie d'un fichier
      * La communication entre les machines suit un système client / serveur
@@ -56,22 +56,21 @@ public class Reseau {
      * Le serveur doit être lancé avant le client
      * 
      * @param ip IP de la machine qui prend le rôle de serveur 
-     * @param port port sur lequel le client se connecte au serveur
      * @param cheminFichier chemin du fichier a envoyer
      * @throws IOException si le serveur est introuvable
      */
-    public static void envoyer(String ip, int port, String cheminFichier) throws IOException {
-        
+    public static void envoyer(String ip, String cheminFichier) throws IOException {
+
         definirDictionnaire();
-        
+
         try {
-            
+
             // Connexion au serveur
-            Socket serveur = new Socket(ip, port);
+            Socket socket = new Socket(ip, PORT_CONNEXION);
             System.out.println("Client : connecté au serveur");
 
             // Obtention du flux de sortie vers le serveur
-            BufferedOutputStream out = new BufferedOutputStream(serveur.getOutputStream());
+            BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
 
             // Sélection du fichier CSV à envoyer
             FileInputStream fileIn = new FileInputStream(cheminFichier);
@@ -82,7 +81,7 @@ public class Reseau {
              */
             byte[] buffer = new byte[TAILLE_BLOC_DONNEES];
             int tailleBlocEnvoye;
-            String cleChiffrement = generationCleClient(serveur); // génération de la clé de chiffrement
+            String cleChiffrement = generationCleClient(socket); // génération de la clé de chiffrement
             while ((tailleBlocEnvoye = fileIn.read(buffer)) != -1) {
                 out.write(crypter(buffer, cleChiffrement), 0, tailleBlocEnvoye);
                 System.out.println("Client : Envoie d'un bloc de " + tailleBlocEnvoye 
@@ -94,14 +93,14 @@ public class Reseau {
             // Fermeture des flux et de la socket
             out.close();
             fileIn.close();
-            serveur.close();
+            socket.close();
         } catch (IOException e) {
             System.err.println("Client : Connexion au serveur impossible "
                     + e.getMessage());
             throw e;
         }
     }
-   
+
     /** 
      * Méthode de reception d'un fichier
      * La communication entre les machines suit un système client / serveur
@@ -109,21 +108,20 @@ public class Reseau {
      * La machine qui veut envoyer le fichier fait office de client
      * Le serveur doit être lancé avant le client
      * 
-     * @param port port sur lequel le serveur attend une connection
      * @param cheminReceptionFichier chemin ou sera écrit le fichier reçu
      * @param cheminFichier chemin du fichier a envoyer
      * @throws IOException si il y a un problème de connexion avec le client
      */
-    public static void recevoir(int port, String cheminReceptionFichier) throws IOException {
-        
+    public static void recevoir(String cheminReceptionFichier) throws IOException {
+
         definirDictionnaire();
-        
+
         try {
             // Création d'un ServerSocket écoutant sur le port 12345
-            ServerSocket serverSocket = new ServerSocket(port);
+            ServerSocket serverSocket = new ServerSocket(PORT_CONNEXION);
 
             System.out.println("Serveur : Attente de connexion...");
-            serverSocket.setSoTimeout(15000);
+            serverSocket.setSoTimeout(10000);
 
             // Attente d'une connexion client
             Socket clientSocket = serverSocket.accept();
@@ -157,15 +155,13 @@ public class Reseau {
             clientSocket.close();
             serverSocket.close();
 
-        } catch (SocketTimeoutException e) {
-            System.err.println("Serveur : Aucun client trouvé");
-            throw new SocketTimeoutException("Aucun client trouvé");
-        } catch (SocketException e) {
-            System.err.println("Serveur : Le client a quitté l'échange");
-            throw new SocketException("Le client a quitté l'échange, aucun fichier transmis");
+        } catch (IOException e) {
+            System.out.println("Serveur : connexion avec le client impossible "
+                    + e.getMessage());
+            throw e;
         }
     }
-    
+
     /** 
      * Méthode de cryptage d'un tableau de byte contenant des code ascii a crypter
      * La méthode de cryptage utilisé est une méthode de Vigenère
@@ -177,28 +173,26 @@ public class Reseau {
      */
     private static byte[] crypter(byte[] donnees, String cle) throws NullPointerException {
         byte caractere;
-        
+
         /* Parcours des données a crypter */ 
         for (int i = 0; i < donnees.length && donnees[i] != 0; i++) {
-            
-            /* Commentaires ci-dessous = affichage des caractères et diverses informations 
+            /* Commentaires = affichage des caractères de diverses informations 
              * nécessaire a la vérification de la validité du cryptage 
              */
-//            System.out.print("Donnees = " + donnees[i] + " code = "     
-//                    + dictionnaireCryptage.get((char)donnees[i]) + " cle = " 
-//                    + cle.charAt(i%cle.length()) + " code "                  
-//                    + dictionnaireCryptage.get(cle.charAt(i%cle.length())));
-            
+            //            System.out.print("Donnees = " + donnees[i] + " code = "     
+            //                    + dictionnaireCryptage.get((char)donnees[i]) + " cle = " 
+            //                    + cle.charAt(i%cle.length()) + " code "                  
+            //                    + dictionnaireCryptage.get(cle.charAt(i%cle.length())));
             /* Chiffrement */
-            caractere = (byte) ((dictionnaireCryptage.get((char)donnees[i]) // Récupération du code du caractère a chiffrer
-                    + dictionnaireCryptage.get(cle.charAt(i%cle.length()))) //  Récupération du code du caractère de la clé
+            caractere = (byte) ((dictionnaireCryptage.get((char)donnees[i]) 
+                    + dictionnaireCryptage.get(cle.charAt(i%cle.length())))
                     % dictionnaireCryptage.size());
-            
-//            System.out.println(" cryptage = " + toCaractere(caractere));
-          
+
+            //            System.out.println(" cryptage = " + toCaractere(caractere));
+
             donnees[i] = (byte)toCaractere(caractere);
         }
-      
+
         return donnees;
     }
 
@@ -211,76 +205,80 @@ public class Reseau {
      */
     private static byte[] decrypter(String cle, byte[] donneesCryptees) {
         byte caractere;
-        
+
         /* Parcours des données a décrypter */ 
         for (int i = 0; i < donneesCryptees.length && donneesCryptees[i] != 0; i++) {
             /* Déchiffrement */
             caractere = (byte) (dictionnaireCryptage.get((char)donneesCryptees[i]) 
-                      - dictionnaireCryptage.get(cle.charAt(i%cle.length())));
+                    - dictionnaireCryptage.get(cle.charAt(i%cle.length())));
             /* Effectue le modulo */
-            while (caractere < 0) {
+            if (caractere < 0) {
                 caractere += dictionnaireCryptage.size();
             }
-              
+
             donneesCryptees[i] = (byte)toCaractere(caractere);
         }
-        
+
         return donneesCryptees;
     }
-    
+
     /** 
      * Génère une clée pour un chiffrement de Vigenère
      * Génère la clé de manière aléatoire grâce a un échange de Diffie-Hellman
      * avec le serveur
+     * Le client détermine la longueur de la clé, entre 3 et 5 caractères
      *
      * @param socket du serveur avec qui l'échange de Diffie-Hellman est effectué
      * @return clé pour un chiffrement de Vigenère
      */
     private static String generationCleClient(Socket serveur) {
-       
+
         /* Génération aléatoire des données nécessaire à l'échange de Diffe-Hellman */
         int p;
         int g;
         int a;
         int gPuissanceA;
         int gPuissanceB;
-        int tailleCle = 8;
+        int tailleCle = (int)(3 + Math.random()*5);
         String cle = ""; 
-        
+
         try {
             System.out.println("Client : Génération de la clé de chiffrement");
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(serveur.getInputStream()));
             PrintStream out = new PrintStream(serveur.getOutputStream());
-            
+
+            /* Envoie de la taille de la clé */
+            out.println(tailleCle);
+
             /* Génération des différents caractères de la clé */
             for (int i = 0; i < tailleCle; i++) {
                 do {
                     p = (int)(1000 + Math.random()*9000);
                 } while (!estPremier(p));
-                
+
                 do {
-                    g = (int)(Math.random()*p);
+                    g = (int)(1000 + Math.random()*9000);
                 } while (!estGenerateur(p,g));
-                
+
                 a = (int)(1 + Math.random()*(p - 1));
                 gPuissanceA = puissanceModulo(g,a,p);
-                
+
                 out.println(p);
                 out.println(g);
                 out.println(gPuissanceA);
-                
+
                 /* Réception de données du serveur */
                 gPuissanceB = Integer.parseInt(in.readLine());
-                
+
                 /* Génération du caractère */
                 int gPuissanceAB = puissanceModulo(gPuissanceB, a, p);
                 char caractere;
                 caractere = (char)(65 + gPuissanceAB % 26);
                 cle += caractere;
             }
-            
-            System.out.println("Client : clé = " + cle);
+
+            //            System.out.println("Client : clé = " + cle);
         } catch (IOException e) {
             System.err.println("Communication avec le serveur impossible");
             cle = null;
@@ -297,45 +295,47 @@ public class Reseau {
      * @return clé pour un chiffrement de Vigenère
      */
     private static String generationCleServeur(Socket client) {
-        
+
         int p; // généré et transmis par le client
         int g; // généré et transmis par le client
         int gPuissanceA; // généré et transmis par le client
         String cle = "";
-        int tailleCle = 8;
-        
+        int tailleCle; // généré et transmis par le client
+
         System.out.println("Génération de la clé de chiffrement");
         try {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(client.getInputStream()));
             PrintStream out = new PrintStream(client.getOutputStream());
-            
+
+            tailleCle = Integer.parseInt(in.readLine());
+
             /* Génération des différents caractères de la clé */
             for (int i = 0; i < tailleCle; i++) {
                 p = Integer.parseInt(in.readLine());
                 g = Integer.parseInt(in.readLine());
                 gPuissanceA = Integer.parseInt(in.readLine());
-                
+
                 /* Génération aléatoire des données nécessaire à l'échange de Diffe-Hellman */
                 int b = (int)(1 + Math.random()*(p - 1));
                 int gPuissanceB = puissanceModulo(g,b,p);
-                
+
                 /* Envoie de données au client */
                 out.println(gPuissanceB);
-                
+
                 /* Génération du caractère */
                 int gPuissanceAB = puissanceModulo(gPuissanceA,b,p);
                 char caractere;
                 caractere = (char)(65 + gPuissanceAB % 26);
                 cle += caractere;
             }
-            
-            System.out.println("Serveur : clé = " + cle);
+
+            //            System.out.println("Serveur : clé = " + cle);
         } catch (IOException e) {
-            System.err.println("Communication avec le client impossible");
+            System.err.println("Communication avec le serveur impossible");
             cle = null;
         }
-        
+
         return cle;
     }
 
@@ -355,7 +355,7 @@ public class Reseau {
         }
         return resultat;
     }
-    
+
     /**
      * Vérifie que g est une classe générateur de p
      * 
@@ -365,18 +365,18 @@ public class Reseau {
      */
     public static boolean estGenerateur(int p, int g) {
         HashSet<Integer> classes = new HashSet<>();
-        
+
         if (g >= p || g <= 1) {
             return false;
         }
-        
+
         for (int i = 1; i < p; i++) {
             classes.add(puissanceModulo(g,i,p));
         }
-                
+
         return classes.size() == p-1;
     }
-    
+
     /** 
      * Détermine si un nombre entier positif est premier
      * Un nombre est premier si il est divisible seulement par 1 et lui même
@@ -387,30 +387,28 @@ public class Reseau {
      */
     public static boolean estPremier(int i) {
         boolean estPremier = true;
-        
+
         if (i == 2) {
             return true;
         } else if (i <= 1) {
             return false;
         }
-        
+
         for (int k = 2; k < i && estPremier; k++) {
             if (i%k == 0) {
                 estPremier = false;
             }
         }
-        
+
         return estPremier;
     }
-    
+
     /**
      * Génère la HashMap contenant le dictionnaire de caractère utilisés
      * pour le chiffrement des données 
-     * dictionnaireCryptage contient en clé des caractère sous forme de char
-     * et en valeur des int
      */
     private static void definirDictionnaire() {
-        
+
         /* Ajout de l'alphabet minuscule */
         char caractere = 'a';
         for (int i = 0; i < 26; i++) {
@@ -447,25 +445,25 @@ public class Reseau {
         dictionnaireCryptage.put(')', 76);
         dictionnaireCryptage.put((char)10, 77); // Chiffrage du saut de ligne
         dictionnaireCryptage.put((char)13, 78); // Chiffrage du retour chariot
-        dictionnaireCryptage.put((char)-65, 79); // Chiffrage de trois caractères
-        dictionnaireCryptage.put((char)-17, 80); // invisible présent au tout e
-        dictionnaireCryptage.put((char)-69, 81); //début d'u fichier ParametreSemestre
+        dictionnaireCryptage.put((char)-65, 79); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
+        dictionnaireCryptage.put((char)-17, 80); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
+        dictionnaireCryptage.put((char)-69, 81); // Chiffrage d'un caractère inconnu présent au tout début d'un fichier ParametreSemestre
     }
-    
+
     /** 
-     * Renvoie le caractère associé à la valeur du dictionnaire de caractère 
-     * utilisé pour le chiffrage de données
+     * Renvoie le caractère associé à la valeur passé en paramètre en fonction 
+     * du dictionnaire de caractère utilisé pour le chiffrage de données
      * @param code code du caractère a récupérer
      * @return le caractère correspondant ou 0 si aucun caractère ne correspond
      */
     private static char toCaractere(byte code) {
-        
+
         for(char caractere : dictionnaireCryptage.keySet()) {
             if (dictionnaireCryptage.get(caractere) == code) {
                 return caractere;
             }
         }
-        
+
         return 0;
     }
 }

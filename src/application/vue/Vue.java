@@ -27,7 +27,7 @@ public class Vue extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		this.primaryStage = primaryStage;
-		this.primaryStage.setTitle("Apllication Note");
+		this.primaryStage.setTitle("Application Note");
 
 		initRootLayout();
 	}
@@ -42,9 +42,9 @@ public class Vue extends Application {
 			loader.setLocation(getClass().getResource("PageNotes.fxml"));
 			BorderPane PageNotes = loader.load();
 			Scene PageNoteScene = new Scene(PageNotes);
-			 // Ajoutez un logo à la barre de titre
-                        Image logo = new Image(getClass().getResourceAsStream("logo.png"));
-                        primaryStage.getIcons().add(logo);
+			// Ajoutez un logo à la barre de titre
+			Image logo = new Image(getClass().getResourceAsStream("logo.png"));
+			primaryStage.getIcons().add(logo);
 			primaryStage.setScene(PageNoteScene);
 			primaryStage.show();
 			PageNoteScene.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());

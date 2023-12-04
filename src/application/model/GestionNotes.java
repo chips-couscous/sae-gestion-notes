@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +19,10 @@ import application.model.exception.ControleInvalideException;
 import application.model.exception.EnseignementInvalideException;
 import application.model.exception.ExtensionFichierException;
 import application.model.exception.IpException;
+import application.model.exception.MoyenneCompetenceException;
 import application.model.exception.MoyenneRessourceException;
 import application.model.exception.NoteInvalideException;
 import application.model.exception.ParametresSemestreException;
-import application.model.exception.PortReseauException;
 import application.model.exception.SemestreInvalideExecption;
 import application.model.exception.UtilisateurInvalideException;
 import application.model.exception.cheminFichierException;
@@ -50,7 +51,7 @@ public class GestionNotes {
      * @throws ClassNotFoundException si les objets à charger sont inconnu
      */
     public GestionNotes() throws ClassNotFoundException, IOException {
-        fichierSerialize = new File(".\\tmp\\gestion-notes.ser");
+        fichierSerialize = new File("tmp/gestion-notes.ser");
 
         /* Récupération des données enregistré si il y a eu une sauvegarde */
         if (fichierSerialize.exists()) {
@@ -140,6 +141,18 @@ public class GestionNotes {
 
         moyenneEnseignement = enseignement.getMoyenne();
         return moyenneEnseignement;
+    }
+
+    /**
+     * Initialiser la moyenne d'une competence
+     * @param identifiant de la competence dont on veut connaître la moyenne
+     * @throws NoteInvalideException
+     * @throws MoyenneRessourceException
+     * @throws MoyenneCompetenceException 
+     */
+    public void calculerMoyenneCompetence(String identifiant) throws MoyenneCompetenceException, NoteInvalideException, MoyenneRessourceException{ 
+        Competence competence = trouverCompetence(identifiant);
+        competence.setMoyenneCompetence();
     }
 
     /**
@@ -235,12 +248,58 @@ public class GestionNotes {
     }
 
     /**
-     * Supprime la note d'un contrôle
-     * @param identifiant du controle dont on veut supprimer la note
+     * Supprime la note d'un contrôle, d'une SAE ou d'un Portfolio
+     * @param noteASupprimer est un objet qui correspond à la note que l'on veut supprimer
      */
-    public void supprimerNoteAControle(String identifiant) {
-        Controle controle = trouverControle(identifiant);
-        controle.setNoteControle(null);
+    public void supprimerNote(Object noteASupprimer) {
+        if (noteASupprimer instanceof Sae) {
+            Sae noteSae = (Sae) noteASupprimer;
+            noteSae.setNoteSae(null);
+        } else if (noteASupprimer instanceof Portfolio) {
+            Portfolio notePortfolio = (Portfolio) noteASupprimer;
+            notePortfolio.setNotePortfolio(null);
+        } else {
+            Controle controle = (Controle) noteASupprimer;
+            controle.setNoteControle(null);
+        }
+    }
+
+    /**
+     * Modifie la note d'un contrôle, d'une SAE ou d'un Portfolio
+     * @param noteAModifier 
+     * @param note 
+     * @param denominateur 
+     * @param commentaire 
+     */
+    public void modifierNote(Object noteAModifier, Double note, int denominateur, String commentaire) {
+        if (noteAModifier instanceof Sae) {
+            Sae notePortfolio = (Sae) noteAModifier;
+            try {
+                Note nouvelleNote = new Note(note, denominateur, commentaire);
+                notePortfolio.setNoteSae(nouvelleNote);
+            } catch (NoteInvalideException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } else if (noteAModifier instanceof Portfolio) {
+            Portfolio notePortfolio = (Portfolio) noteAModifier;
+            try {
+                Note nouvelleNote = new Note(note, denominateur, commentaire);
+                notePortfolio.setNotePortfolio(nouvelleNote);
+            } catch (NoteInvalideException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        } else {
+            Controle controle = (Controle) noteAModifier;
+            try {
+                modifierNoteAControle(controle.getIndentifiantControle(), note, denominateur, commentaire);
+            } catch (NoteInvalideException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -279,8 +338,6 @@ public class GestionNotes {
                 competence.ajouterEnseignement(trouverEnseignement(identifiantEnseignement), poidsEnseignement);
             }
         }
-
-        System.out.println(semestreGestionNotes.toString());
     }
 
     /**
@@ -380,11 +437,10 @@ public class GestionNotes {
      * @throws IOException 
      * @throws ClassNotFoundException 
      */
-    public void reinitialiserGestionNotes() throws UtilisateurInvalideException, ClassNotFoundException, IOException {
-        setSemestreGestionNotes(new Semestre());
-        setUtilisateurGestionNotes(new Utilisateur());
-        deserializerDonnees();
-        serializerDonnees();
+    public void reinitialiserGestionNotes() throws UtilisateurInvalideException, 
+                                                   ClassNotFoundException, IOException {
+        fichierSerialize.delete();
+        instance = null;
     }
 
     /** 
@@ -433,51 +489,42 @@ public class GestionNotes {
     }
 
     /** 
-     * Vérifie la conformité du port de connexion avant de lancer le serveur 
-     * pour recevoir un fichier d'un autre utilisateur
+     * Vérifie la conformité du chemin d'écriture du fichier
+     * avant de lancer le serveur pour recevoir un fichier d'un autre utilisateur
      * 
      * @param port port de connexion (compris entre 1024 et 60000)
      * @param cheminReceptionFichier chemin ou sera créer le fichier recu
-     * @throws PortReseauException si le port est invalide
      * @throws IOException si il y eu un problème lors de la connexion avec le client
      * @throws cheminFichierException si cheminReceptionFichier est null ou vide
      */
-    public static void recevoirFichier(int port, String cheminReceptionFichier) throws PortReseauException, IOException, cheminFichierException {
+    public void recevoirFichier(String cheminReceptionFichier) throws IOException, cheminFichierException {
 
-        if (port < 1024 || port > 60000) {
-            throw new PortReseauException("Le port est incorrect");
-        }
         if (cheminReceptionFichier == null || cheminReceptionFichier.equals("")) {
             throw new cheminFichierException("Le chemin de reception est incorrect");
         }
-        Reseau.recevoir(port, cheminReceptionFichier);
+        Reseau.recevoir(cheminReceptionFichier);
     }
 
     /** 
      * Vérifie que la conformité des paramètres et lance le client 
      * pour envoyer le fichier passé en paramètre à l'adresse IP communiqué en paramètre
      * @param ipServeur IP de la machine a qui on envoi le fichier
-     * @param port port de connexion 
      * @param cheminFichier chemin du fichier a envoyer
-     * @throws PortReseauException  si le port est invalide
      * @throws IpException si l'adresse IP est invalide
      * @throws cheminFichierException si le chemin est invalide
      * @throws IOException si le serveur est introuvable
      */
-    public static void envoyerFichier(String ipServeur, int port, String cheminFichier) throws PortReseauException, IpException, cheminFichierException, IOException {
+    public static void envoyerFichier(String ipServeur,  String cheminFichier) throws IpException, cheminFichierException, IOException {
         String patternIP = "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])(\\.(?!$)|$)){4}$";
 
         if (!Pattern.matches(patternIP, ipServeur)) {
             throw new IpException("L'adresse IP est incorrect");
         }
-        if (port < 1024 || port > 60000) {
-            throw new PortReseauException("Le port est incorrect");
-        }
         if (cheminFichier.equals("")) { // Pas besoin de vérifier plus, la vue impose un chemin correct
             throw new cheminFichierException("Le fichier est incorrect");
         }
 
-        Reseau.envoyer(ipServeur, port, cheminFichier);
+        Reseau.envoyer(ipServeur, cheminFichier);
     }
 
     /** 
@@ -503,7 +550,7 @@ public class GestionNotes {
                 }
             }
         }
-        
+
         return listeNotes;
     }
 
@@ -524,6 +571,48 @@ public class GestionNotes {
         } else {
             throw new NoteInvalideException("La note est invalide");
         }
+    }
+
+    /** Génère un fichier au format csv contenant tous les paramètres actuels 
+     * de l'application
+     * @param chemin chemin où sera générer le fichier
+     * @throws IOException si le chemin est incorrect
+     */
+    public void genererFichierExport(String chemin) throws IOException {
+        File fichierExport = new File(chemin);
+        fichierExport.createNewFile(); // Créer le fichier si il n'existe pas
+        PrintWriter sortieFichier = new PrintWriter(fichierExport);
+
+        /*Ecriture de l'entête du fichier */
+        sortieFichier.printf("BUT Informatique - Modalité Contrôle de connaissances ressources semestre %d;;\n"
+                ,semestreGestionNotes.getNumeroSemestre());
+        sortieFichier.printf("Semestre;%d;\n"
+                ,semestreGestionNotes.getNumeroSemestre());
+        String parcourSemestre = semestreGestionNotes.getParcoursSemestre()+"";
+        if (parcourSemestre.equals("T")) {
+            parcourSemestre = "Tous";
+        }
+        sortieFichier.printf("Parcours;%s;\n"
+                ,parcourSemestre);
+        sortieFichier.println(";;");
+
+        /* Ecrit toutes les ressources et les controles présents dans les ressources */
+        for (Enseignement enseignement : semestreGestionNotes.getEnseignementsSemestre()) {
+            if (enseignement instanceof Ressource) {
+                /* Ecriture de l'entête de la ressource */
+                sortieFichier.printf("Ressource;%s;%s\n"
+                        ,enseignement.getIdentifiantEnseignement()
+                        , enseignement.getIntituleEnseignement());
+                sortieFichier.println("Type évaluation;Date;Poids");
+                /* Ecriture des différents contrôles */
+                for (Controle controle : ((Ressource)enseignement).getControlesRessource()) {
+                    sortieFichier.printf("%s;%s;%s\n",controle.getTypeControle(),
+                            controle.getDateControle(),controle.getPoidsControle());
+                }
+                sortieFichier.println(";;");
+            }
+        }
+        sortieFichier.close();
     }
 
     /**

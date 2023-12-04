@@ -29,7 +29,7 @@ public class TestReseau {
                 1,6,8,9,10,15,24,35,45,48,50,57,58,62,66,72,78,86,93,99,102
         };
         int nbTestOk = 0;
-        
+
         for (int i : nbPremiers) {
             if (Reseau.estPremier(i)) {
                 nbTestOk ++;
@@ -44,7 +44,7 @@ public class TestReseau {
             System.out.println("Test estPremier validé avec succès");
         }
     }
-    
+
     /**
      * Méthode de test de la classe estGenerateur
      * Vérifier les résultats à la main pour vérifier la validité du test
@@ -62,17 +62,18 @@ public class TestReseau {
             }
         }
     }
-    
+
     /**
      * Méthode principal, appelle les différentes méthodes de test
      * @param args
      */
     public static void main(String[] args) {
-//        testEstPremier();
-//        testEstGenerateur();
+        //        testEstPremier();
+        //        testEstGenerateur();
         try {
-            Reseau.envoyer("127.0.0.1", 8064, "csv/ParametresSemestre(AImporter).csv");
+            Reseau.envoyer("127.0.0.1", "csv/ParametresRessource(AImporter).csv");
         } catch (IOException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

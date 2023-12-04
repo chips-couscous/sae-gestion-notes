@@ -9,17 +9,17 @@ package application.model.exception;
  * @author tom.jammes
  */
 public class cheminFichierException extends Exception {
-    
-    /** Constructeur de l'exception */
-    public cheminFichierException() {
-        super();
-    }
-    
-    /** 
-     * Constructeur de l'exception avec un message d'erreur
-     * @param message d'erreur personnalisé
-     */
-    public cheminFichierException(String message) {
-        super(message);
-    }
+
+	/** Constructeur de l'exception */
+	public cheminFichierException() {
+		super();
+	}
+
+	/** 
+	 * Constructeur de l'exception avec un message d'erreur
+	 * @param message d'erreur personnalisé
+	 */
+	public cheminFichierException(String message) {
+		super(message);
+	}
 }

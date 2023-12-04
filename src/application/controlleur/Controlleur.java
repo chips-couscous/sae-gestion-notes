@@ -3,7 +3,6 @@
  * INFO2 2023-2024, pas de copyright ni droits d'auteurs
  */
 package application.controlleur;
-
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextInputDialog;
@@ -29,8 +28,12 @@ import application.model.Portfolio;
 import application.model.Ressource;
 import application.model.Sae;
 import application.model.exception.ControleInvalideException;
+import application.model.exception.EnseignementInvalideException;
 import application.model.exception.ExtensionFichierException;
+import application.model.exception.ImportationException;
 import application.model.exception.IpException;
+import application.model.exception.MoyenneCompetenceException;
+import application.model.exception.MoyenneRessourceException;
 import application.model.exception.NoteInvalideException;
 import application.model.exception.PortReseauException;
 import application.model.exception.UtilisateurInvalideException;
@@ -89,6 +92,8 @@ public class Controlleur {
 	@FXML
 	GridPane grilleNotes;
 	@FXML
+	GridPane grilleBoutons;
+	@FXML
 	Button validerNom;
 	@FXML
 	Label labelNomEtudiant;
@@ -113,13 +118,31 @@ public class Controlleur {
 	@FXML
 	Button btnEnvoyerFichier;
 	@FXML
+	Button boutonReinitialisation;
+	@FXML
 	Button btnRecevoirFichier;
+	@FXML
+	Button boutonNotes;
+	@FXML
+	Button boutonParametreImporter;
+	@FXML
+	Button boutonParametreImporter2;
+	@FXML
+	Button boutonParametrePartager;
+	@FXML
+	Button boutonParametreModifier;
+	@FXML
+	Button boutonParametreReinitialiser;
+	@FXML
+	Button boutonRessources;
 	@FXML
 	Label ipUtilisateur;
 	@FXML
 	Label cheminFichierExport;
 	@FXML
-	Label cheminDossierReception;	 
+	Label erreurChamps;
+	@FXML
+	Label cheminDossierReception;     
 	@FXML
 	TextField saisieIpServeur;
 	@FXML
@@ -143,13 +166,13 @@ public class Controlleur {
 
 	String nomEtu;
 
-	int indice = 0;
+	//int indice = 0;
 	int indiceEnseignement = 0;
 
 	private static final int LONGUEUR_MAX_LIGNE = 50;
 	private static final int LONGUEUR_MAX = 200;
 
-	private GestionNotes gn = GestionNotes.getInstance();
+	private static GestionNotes gn = GestionNotes.getInstance();
 
 	FXMLLoader loader = new FXMLLoader(); // FXML loader permettant de charger un fichier FXML et de changer de scene
 	final String MESSAGE_AIDE = "Aide";
@@ -164,9 +187,25 @@ public class Controlleur {
 	 * directement au lancement de l'application
 	 */
 	public void initialize() {
+		
+		if (boutonReinitialisation != null) {
+			
+            boutonReinitialisation.setOnAction(event -> reinitialiserDonnees());
+            
+
+        }
+		if (boutonImporterFichierProgramme != null) {
+			if (!fichierImporter()) {
+				System.out.println(fichierImporter());
+				desactiverAutresBoutons();
+			}
+		}
+		if (erreurChamps != null) {
+			erreurChamps.setVisible(false);
+		}
 		if (listeNotes != null) {
-			GridPane grilleRessources = (GridPane)((ScrollPane) ((Pane)(rootPane).getChildren().get(1)).getChildren().get(4)).getContent();
-			GridPane grilleNotes = (GridPane)((ScrollPane) ((Pane)(rootPane).getChildren().get(1)).getChildren().get(2)).getContent();
+			GridPane grilleRessources = (GridPane)((ScrollPane) ((Pane)(rootPane).getChildren().get(1)).getChildren().get(3)).getContent();
+			GridPane grilleNotes = (GridPane)((ScrollPane) ((Pane)(rootPane).getChildren().get(1)).getChildren().get(1)).getContent();
 			afficherEnseignements(true, grilleRessources, gn.getSemestreGestionNotes().getEnseignementsSemestre(), grilleNotes);
 			afficherNotes(grilleNotes,null);
 		}
@@ -269,9 +308,35 @@ public class Controlleur {
 			afficherIP();
 		}
 	}
+	// Le bouton que vous ne voulez pas cliquer
 
+
+	public void desactiverAutresBoutons() {
+		boutonNotes.setDisable(true);
+		boutonParametreImporter.setDisable(true);
+		boutonParametreImporter2.setDisable(true);
+		boutonParametrePartager.setDisable(true);
+		boutonParametreModifier.setDisable(true);
+		boutonParametreReinitialiser.setDisable(true);
+		boutonRessources.setDisable(true);
+	}
+
+	private void activerAutresBoutons() {
+		boutonNotes.setDisable(false);
+		boutonParametreImporter.setDisable(false);
+		boutonParametreImporter2.setDisable(false);
+		boutonParametrePartager.setDisable(false);
+		boutonParametreModifier.setDisable(false);
+		boutonParametreReinitialiser.setDisable(false);
+		boutonRessources.setDisable(false);
+	}
+
+	public static boolean fichierImporter() {
+		return gn.getFichierImporte();
+
+	}
 	/**
-	 *
+	 * 
 	 * @param note
 	 * @param denominateur
 	 * @param commentaire
@@ -333,7 +398,7 @@ public class Controlleur {
 	/**
 	 * Cette méthode permet d'afficher dans la ScrollPane de gauche
 	 * de la page Enseignements, les compétences actuellement importées.
-	 * On retrouve une option Toutes qui si cliquée affiche les
+	 * On retrouve une option Toutes qui si cliquée affiche les 
 	 * ressources de toutes les compétences.
 	 * Chaque compétence est cliquable et afficheront si cliquée
 	 * la liste des ressources appartenant à cette compétence.
@@ -343,8 +408,8 @@ public class Controlleur {
 	private void ajouterCompetence(List<Competence> listeCompetences, Scene scene) {
 		/* Entier correspondant au numéro d'index de la ligne
 		 * à laquelle doit s'afficher la compétence actuelle.
-		 * Cet entier est initialisé à 1 car la ligne d'index 0
-		 * est occupée par la ligne "Toutes".
+		 * Cet entier est initialisé à 1 car la ligne d'index 0 
+		 * est occupée par la ligne "Toutes". 
 		 */
 		int indiceCompetence = 1;
 		/* Nombre maximum de caractères par ligne*/
@@ -424,7 +489,7 @@ public class Controlleur {
 			 * Identifiant + Intitulé
 			 */
 			String texteCompetence = competence.getIdentifiantCompetence() + " " + competence.getIntituleCompetence();
-			/* Création d'un objet de type Text
+			/* Création d'un objet de type Text 
 			 * contenant le nom d'une compétence
 			 */
 			Text texte = new Text(texteCompetence);
@@ -565,7 +630,7 @@ public class Controlleur {
 				 * Identifiant + Intitulé
 				 */
 				String texteEnseignement = enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement();
-				/* Création d'un objet de type Text
+				/* Création d'un objet de type Text 
 				 * contenant le nom d'une compétence
 				 */
 				Text texte = new Text(texteEnseignement);
@@ -655,7 +720,7 @@ public class Controlleur {
 		String identifiantControle = "";
 		String identifiantRessource = ressource.substring(0, 5);
 		Enseignement enseignement = gn.trouverEnseignement(identifiantRessource);
-		GridPane grille = (GridPane)((ScrollPane)((Pane)(rootPane).getChildren().get(1)).getChildren().get(2)).getContent();
+		GridPane grille = (GridPane)((ScrollPane)((Pane)(rootPane).getChildren().get(1)).getChildren().get(1)).getContent();
 		if (enseignement instanceof Ressource) {
 			Ressource laRessource = (Ressource) enseignement;
 			List<Controle> listeControles = laRessource.getControlesRessource();
@@ -667,7 +732,7 @@ public class Controlleur {
 			// Ajout de la note dans le model
 			try {
 				gn.ajouterNoteAControle(identifiantControle, Double.parseDouble(note), Integer.parseInt(denominateur), commentaire);
-				afficherNotes(grille, enseignement);
+				afficherNotes(grille, null);
 			} catch (NumberFormatException | NoteInvalideException e) {
 				throw e;
 			}
@@ -675,7 +740,7 @@ public class Controlleur {
 			// Ajout de la note dans le model
 			try {
 				gn.ajouterNoteASaePortfolio(enseignement, Double.parseDouble(note), Integer.parseInt(denominateur), commentaire);
-				afficherNotes(grille, enseignement);
+				afficherNotes(grille, null);
 			} catch (NumberFormatException | NoteInvalideException e) {
 				throw e;
 			}
@@ -720,7 +785,7 @@ public class Controlleur {
 	}
 
 	/*
-	 *
+	 * 
 	 */
 	private void ajoutRessourcesCombo() {
 		ressourcesCombo.getItems().clear();
@@ -742,19 +807,8 @@ public class Controlleur {
 		}
 	}
 
-	private String verifierRessource(String ressource) {
-		String touteLaRessource = null;
-		List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
-		for (Enseignement enseignement : listeEnseignement) {
-			if (ressource.equals(enseignement.getIntituleEnseignement())) {
-				touteLaRessource =  enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement();
-			}
-		}
-		return touteLaRessource;
-	}
-
 	/*
-	 *
+	 * 
 	 */
 	private void choixComboRessources(ComboBox<String> combo) {
 		combo.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -910,7 +964,7 @@ public class Controlleur {
 		}
 	}
 	/**
-	 *
+	 * 
 	 */
 	private void afficherControle(Scene scene, Pane enseignementSelectionne, Enseignement enseignement) {
 		GridPane grilleEnseignement = ((GridPane)((ScrollPane)((Pane)((BorderPane) scene.getRoot()).getChildren().get(1)).getChildren().get(0)).getContent());
@@ -1014,7 +1068,7 @@ public class Controlleur {
 	/**
 	 * Affiche les notes saisie par l'utilisateur lorsque celui-ci se trouve sur
 	 * la page notes
-	 * @param enseignement
+	 * @param enseignement 
 	 *
 	 */
 	private void afficherNotes(GridPane grille, Enseignement enseignement) {
@@ -1023,7 +1077,7 @@ public class Controlleur {
 			ArrayList<Object> notes = gn.getNotes(); // Contient tous les contrôles, SAE, Portfolio ayant une note
 			ArrayList<Object[]> notesBien = new ArrayList<Object[]>();
 			for (Object note : notes) {
-				Object[] tabNote = new String[9];
+				Object[] tabNote = new String[6];
 				if (note instanceof Controle) {
 					tabNote = noteControle(note);
 				} else if (note instanceof Sae){
@@ -1102,7 +1156,7 @@ public class Controlleur {
 				Label labelRessources = new Label((String) tabNote[3]);
 				String date = (String) tabNote[4];
 				String commentaire = (String) tabNote[5];
-				Object identifiantControle = tabNote[7];
+				Object identifiantControle = tabNote[6];
 				labelNote.getStyleClass().add("labelNote");
 				//Récupération d'image pour nos boutons
 				Image imageModifier = new Image(getClass().getResourceAsStream("/application/controlleur/modifier.png"));
@@ -1128,7 +1182,7 @@ public class Controlleur {
 
 				// Action des boutons
 				supprimer.setOnAction(event -> sceneSupprimerNote(mainGridPane, supprimer, tabNote[6]));
-				modifier.setOnAction(event -> sceneModifierNote(mainGridPane,modifier,noteParams, tabNote[6], identifiantControle));
+				modifier.setOnAction(event -> sceneModifierNote(mainGridPane,modifier,noteParams,identifiantControle));
 				// Alignement des Label au centre de leur emplacement
 				GridPane.setHalignment(labelNote, javafx.geometry.HPos.CENTER);
 				GridPane.setHalignment(modifier, javafx.geometry.HPos.CENTER);
@@ -1198,7 +1252,7 @@ public class Controlleur {
 	}
 
 	private Object[] noteControle(Object note) {
-		Object[] tabNote = new Object[8];
+		Object[] tabNote = new Object[7];
 		Controle controle = (Controle) note;
 		tabNote[0] = controle.getNoteControle().getValeurNote() + " / " + controle.getNoteControle().getDenominateurNote();
 		tabNote[1] = controle.getPoidsControle() + "";
@@ -1209,12 +1263,11 @@ public class Controlleur {
 		tabNote[4] = controle.getDateControle();
 		tabNote[5] = controle.getNoteControle().getCommentaire();
 		tabNote[6] = note;
-		tabNote[7] = note;
 
 		return tabNote;
 	}
 	private Object[] noteSae(Object note) {
-		Object[] tabNote = new Object[8];
+		Object[] tabNote = new Object[7];
 		Sae controle = (Sae) note;
 		Note noteControle = controle.getNoteSae();
 		tabNote[0] = noteControle.getValeurNote() + " / " + noteControle.getDenominateurNote();
@@ -1224,12 +1277,11 @@ public class Controlleur {
 		tabNote[4] = "";
 		tabNote[5] = noteControle.getCommentaire();
 		tabNote[6] = note;
-		tabNote[7] = note;
 		return tabNote;
 
 	}
 	private Object[] notePortfolio(Object note) {
-		Object[] tabNote = new Object[8];
+		Object[] tabNote = new Object[7];
 		Portfolio controle = (Portfolio) note;
 		Note noteControle = controle.getNotePortfolio();
 		tabNote[0] = noteControle.getValeurNote() + " / " + noteControle.getDenominateurNote();
@@ -1239,7 +1291,6 @@ public class Controlleur {
 		tabNote[4] = "";
 		tabNote[5] = noteControle.getCommentaire();
 		tabNote[6] = note;
-		tabNote[7] = note;
 		return tabNote;
 	}
 
@@ -1259,7 +1310,6 @@ public class Controlleur {
 	 * @param prenom est le nouveau Prenom
 	 */
 	public void modifierNom(TextField nom, TextField prenom) {
-		String nomPrenomUtilisateurActuel = gn.getUtilisateurGestionNotes();
 		try {
 			gn.setUtilisateurGestionNotes(nom.getText(), prenom.getText());
 			Alert validerUtilisateur = new Alert(AlertType.INFORMATION);
@@ -1294,6 +1344,173 @@ public class Controlleur {
 			e.printStackTrace();
 		}
 	}
+
+	@FXML
+	public void changerSceneMoyenneRessource() {
+		try {
+			/* Récupération du fichier qu'on veut charger */
+			loader.setLocation(getClass().getResource("/application/vue/PageMoyenneRessource.fxml"));
+			Parent nouvelleScene = loader.load();
+			Scene nouvelleSceneObjet = new Scene(nouvelleScene);
+			Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
+			stage.setScene(nouvelleSceneObjet); //Affichage de la nouvelle scene
+			nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
+			GridPane grilleMoyenneRessource = ((GridPane)((ScrollPane)((Pane)((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(1)).getContent());
+			afficherMoyenneDefaut(grilleMoyenneRessource, true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@FXML
+	public void changerSceneMoyenneCompetence() {
+		try {
+			/* Récupération du fichier qu'on veut charger */
+			loader.setLocation(getClass().getResource("/application/vue/PageMoyenneCompetence.fxml"));
+			Parent nouvelleScene = loader.load();
+			Scene nouvelleSceneObjet = new Scene(nouvelleScene);
+			Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
+			stage.setScene(nouvelleSceneObjet); //Affichage de la nouvelle scene
+			nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
+			GridPane grilleMoyenneCompetence = ((GridPane)((ScrollPane)((Pane)((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(1)).getContent());
+			afficherMoyenneDefaut(grilleMoyenneCompetence, false);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Affiche les notes saisie par l'utilisateur lorsque celui-ci se trouve sur
+	 * la page notes
+	 * @param enseignement 
+	 *
+	 */
+	private void afficherMoyenneDefaut(GridPane grille, boolean parRessource) {
+		grille.getChildren().clear();
+
+		Pane paneDefaut = new Pane();
+		Label messageDefaut = new Label("Veuillez-cliquer surle bouton \"Calculer mes moyennes\"\n"
+				+" çi-dessous pour calculer et afficher vos moyennes");
+		Button boutonCalculer = new Button("Calculer mes moyennes");
+
+		paneDefaut.getChildren().addAll(messageDefaut,boutonCalculer);
+
+		paneDefaut.setPrefSize(724,375);
+		messageDefaut.setPrefSize(724,295);
+		boutonCalculer.setPrefSize(200,40);
+		messageDefaut.setAlignment(Pos.CENTER);
+		boutonCalculer.setAlignment(Pos.CENTER);
+		boutonCalculer.setTranslateX(524/2);
+		boutonCalculer.setTranslateY(335/2 + 20);
+
+		messageDefaut.getStyleClass().add("labelMoyenneNonCalculee");
+		boutonCalculer.getStyleClass().add("boutonMoyenneNonCalculee");
+
+		grille.add(paneDefaut, 0, 0);
+
+		boutonCalculer.setOnMouseClicked(event -> {
+			grille.getChildren().clear();
+			afficherMoyenne(grille, parRessource);
+		});
+	}
+
+	private void afficherMoyenne(GridPane grille, boolean parRessource) {
+		System.out.println("afficherMoyenne");
+		int indiceGrille = 0;
+		grille.getChildren().clear();
+		grille.getRowConstraints().clear();
+		RowConstraints taille = new RowConstraints();
+		taille.setPrefHeight(50);
+		if (parRessource) {
+			for (Enseignement enseignement : gn.getSemestreGestionNotes().getEnseignementsSemestre()) {
+				if (gn.estUneRessource(enseignement)) {
+					String identifiant = enseignement.getIdentifiantEnseignement();
+					String moyenneString = "";
+					try {
+						gn.calculerMoyenneEnseignement(identifiant);
+						Note noteMoyenne = gn.moyenneEnseignemnt(identifiant);
+						double moyenne = noteMoyenne.getValeurNote();
+						moyenneString = moyenne + moyenneString;
+					} catch (MoyenneRessourceException e) {
+						moyenneString = "Moyenne Incalculable";
+						//e.printStackTrace();
+					} catch (NoteInvalideException e) {
+						moyenneString = "Moyenne Incalculable";
+						//e.printStackTrace();
+					}
+					//Création des Label que l'on va afficher dans notre page
+					Label labelIdentifiant = new Label(identifiant);
+					Label labelIntitule = new Label(enseignement.getIntituleEnseignement());
+					Label labelMoyenne = new Label(moyenneString);
+
+					labelIdentifiant.getStyleClass().add("labelNote");
+					labelIntitule.getStyleClass().add("labelNote");
+					labelMoyenne.getStyleClass().add("labelNote");
+					GridPane.setHalignment(labelIdentifiant, javafx.geometry.HPos.CENTER);
+					GridPane.setHalignment(labelIntitule, javafx.geometry.HPos.CENTER);
+					GridPane.setHalignment(labelMoyenne, javafx.geometry.HPos.CENTER);
+					labelIdentifiant.setMaxSize(100, 40);
+					labelIntitule.setMaxSize(400, 40);
+					labelMoyenne.setMaxSize(224, 40);
+					labelIdentifiant.setAlignment(Pos.CENTER);
+					labelIntitule.setAlignment(Pos.CENTER);
+					labelMoyenne.setAlignment(Pos.CENTER);
+					grille.getRowConstraints().add(taille);
+					grille.add(labelIdentifiant, 0, indiceGrille);
+					grille.add(labelIntitule, 1, indiceGrille);
+					grille.add(labelMoyenne, 2, indiceGrille);
+					indiceGrille ++;
+				}
+			}
+		} else {
+			for (Competence competence : gn.getSemestreGestionNotes().getCompetencesSemestre()) {
+				for(Enseignement enseignement: (competence.getListeEnseignements()).keySet()) {
+					try {
+						gn.calculerMoyenneEnseignement(enseignement.getIdentifiantEnseignement());
+					} catch (MoyenneRessourceException | NoteInvalideException e) {
+					}
+				}
+				String identifiant = competence.getIdentifiantCompetence();
+				String moyenneString = "";
+				Note noteMoyenne = gn.moyenneCompetence(identifiant);
+				try {
+					gn.calculerMoyenneCompetence(identifiant);
+					noteMoyenne = gn.moyenneCompetence(identifiant);
+					double moyenne = noteMoyenne.getValeurNote();
+					moyenneString = moyenne + moyenneString;
+				} catch (MoyenneCompetenceException e) {
+					moyenneString = "Moyenne Incalculable";
+				} catch (MoyenneRessourceException e) {
+					moyenneString = "Moyenne Incalculable";
+				} catch (NoteInvalideException e) {
+					moyenneString = "Moyenne Incalculable";
+				}	
+				//Création des Label que l'on va afficher dans notre page
+				Label labelIdentifiant = new Label(identifiant);
+				Label labelIntitule = new Label(competence.getIntituleCompetence());
+				Label labelMoyenne = new Label(moyenneString);
+
+				labelIdentifiant.getStyleClass().add("labelNote");
+				labelIntitule.getStyleClass().add("labelNote");
+				labelMoyenne.getStyleClass().add("labelNote");
+				GridPane.setHalignment(labelIdentifiant, javafx.geometry.HPos.CENTER);
+				GridPane.setHalignment(labelIntitule, javafx.geometry.HPos.CENTER);
+				GridPane.setHalignment(labelMoyenne, javafx.geometry.HPos.CENTER);
+				labelIdentifiant.setMaxSize(100, 40);
+				labelIntitule.setMaxSize(400, 40);
+				labelMoyenne.setMaxSize(224, 40);
+				labelIdentifiant.setAlignment(Pos.CENTER);
+				labelIntitule.setAlignment(Pos.CENTER);
+				labelMoyenne.setAlignment(Pos.CENTER);
+				grille.getRowConstraints().add(taille);
+				grille.add(labelIdentifiant, 0, indiceGrille);
+				grille.add(labelIntitule, 1, indiceGrille);
+				grille.add(labelMoyenne, 2, indiceGrille);
+				indiceGrille ++;
+			}
+		}
+	}
+
 
 	/**
 	 * Cette méthode permet de récupérer la scene de la page de paramètre de modification d'identité
@@ -1330,8 +1547,8 @@ public class Controlleur {
 			Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
 			stage.setScene(nouvelleSceneObjet); //Affichage de la nouvelle scene
 			nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
-			GridPane grilleRessources = (GridPane)((ScrollPane) ((Pane)((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(4)).getContent();
-			GridPane grilleNotes = (GridPane)((ScrollPane) ((Pane)((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(2)).getContent();
+			GridPane grilleRessources = (GridPane)((ScrollPane) ((Pane)((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(3)).getContent();
+			GridPane grilleNotes = (GridPane)((ScrollPane) ((Pane)((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(1)).getContent();
 			afficherEnseignements(true, grilleRessources, gn.getSemestreGestionNotes().getEnseignementsSemestre(), grilleNotes);
 			afficherNotes(grilleNotes, null);
 		} catch (IOException e) {
@@ -1408,7 +1625,6 @@ public class Controlleur {
 	@FXML
 	public void sceneAjouterNote() {
 		try {
-			Scene scenePrincipale = rootPane.getScene();
 			/* Récupération du fichier qu'on veut charger */
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/vue/PageAjouterNote.fxml"));
 			Parent root = loader.load();
@@ -1424,12 +1640,14 @@ public class Controlleur {
 			ComboBox<String> ressource = (ComboBox<String>) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(2)).getChildren().get(0));
 			ComboBox<String> controle = (ComboBox<String>) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(5)).getChildren().get(0));
 			TextField denominateur = (TextField)(((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(2));
+			Label erreur = (Label)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(0)).getChildren().get(1);
 			affichageModifAjoutNote(note, denominateur, commentaire);
 			boutonValider.setOnAction(e -> {
 				try {
 					ajouterNote(note.getText(), commentaire.getText(), denominateur.getText(), ressource.getValue(), controle.getValue());
 					popupStage.close();
 				} catch (Exception e1) {
+					erreur.setVisible(true);
 					System.err.println("Impossible d'ajouter la note, veuillez remplir tous les champs");
 				}
 			});
@@ -1455,7 +1673,7 @@ public class Controlleur {
 	 * @param tabNote
 	 * @param date à modifier
 	 */
-	public void sceneModifierNote(GridPane gridPane, Button boutonModifier, String[] noteParams, Object noteAModifier, Object identifiant) {
+	public void sceneModifierNote(GridPane gridPane, Button boutonModifier, String[] noteParams, Object identifiant) {
 		try {
 			String leControle = "";
 			/* Récupération du fichier qu'on veut charger */
@@ -1473,9 +1691,9 @@ public class Controlleur {
 			ComboBox<String> recupRessource = (ComboBox<String>) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(2)).getChildren().get(0));
 			ComboBox<String> recupControle = (ComboBox<String>) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(5)).getChildren().get(0));
 			TextField recupDenominateur = (TextField)(((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(2));
+			Label erreur = (Label)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(0)).getChildren().get(1);
 			//On affiche dans les TextField les informations déja saisies par l'utilisateur
 			if (identifiant instanceof Controle) {
-				
 				Controle controle = (Controle) identifiant;
 				String identifiantRessource = controle.getIndentifiantControle().substring(0, 5);
 				Enseignement enseignement = gn.trouverEnseignement(identifiantRessource);
@@ -1515,10 +1733,12 @@ public class Controlleur {
 					try {
 						ajouterNote(nouvelleNote, nouveauCommentaire, nouveauDenominateur, nouvelleRessource, nouveauControle);
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
+
 						e1.printStackTrace();
 					}
 					popupStage.close();
+				} else {
+					erreur.setVisible(true);
 				}
 			});
 			/* Ouvre le popUp et attend la fermeture */
@@ -1526,6 +1746,17 @@ public class Controlleur {
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private String verifierRessource(String ressource) {
+		String touteLaRessource = null;
+		List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
+		for (Enseignement enseignement : listeEnseignement) {
+			if (ressource.equals(enseignement.getIntituleEnseignement())) {
+				touteLaRessource =  enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement();
+			}
+		}
+		return touteLaRessource;
 	}
 
 	/**
@@ -1593,6 +1824,17 @@ public class Controlleur {
 					paneLigne = (Pane) node;
 				}
 			}
+			//			if (paneLigne.getId()=="Cliquée") {
+			//				gridPane.getChildren().removeIf(node ->
+			//				GridPane.getRowIndex(node)  != null && GridPane.getRowIndex(node).equals(rowIndex + 1));
+			//				indice--;
+			//				for (Node node : gridPane.getChildren()) {
+			//					Integer row = GridPane.getRowIndex(node);
+			//					if (row != null && row > rowIndex) {
+			//						GridPane.setRowIndex(node, row - 1);
+			//					}
+			//				}
+			//			}
 			gridPane.getChildren().removeIf(node ->
 			GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node).equals(rowIndex));
 			if (supprimerLigne) {
@@ -1602,24 +1844,11 @@ public class Controlleur {
 						GridPane.setRowIndex(node, row - 1);
 					}
 				}
-				indice--;
 			}
 		}
 		afficherNotes(gridPane,null);
 	}
 
-	//	/**
-	//	 * @param date est la nouvelle date à afficher
-	//	 * @param denominateur est le nouveau dénominateur à afficher
-	//	 */
-	//	private void modifierNote(GridPane gridPane, Button boutonModifier, String note, String commentaire, String denominateur, Object noteASupprimer, GridPane grille) {
-	//		/* Récupération de l'index de la ligne du bouton cliqué */
-	//		Integer rowIndex = GridPane.getRowIndex(boutonModifier);
-	//		/* Supression de la note mais pas suppression de la ligne */
-	//		gn.modifierNote(noteASupprimer, Double.parseDouble(note), Integer.parseInt(denominateur), denominateur);
-	//		afficherNotes(gridPane, null);
-	//
-	//	}
 
 	/**
 	 * Cette méthode permet d'afficher un popUp sur lequel on peut saisir plusieurs informations
@@ -1672,7 +1901,7 @@ public class Controlleur {
 			erreurSauvegarde.setTitle("Ajout de controle Impossible");
 			erreurSauvegarde.setHeaderText("La somme des poids dépasse 100\nModifier le poids de ce controle\nOu modifier le poids de ceux existants");
 			erreurSauvegarde.showAndWait();
-		}
+		} 
 	}
 
 
@@ -1685,7 +1914,7 @@ public class Controlleur {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param gridPane
 	 * @param ligneCliquée
 	 * @param commentaire
@@ -1770,6 +1999,8 @@ public class Controlleur {
 	/**
 	 * Permet d'ouvrir un explorateur de fichier
 	 * Et de choisir un fichier
+	 * @throws EnseignementInvalideException 
+	 * @throws ControleInvalideException 
 	 * @throws ExtensionFichierException
 	 */
 	private void selectionnerFichier(Button boutonClique) {
@@ -1790,6 +2021,7 @@ public class Controlleur {
 					importationReussi.setTitle("Importation réussi");
 					importationReussi.setHeaderText("Importation réussi");
 					importationReussi.showAndWait();
+					activerAutresBoutons();
 				} catch (Exception e) {
 					Alert importationErreur = new Alert(AlertType.ERROR);
 					importationErreur.setTitle("Erreur d'importation");
@@ -1813,12 +2045,41 @@ public class Controlleur {
 			} else if (boutonClique == boutonSelectionFichierPartager) {
 				cheminFichierExport.setText("Fichier : " + nomFichier);
 			}
+			
 		}
 	}
+	
+	/** 
+     * Réinitialise toutes les données de l'application
+     * 
+     */
+    private void reinitialiserDonnees() {
+        try {
+            Alert donneesEffacees = new Alert(AlertType.CONFIRMATION);
+            donneesEffacees.setTitle("Réinitialisation");
+            donneesEffacees.setContentText("Etes-vous sûr(e) de vouloir réinitialiser l'application ?");
+            donneesEffacees.getButtonTypes().setAll(ButtonType.YES,ButtonType.NO);
+            donneesEffacees.showAndWait();
+            if (donneesEffacees.getResult() == ButtonType.YES) {
+                gn.reinitialiserGestionNotes();
+                gn = GestionNotes.getInstance();
+                afficherNom();
+                Alert reinitialisationReussi = new Alert(AlertType.INFORMATION);
+                reinitialisationReussi.setTitle("Données réinitialisées");
+                reinitialisationReussi.setHeaderText("Les données ont bien été réinitialisé");
+                reinitialisationReussi.showAndWait();
+                gn.setFichierImporte(false);
+                changerSceneParametre();
+            }
+        } catch (ClassNotFoundException | UtilisateurInvalideException | IOException e) {
+            Alert erreurReinitialisation = new Alert(AlertType.ERROR);
+            erreurReinitialisation.setTitle("Données non réinitialisées");
+            erreurReinitialisation.setHeaderText("Les données n'ont pas pu être réinitialisé");
+            erreurReinitialisation.showAndWait();
+        }
+    }
 	private void afficherMessageSurvol(Button bouton, String message) {
 		javafx.scene.control.Tooltip tooltip = new javafx.scene.control.Tooltip(message);
 		javafx.scene.control.Tooltip.install(bouton, tooltip);
 	}
 }
-
-

@@ -153,13 +153,18 @@
 	-fx-text-fill: #354B85;
 	-fx-fill: #354B85;	
 }
- .combo-box .list-cell:selected {
-    -fx-text-fill: #E6E9F0; /* Couleur du texte */
-}
 
-.labelPasDeNote {
-	-fx-font-size: 36px; 
+.labelMoyenneNonCalculee {
+	-fx-font-size: 18px; 
 	-fx-font-weight: bold; 	
 	-fx-text-fill: #354B85;
+	-fx-text-aligment: justify;
 	-fx-fill: #354B85;	
 }
+
+.boutonMoyenneNonCalculee {
+	-fx-font-size: 14px; 
+	-fx-text-fill: #E6E9F0;
+	-fx-background-color: #354B85;
+}
+	

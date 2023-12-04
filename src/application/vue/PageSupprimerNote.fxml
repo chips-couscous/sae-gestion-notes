@@ -7,7 +7,6 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
-
 <BorderPane fx:id="rootPane" maxHeight="-Infinity"
 	maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
 	prefHeight="114.0" prefWidth="400.0"
@@ -33,7 +32,6 @@
 					prefHeight="57.0" prefWidth="200.0"
 					style="-fx-background-color: #E6E9F0;" text="OUI"
 					textFill="#354b85" GridPane.rowIndex="1">
-
 					<font>
 						<Font name="System Bold" size="14.0" />
 					</font>
@@ -46,7 +44,6 @@
 						<Font name="System Bold" size="14.0" />
 					</font>
 				</Button>
-
 				<Pane prefHeight="200.0" prefWidth="200.0"
 					style="-fx-background-color: #354b85;" GridPane.columnSpan="2">
 					<children>
@@ -64,4 +61,3 @@
 		</GridPane>
 	</center>
 </BorderPane>
-

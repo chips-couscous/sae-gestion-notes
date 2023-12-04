@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!-- grid.fxml -->
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -17,11 +14,12 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
+
 <BorderPane fx:id="rootPane" maxHeight="-Infinity"
 	maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
 	prefHeight="650.0" prefWidth="470.0"
-	style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8"
-	xmlns:fx="http://javafx.com/fxml/1"
+	style="-fx-background-color: white;"
+	xmlns="http://javafx.com/javafx/17.0.9" xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="application.controlleur.Controlleur">
 	<top>
 		<GridPane maxHeight="-Infinity" maxWidth="-Infinity"
@@ -57,6 +55,11 @@
 							prefWidth="189.0" text="Modifier la note" textFill="#354b85">
 							<font>
 								<Font name="System Bold" size="18.0" />
+							</font>
+						</Label>
+						<Label alignment="CENTER"  fx:id="erreurChamps" contentDisplay="CENTER" layoutX="141.0" layoutY="57.0" prefHeight="37.0" prefWidth="189.0" text="⚠ Note mal saisie" textFill="RED" visible="true">
+							<font>
+								<Font name="System Bold" size="16.0" />
 							</font>
 						</Label>
 					</children>
@@ -112,8 +115,8 @@
 					<children>
 						<ComboBox fx:id="ressourcesCombo" layoutX="135.0"
 							layoutY="30.0" prefHeight="40.0" prefWidth="200.0"
-							style="-fx-background-color: #354b85;" 
-							stylesheets="/application/vue/application.css"/>
+							style="-fx-background-color: #354b85;"
+							stylesheets="/application/vue/application.css" />
 						<Label layoutX="135.0" layoutY="2.0" prefHeight="20.0"
 							prefWidth="74.0" text="Ressource" textFill="#354b85">
 							<font>
@@ -166,14 +169,15 @@
 							layoutY="50.0" prefHeight="40.0" prefWidth="200.0"
 							style="-fx-background-color: #354b85;"
 							stylesheets="/application/vue/application.css" />
-						<Label layoutX="135.0" layoutY="24.0" prefHeight="20.0"
-							prefWidth="60.0" text="Contrôle" textFill="#354b85" fx:id="controle">
+						<Label fx:id="controle" layoutX="135.0" layoutY="24.0"
+							prefHeight="20.0" prefWidth="60.0" text="Contrôle"
+							textFill="#354b85">
 							<font>
 								<Font size="14.0" />
 							</font>
 						</Label>
-						<Label layoutX="188.0" layoutY="24.0" prefHeight="17.0"
-							prefWidth="14.0" text="*" textFill="RED" fx:id="etoile">
+						<Label fx:id="etoile" layoutX="188.0" layoutY="24.0"
+							prefHeight="17.0" prefWidth="14.0" text="*" textFill="RED">
 							<font>
 								<Font size="14.0" />
 							</font>

@@ -164,7 +164,7 @@ public class Controlleur {
 
 	//int indice = 0;
 	int indiceEnseignement = 0;
-	
+
 	/* Nombre Maximum de caracteres dans une ligne de commentaire */ 
 	private static final int LONGUEUR_MAX_LIGNE = 50;
 	private static final int LONGUEUR_MAX = 200;
@@ -173,7 +173,7 @@ public class Controlleur {
 	private static GestionNotes gn = GestionNotes.getInstance();
 
 	FXMLLoader loader = new FXMLLoader(); // FXML loader permettant de charger un fichier FXML et de changer de scene
-	
+
 	/* Messages qui apparaissent lors du survol en fonction du bouton */
 	final String MESSAGE_AIDE = "Aide";
 	final String MESSAGE_SAUVEGARDE = "Sauvegarder";
@@ -187,24 +187,24 @@ public class Controlleur {
 	 * directement au lancement de l'application
 	 */
 	public void initialize() {
-		
+
 		/* Vérification de la présence du bouton de réalisation sur la page */
 		if (boutonReinitialisation != null) {
 			/* Si le bouton est présent, on lui attribut le fait de réinitialiser les données */
 			boutonReinitialisation.setOnAction(event -> reinitialiserDonnees());
 		}
-		
+
 		/* vérification de la présence du bouton d'importation sur la page */
 		if (boutonImporterFichierProgramme != null) {
-			
+
 			/* Test permettant de savoir si un fichier Semestre a déja été importé ou non */
 			if (!fichierImporter()) {
-				
+
 				/* Si il n'est pas importé, on fait appel à une méthode qui désactive les autres boutons */
 				desactiverAutresBoutons();
 			}
 		}
-		
+
 		/* Vérification de la présence du Label qui affiche si une erreur de saisie à lieu */
 		if (erreurChamps != null) {
 			/* Permet de ne pas afficher l'erreur tant que l'utilisateur n'a rien saisi */
@@ -213,7 +213,7 @@ public class Controlleur {
 
 		/* Vérification de la présence de la grille contenant la liste des notes */
 		if (listeNotes != null) {
-			
+
 			/* Récupération de la Grille ou sont affichées toutes les ressources */
 			GridPane grilleRessources = (GridPane)((ScrollPane) ((Pane)(rootPane).getChildren().get(1)).getChildren().get(3)).getContent();
 			/* Récupération de la Grille ou sont affichées toutes les notes */
@@ -223,7 +223,7 @@ public class Controlleur {
 			/* Affichage de toutes les notes dans la grilleNote si la grille est affichée */
 			afficherNotes(grilleNotes,null);
 		}
-		
+
 		/* vérification de la présence de la ComboBox ou sont affichées les ressources */
 		if (ressourcesCombo != null) {
 			/* Ajout de toutes les ressources dans la ComboBox */
@@ -231,7 +231,7 @@ public class Controlleur {
 			/* Méthode permettant de vérifier en permanence le choix saisi dans la ComboBox */
 			choixComboRessources(ressourcesCombo);
 		}
-		
+
 		/* vérification de la présence du bouton de sauvegarde des données */
 		if (boutonSauvegarder != null) {
 			/* On affecte au bouton le fait de sauvegarder les données de l'application et du model */
@@ -274,7 +274,7 @@ public class Controlleur {
 			boutonAide.setText(""); // Désactive le texte du bouton
 			boutonAide.getStyleClass().add("boutonSauvegarderAide");
 		}
-		
+
 		/* Vérification de la présence de la ComboBox où sont affichés les controles */
 		if (comboRessourcesControle != null) {
 			/* On ajoute les controles dans la ComboBox */
@@ -454,7 +454,7 @@ public class Controlleur {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Méthode permettant d'afficher l'aide à l'utilisateur
 	 * Elle est appelée quand le bouton d'aide est cliqué
@@ -831,11 +831,11 @@ public class Controlleur {
 				gn.ajouterNoteAControle(identifiantControle, Double.parseDouble(note), Integer.parseInt(denominateur), commentaire);
 				/* Affichage des notes dans la grille qui permet d'afficher les notes */
 				afficherNotes(grille, null);
-			/* On lève les exceptions si besoin */
+				/* On lève les exceptions si besoin */
 			} catch (NumberFormatException | NoteInvalideException e) {
 				throw e;
 			}
-		/* Si la note n'est pas une ressource, elle est donc une SAE ou Portfolio */
+			/* Si la note n'est pas une ressource, elle est donc une SAE ou Portfolio */
 		} else {
 			/* Ajout de la note dans le model si c'est une SAE ou Portfolio */
 			try {
@@ -843,7 +843,7 @@ public class Controlleur {
 				gn.ajouterNoteASaePortfolio(enseignement, Double.parseDouble(note), Integer.parseInt(denominateur), commentaire);
 				/* Affichage des notes dans la grille des notes */
 				afficherNotes(grille, null);
-			/* On lève les exceptions si besoin */
+				/* On lève les exceptions si besoin */
 			} catch (NumberFormatException | NoteInvalideException e) {
 				throw e;
 			}
@@ -892,67 +892,101 @@ public class Controlleur {
 	/**
 	 * Méthode permettant d'ajouter toutes les ressources à la ComboBox
 	 * On y retrouve des ressources, SAE ou Portoflio
+	 * Elle permet également de vérifier si un enseignements possède une note.
+	 * Si elle possède une note. Elle ne sera pas ajoutée à la comboBox pour ne pas lui remettre de note 
 	 */
 	private void ajoutRessourcesCombo() {
 		/* Supression de tous les éléments déja présents dans la comboBox */
 		ressourcesCombo.getItems().clear();
 		/* On récupère la liste des enseignements du semestre */
 		List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
+		/* Parcours de la liste d'enseignement */
 		for (Enseignement enseignement : listeEnseignement) {
+			/* On test si l'enseignements est une SAE */
 			if (gn.estUneSae(enseignement)) {
+				/* On change l'enseignement en SAE */
 				Sae sae = (Sae) enseignement;
+				/* Test si la SAE possède une note */
 				if(sae.getNoteSae() == null) {
+					/* Ajout de la SAE dans la comboBox avec un certain format si elle ne possède pas de note */
 					ressourcesCombo.getItems().add(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
 				}
+				/* Test pour vérifier si l'enseignement est un Portfolio */
 			} else if (gn.estUnPortfolio(enseignement)) {
+				/* On change l'enseignement en Portfolio */
 				Portfolio portfolio = (Portfolio) enseignement;
+				/* Test si le Portfolio possède une note */
 				if(portfolio.getNotePortfolio() == null) {
+					/* Ajout du Portfolio dans la comboBox avec un certain format si elle ne possède pas de note */
 					ressourcesCombo.getItems().add(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
 				}
 			} else {
+				/* Si c'est ni une SAE ni un Portfolio, on ajoute dans la comboBox */
 				ressourcesCombo.getItems().add(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
 			}
 		}
 	}
 
 	/**
-	 * 
-	 * @param combo
+	 * Permet d'écouter en permanence la comboBox prise en parametre
+	 * Elle permet d'afficher la comboBox des controles en fonction de la ressource sélectionnée
+	 * Si le choix est une ressource, on affiche la liste des controles
+	 * Sinon, on ne l'affiche pas
+	 * @param combo est la comboBox que l'on veut écouter en permanence
 	 */
 	private void choixComboRessources(ComboBox<String> combo) {
+		/* Listener qui permet d'écouter la comboBox en temps réel */
 		combo.valueProperty().addListener((observable, oldValue, newValue) -> {
+			/* On récupère le choix de l'utilisateur pour ne garder que les 5 premiers caracteres.
+			 * Ils permettent de n'avoir que la partie 
+			 * permettant de déterminer si c'est une SAE, ressource ou Portfolio
+			 */
 			String choix = combo.getValue().substring(0,5);
+			/* Test permettant de savoir si le choix de l'utilisateur en temps réel n'est pas une ressource */
 			if (!gn.estUneRessource(gn.trouverEnseignement(choix))) {
+				/* On enlève tous les éléments liés aux controles */
 				controleCombo.setVisible(false);
 				etoile.setVisible(false);
 				controle.setVisible(false);
 			} else {
+				/* Si c'est une ressource, on affiche les éléments liés aux controles */
 				controleCombo.setVisible(true);
 				etoile.setVisible(true);
 				controle.setVisible(true);
+				/* On rajoute les controles dans la comboBox des controles */
 				ajoutComboControle(controleCombo, choix);
 			}
 		});
 	}
 
 	/**
-	 * 
-	 * @param combo
-	 * @param ressources
+	 * Méthode permettant d'ajouter les oontroles dans ne comboBox
+	 * Elle affiche la liste des controles liés à un ressource
+	 * @param combo est la comboBox à laquelle on veut ajouter les controles
+	 * @param ressources permettant de n'afficher que la liste des controles liés à la ressource
 	 */
 	private void ajoutComboControle(ComboBox<String> combo, String ressources) {
+		/* On vide la comboBx */
 		combo.getItems().clear();
+		/* On cherche dans le modele la ressource correspondante */
 		Enseignement enseignement = gn.trouverEnseignement(ressources);
+		/* L'enseignement devient un objet ressource */
 		Ressource ressource = (Ressource) enseignement;
+		/* Liste contenant tous les controles d'une ressource */
 		List<Controle> listeControles = ressource.getControlesRessource();
+		/* Parcours de la liste des controles de la ressource */
 		for (Controle controle: listeControles) {
+			/* Test si le controle à une note ou non */
 			if (controle.getNoteControle() == null) {
+				/* Si il n'a pas de note, mise en forme de l'affichage pour la comboBox */
 				String affichageComboControle = controle.getIndentifiantControle().substring(controle.getIndentifiantControle().length() - 2);
 				affichageComboControle += " " + controle.getTypeControle() + " " + controle.getDateControle();
+				/* Ajout dans la comboBox avec l'affichage choisi */
 				combo.getItems().add(affichageComboControle);
 			}
 		}
 	}
+
 	/**
 	 * Selectionne un dossier où recevoir le fichier exporté par un autre utilisateur
 	 * Demande également à l'utilisateur le nom du fichier souhaité
@@ -1074,8 +1108,13 @@ public class Controlleur {
 			ipUtilisateur.setText("IP inconnue");
 		}
 	}
+
+
 	/**
 	 * 
+	 * @param scene
+	 * @param enseignementSelectionne
+	 * @param enseignement
 	 */
 	private void afficherControle(Scene scene, Pane enseignementSelectionne, Enseignement enseignement) {
 		GridPane grilleEnseignement = ((GridPane)((ScrollPane)((Pane)((BorderPane) scene.getRoot()).getChildren().get(1)).getChildren().get(0)).getContent());
@@ -1292,7 +1331,7 @@ public class Controlleur {
 			}
 			afficherNotesSelectionne(notesBien,indiceGrille,grille);
 		}else {
-			ArrayList<Object[]> notesBien = new ArrayList<Object[]>();
+			ArrayList<Object[]> listeNotes = new ArrayList<Object[]>();
 			int indiceGrille = 0;
 			if (gn.estUneRessource(enseignement)) {
 				String enseignementID = enseignement.getIdentifiantEnseignement();
@@ -1300,7 +1339,7 @@ public class Controlleur {
 				for (Controle controle : ressource.getControlesRessource()) {
 					if (controle.aUneNote()) {
 						Object[] tabNote = noteControle(controle);
-						notesBien.add(tabNote);
+						listeNotes.add(tabNote);
 					}
 				}
 			} else if (gn.estUneSae(enseignement)) {
@@ -1308,17 +1347,17 @@ public class Controlleur {
 				Sae sae = (Sae) gn.trouverEnseignement(enseignementID);
 				if (sae.aUneNote()) {
 					Object[] tabNote = noteSae(sae);
-					notesBien.add(tabNote);
+					listeNotes.add(tabNote);
 				}
 			} else if (gn.estUnPortfolio(enseignement)) {
 				String enseignementID = enseignement.getIdentifiantEnseignement();
 				Portfolio portfolio = (Portfolio) gn.trouverEnseignement(enseignementID);
 				if (portfolio.aUneNote()) {
 					Object[] tabNote = notePortfolio(portfolio);
-					notesBien.add(tabNote);
+					listeNotes.add(tabNote);
 				}
 			}
-			afficherNotesSelectionne(notesBien,indiceGrille,grille);
+			afficherNotesSelectionne(listeNotes,indiceGrille,grille);
 		}
 	}
 
@@ -1359,7 +1398,7 @@ public class Controlleur {
 				Label labelRessources = new Label((String) tabNote[3]);
 				String date = (String) tabNote[4];
 				String commentaire = (String) tabNote[5];
-				Object identifiantControle = tabNote[7];
+				Object identifiantControle = tabNote[6];
 				labelNote.getStyleClass().add("labelNote");
 				//Récupération d'image pour nos boutons
 				Image imageModifier = new Image(getClass().getResourceAsStream("/application/controlleur/modifier.png"));
@@ -1385,7 +1424,7 @@ public class Controlleur {
 
 				// Action des boutons
 				supprimer.setOnAction(event -> sceneSupprimerNote(mainGridPane, supprimer, tabNote[6]));
-				modifier.setOnAction(event -> sceneModifierNote(mainGridPane,modifier,noteParams, tabNote[6], identifiantControle));
+				modifier.setOnAction(event -> sceneModifierNote(mainGridPane,modifier,noteParams,identifiantControle));
 				// Alignement des Label au centre de leur emplacement
 				GridPane.setHalignment(labelNote, javafx.geometry.HPos.CENTER);
 				GridPane.setHalignment(modifier, javafx.geometry.HPos.CENTER);
@@ -1454,9 +1493,18 @@ public class Controlleur {
 		}
 	}
 
+	/**
+	 * Méthode utilisée quand une éléments est un Controle
+	 * Il renvoie un tableau d'object avec l'affichage comme on le souhaite de chaque éléments
+	 * @param note représente un controle dont on veut la note
+	 * @return un tableau d'object contenant l'affichage
+	 */
 	private Object[] noteControle(Object note) {
+		/* On crée un tableau d'object */
 		Object[] tabNote = new Object[8];
+		/* Notre object en paramere devient un controle */
 		Controle controle = (Controle) note;
+		/* Ajout de l'affichage de la note avec son type, poids, commentaire dans le tableau */
 		tabNote[0] = controle.getNoteControle().getValeurNote() + " / " + controle.getNoteControle().getDenominateurNote();
 		tabNote[1] = controle.getPoidsControle() + "";
 		tabNote[2] = controle.getTypeControle();
@@ -1467,13 +1515,24 @@ public class Controlleur {
 		tabNote[5] = controle.getNoteControle().getCommentaire();
 		tabNote[6] = note;
 		tabNote[7] = note;
-
+		/* On renvoie la tableau une fois que la mise en forme finie */
 		return tabNote;
 	}
+
+	/**
+	 * Méthode utilisée quand une éléments est un Controle
+	 * Il renvoie un tableau d'object avec l'affichage comme on le souhaite de chaque éléments
+	 * @param note représente la SAE dont on veut la note
+	 * @return un tableau d'object contenant l'affichage
+	 */
 	private Object[] noteSae(Object note) {
+		/* On crée un tableau d'object */
 		Object[] tabNote = new Object[8];
+		/* Notre object en paramere devient une SAE */
 		Sae controle = (Sae) note;
+		/* On récupère la note de notre SAE */
 		Note noteControle = controle.getNoteSae();
+		/* Ajout de l'affichage de la note avec son type, poids, commentaire dans le tableau */
 		tabNote[0] = noteControle.getValeurNote() + " / " + noteControle.getDenominateurNote();
 		tabNote[1] = "100";
 		tabNote[2] = "SAE";
@@ -1482,13 +1541,25 @@ public class Controlleur {
 		tabNote[5] = noteControle.getCommentaire();
 		tabNote[6] = note;
 		tabNote[7] = note;
+		/* On renvoie la tableau une fois que la mise en forme finie */
 		return tabNote;
 
 	}
+
+	/**
+	 * Méthode utilisée quand une éléments est un Controle
+	 * Il renvoie un tableau d'object avec l'affichage comme on le souhaite de chaque éléments
+	 * @param note représente le Portoflio dont on veut la note
+	 * @return un tableau d'object contenant l'affichage
+	 */
 	private Object[] notePortfolio(Object note) {
+		/* On crée un tableau d'object */
 		Object[] tabNote = new Object[8];
+		/* Notre object en paramere devient un Portoflio */
 		Portfolio controle = (Portfolio) note;
+		/* On récupère la note de notre Portoflio */
 		Note noteControle = controle.getNotePortfolio();
+		/* Ajout de l'affichage de la note avec son type, poids, commentaire dans le tableau */
 		tabNote[0] = noteControle.getValeurNote() + " / " + noteControle.getDenominateurNote();
 		tabNote[1] = "100";
 		tabNote[2] = controle.getIntituleEnseignement();
@@ -1497,6 +1568,7 @@ public class Controlleur {
 		tabNote[5] = noteControle.getCommentaire();
 		tabNote[6] = note;
 		tabNote[7] = note;
+		/* On renvoie la tableau une fois que la mise en forme finie */
 		return tabNote;
 	}
 
@@ -1505,6 +1577,7 @@ public class Controlleur {
 	 * L'affichage se fait dans un label présent sur toutes nos pages (sauf popUp)
 	 */
 	public void afficherNom() {
+		/* Ajoute au label contenant le nom et prénom, le nouveau nom depuis le model*/
 		labelNomEtudiant.setText(gn.getUtilisateurGestionNotes());
 	}
 
@@ -1517,16 +1590,22 @@ public class Controlleur {
 	 */
 	public void modifierNom(TextField nom, TextField prenom) {
 		try {
+			/* On essaye de modifier le nom du model */
 			gn.setUtilisateurGestionNotes(nom.getText(), prenom.getText());
+			/* Création d'une alerte pour prévenir l'utilisateur que le changement a fonctionné */
 			Alert validerUtilisateur = new Alert(AlertType.INFORMATION);
 			validerUtilisateur.setTitle("Changement utilisateur");
 			validerUtilisateur.setHeaderText("L'utilisateur a bien été changé");
+			/* On affiche le nouveau nom */
 			afficherNom();
+			/* Attend la fermeture de l'alerte */
 			validerUtilisateur.showAndWait();
 		} catch (UtilisateurInvalideException e) {
+			/* Si le changement n'a pas été possible on affiche une alerte qui explique que cela n'a pas été possible */
 			Alert erreurNomPrenom = new Alert(AlertType.ERROR);
 			erreurNomPrenom.setTitle("Utilisateur invalide");
 			erreurNomPrenom.setHeaderText(e.getMessage());
+			/* On attend la fermeture de l'alerte */
 			erreurNomPrenom.showAndWait();
 		}
 	}
@@ -1830,12 +1909,14 @@ public class Controlleur {
 	@FXML
 	public void sceneAjouterNote() {
 		try {
-			Scene scenePrincipale = rootPane.getScene();
 			/* Récupération du fichier qu'on veut charger */
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/vue/PageAjouterNote.fxml"));
+			/* On charge la scene que l'on vient de récupérer */
 			Parent root = loader.load();
+			/* Création d'un popUp */
 			Stage popupStage = new Stage();
 			popupStage.initModality(Modality.APPLICATION_MODAL);
+			/* Nom du pop */
 			popupStage.setTitle("Ajouter Note");
 			Scene popupScene = new Scene(root);
 			popupStage.setScene(popupScene);
@@ -1846,12 +1927,19 @@ public class Controlleur {
 			ComboBox<String> ressource = (ComboBox<String>) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(2)).getChildren().get(0));
 			ComboBox<String> controle = (ComboBox<String>) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(5)).getChildren().get(0));
 			TextField denominateur = (TextField)(((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(2));
+			Label erreur = (Label)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(0)).getChildren().get(1);
+			/* On appelle la méthode qui oblige un certain type de saisie à l'utilisateur */
 			affichageModifAjoutNote(note, denominateur, commentaire);
+			/* On affecte au bouton de validation le fait d'ajouter une note */
 			boutonValider.setOnAction(e -> {
 				try {
+					/* On appelle la méthode qui ajoute une note */
 					ajouterNote(note.getText(), commentaire.getText(), denominateur.getText(), ressource.getValue(), controle.getValue());
+					/* On ferme le popUp */
 					popupStage.close();
 				} catch (Exception e1) {
+					/* Si une erreur de saisie ou alors une case manquante, on affiche l'erreur */
+					erreur.setVisible(true);
 					System.err.println("Impossible d'ajouter la note, veuillez remplir tous les champs");
 				}
 			});
@@ -1862,29 +1950,26 @@ public class Controlleur {
 		}
 	}
 
+
 	/**
-	 * Cette méthode permet d'afficher un popUp sur lequel on peut modifier une note
-	 * On peut y saisir les nouvelles données pour la note, le controle, la commentaire et la date.
-	 * Le popUp récupère les données saisies et lors du clic sur le bouton de validation
-	 * Le bouton fait appel à une méthode qui modifie les données des notes de la bonne ligne
-	 * @param gridPane est la grille que l'on veut modifier
-	 * @param boutonModifier le bouton qui permet de modifier la note
-	 * @param note à modifier
-	 * @param denominateur à modifier
-	 * @param commentaire à modifier
-	 * @param ressource
-	 * @param controle
-	 * @param tabNote
-	 * @param date à modifier
+	 * Permet d'afficher une scene de modification de note
+	 * Place directement dans les labels présents les informations saisies avant modification
+	 * Elle vérifie ensuite les informations saisies et modifie si possible
+	 * @param gridPane représente la grille dont on modifie la note
+	 * @param boutonModifier permet de retrouver la ligne de la grille
+	 * @param noteParams est un tableau de String contenant toutes les infos misent en forme
+	 * @param identifiant est la note que l'on modfiie, il peut être une SAE, Portfolio ou ressource
 	 */
-	public void sceneModifierNote(GridPane gridPane, Button boutonModifier, String[] noteParams, Object noteAModifier, Object identifiant) {
+	public void sceneModifierNote(GridPane gridPane, Button boutonModifier, String[] noteParams, Object identifiant) {
 		try {
 			String leControle = "";
 			/* Récupération du fichier qu'on veut charger */
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/vue/PageModifierNote.fxml"));
 			Parent root = loader.load();
+			/* On crée un popUp */
 			Stage popupStage = new Stage();
 			popupStage.initModality(Modality.APPLICATION_MODAL);
+			/* Titre de la popUp */
 			popupStage.setTitle("Modifier Note");
 			Scene popupScene = new Scene(root);
 			popupStage.setScene(popupScene);
@@ -1895,52 +1980,65 @@ public class Controlleur {
 			ComboBox<String> recupRessource = (ComboBox<String>) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(2)).getChildren().get(0));
 			ComboBox<String> recupControle = (ComboBox<String>) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(5)).getChildren().get(0));
 			TextField recupDenominateur = (TextField)(((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(2));
-			//On affiche dans les TextField les informations déja saisies par l'utilisateur
+			Label erreur = (Label)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(0)).getChildren().get(1);
+			/* Test permettant de vérifier si l'identifiant est un controle */
 			if (identifiant instanceof Controle) {
-
+				/* L'identifiant devient un controle si c'est un controle */
 				Controle controle = (Controle) identifiant;
+				/* On récupère l'identifiant de la ressource du controle selectionné */
 				String identifiantRessource = controle.getIndentifiantControle().substring(0, 5);
+				/* On cherche la ressource dans le model en fonction de l'identifiant */
 				Enseignement enseignement = gn.trouverEnseignement(identifiantRessource);
+				/* permet l'affichage de base dans la comboBox */
 				leControle = controle.getIndentifiantControle().substring(controle.getIndentifiantControle().length() - 2);
 				leControle += " " + controle.getTypeControle() + " " + controle.getDateControle();
+				/* On remet la note à null pour que le controle puisse revenir dans la comboBox */
 				controle.setNoteControle(null);
+				/* Test si l'identifiant est une sae */
 			} else if (identifiant instanceof Sae) {
+				/* L'identifiant est une SAE */
 				Sae sae = (Sae) identifiant;
+				/* On met la note de la SAE à null pour qu'elle revienne dans la comboBox */
 				sae.setNoteSae(null);
+				/* Test si l'identifiant est un portfolio */
 			} else if (identifiant instanceof Portfolio){
+				/* L'identifiant est un Portfolio */
 				Portfolio portfolio = (Portfolio) identifiant;
+				/* On met la note de la Portfolio à null pour qu'elle revienne dans la comboBox */
 				portfolio.setNotePortfolio(null);
 			}
 
-
+			/* On met de base les données prédèdentes de la note */
 			recupNote.setText(noteParams[0]);
 			recupCommentaire.setText(noteParams[2]);
 			recupRessource.setValue(verifierRessource(noteParams[3])); 
 			recupControle.setValue(leControle);
 			recupDenominateur.setText(noteParams[1]);
+			/* Appel à la méthode qui force une certaine saisie à l'utilisateur */
 			affichageModifAjoutNote(recupNote, recupDenominateur, recupCommentaire);
+			/* On affecte au bouton valider le fait de modifier une note */
 			boutonValider.setOnAction(e -> {
-				//Vérification que la note est bien inférieure ou égale au dénominateur
+				/* Vérification que la note est bien inférieure ou égale au dénominateur et de la présence des autres éléments*/
 				if (!recupNote.getText().isEmpty() && !recupDenominateur.getText().isEmpty()
 						&& Double.parseDouble(recupNote.getText()) <= Double.parseDouble(recupDenominateur.getText())
 						&& recupRessource.getValue() != null && recupControle.getValue() != null) {
-					// Récupérer les nouvelles informations saisies
+					/* Récupérer les nouvelles informations saisies */
 					String nouvelleNote = recupNote.getText();
 					String nouveauCommentaire = recupCommentaire.getText();
-					//String nouvelleDate = recupDate.getText();
 					String nouveauDenominateur = recupDenominateur.getText();
-					// Modifier les informations dans la GridPane
 					String nouvelleRessource = recupRessource.getValue();
 					String nouveauControle = recupControle.getValue();
-					//modifierNote(gridPane, boutonModifier, nouvelleNote, nouveauCommentaire, nouveauDenominateur, noteAModifier, gridPane);
-					// Fermeture du popUp
 					try {
+						/* On essaye d'ajouter la note avec les nouvelles inforamtions */
 						ajouterNote(nouvelleNote, nouveauCommentaire, nouveauDenominateur, nouvelleRessource, nouveauControle);
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+					/* On ferme le popUp */
 					popupStage.close();
+				} else {
+					/* Si une erreur de saisie on affiche le label d'erreur */
+					erreur.setVisible(true);
 				}
 			});
 			/* Ouvre le popUp et attend la fermeture */
@@ -2008,17 +2106,19 @@ public class Controlleur {
 	}
 
 	/**
-	 * Cette méthode permet de supprimer une note sur une gridPane en récuprérant un indice du bouton
-	 * Elle permet aussi d'enlever la ligne et ne pas laisser de trou si il y a une suppression de note
-	 * @param gridPane est la gridPane que l'on veut modifier
-	 * @param boutonSupprimer est le bouton cliqué dont on récupère l'indice de la ligne
-	 * @param supprimerLigne Ce boolean permet de savoir si on veut supprimer entièrement la ligne
+	 * 
+	 * @param gridPane
+	 * @param boutonSupprimer
+	 * @param supprimerLigne
+	 * @param noteASupprimer
 	 */
 	private void supprimerNote(GridPane gridPane, Button boutonSupprimer, boolean supprimerLigne, Object noteASupprimer) {
+		/* Récupère la ligne que l'on veut supprimer à l'aide du bouton */
 		Integer rowIndex = GridPane.getRowIndex(boutonSupprimer);
+		/* On supprime la note dans le model */
 		gn.supprimerNote(noteASupprimer);
 		if (rowIndex != null) {
-			// Récupérer la Pane de la première colonne de la ligne d'indice rowIndex
+			/* Récupérer la Pane de la première colonne de la ligne d'indice rowIndex */
 			Pane paneLigne = null;
 			for (Node node : gridPane.getChildren()) {
 				Integer row = GridPane.getRowIndex(node);
@@ -2027,17 +2127,6 @@ public class Controlleur {
 					paneLigne = (Pane) node;
 				}
 			}
-			//			if (paneLigne.getId()=="Cliquée") {
-			//				gridPane.getChildren().removeIf(node ->
-			//				GridPane.getRowIndex(node)  != null && GridPane.getRowIndex(node).equals(rowIndex + 1));
-			//				indice--;
-			//				for (Node node : gridPane.getChildren()) {
-			//					Integer row = GridPane.getRowIndex(node);
-			//					if (row != null && row > rowIndex) {
-			//						GridPane.setRowIndex(node, row - 1);
-			//					}
-			//				}
-			//			}
 			gridPane.getChildren().removeIf(node ->
 			GridPane.getRowIndex(node) != null && GridPane.getRowIndex(node).equals(rowIndex));
 			if (supprimerLigne) {

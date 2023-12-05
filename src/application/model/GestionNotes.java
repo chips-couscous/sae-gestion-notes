@@ -102,6 +102,19 @@ public class GestionNotes {
 
 		return competenceATrouver;
 	}
+	
+	/**
+	 * Supprime un contrôle à une ressource
+	 * @param identifiant de l'enseignement
+	 * @param controle à supprimer
+	 * @return true si le contrôle a bien été ajouté
+	 * @throws ControleInvalideException
+	 */
+	public boolean supprimerControleAEnseignement(String identifiant, Controle controleASupprimer) throws ControleInvalideException {
+		Ressource enseignement = (Ressource) trouverEnseignement(identifiant);      
+		enseignement.supprimerControle(controleASupprimer);
+		return true;
+	}
 
 
 	/**
@@ -657,3 +670,8 @@ public class GestionNotes {
 	//        System.out.println(gn.moyenneEnseignemnt("R2.01").getValeurNote());
 	//    }
 }
+
+	
+	
+
+	

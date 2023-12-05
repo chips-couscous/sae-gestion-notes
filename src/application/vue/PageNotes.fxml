@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!-- grid.fxml -->
+
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -153,7 +155,7 @@
 					</font>
 				</Button>
 				<ScrollPane fx:id="listeNotes" layoutX="276.0"
-					layoutY="128.0" prefHeight="377.0" prefWidth="726.0"
+					layoutY="128.0" prefHeight="377.0" prefWidth="739.0"
 					style="-fx-background-color: transparent;">
 					<content>
 						<GridPane fx:id="grilleNotes" vgap="10.0">

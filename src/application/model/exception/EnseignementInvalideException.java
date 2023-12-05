@@ -11,16 +11,16 @@ package application.model.exception;
  */
 public class EnseignementInvalideException extends Exception {
 
-    /** Constructeur de l'exception */
-    public EnseignementInvalideException() {
-        super();
-    }
-    
-    /** 
-     * Constructeur de l'exception avec un message d'erreur
-     * @param message d'erreur personnalisé
-     */
-    public EnseignementInvalideException(String message) {
-        super(message);
-    }   
+	/** Constructeur de l'exception */
+	public EnseignementInvalideException() {
+		super();
+	}
+
+	/** 
+	 * Constructeur de l'exception avec un message d'erreur
+	 * @param message d'erreur personnalisé
+	 */
+	public EnseignementInvalideException(String message) {
+		super(message);
+	}   
 }

@@ -1,17 +1,17 @@
-/*
- * PortReseauException.java                                      21 nov. 2023
+/**
+ * cheminFichierException.java                                      21 nov. 2023
  * IUT Rodez, info2 2022-2023, pas de copyright ni "copyleft" 
  */
 package application.model.exception;
 
 /** 
- * Exception qui gère l'erreur sur un port de connexion invalide pour un échange réseau
+ * Exception qui gère les problème avec un chemin ded fichier
  * @author tom.jammes
  */
-public class PortReseauException extends Exception {
+public class cheminFichierException extends Exception {
 
 	/** Constructeur de l'exception */
-	public PortReseauException() {
+	public cheminFichierException() {
 		super();
 	}
 
@@ -19,7 +19,7 @@ public class PortReseauException extends Exception {
 	 * Constructeur de l'exception avec un message d'erreur
 	 * @param message d'erreur personnalisé
 	 */
-	public PortReseauException(String message) {
+	public cheminFichierException(String message) {
 		super(message);
 	}
 }

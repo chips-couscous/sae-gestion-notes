@@ -85,5 +85,4 @@ public class Vue extends Application {
 			e.printStackTrace();
 		}
 	}
-	
 }

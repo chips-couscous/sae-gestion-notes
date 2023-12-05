@@ -85,6 +85,7 @@ public class Ressource extends Enseignement implements Serializable {
 		controlesRessource.remove(controle);
 		numeroControle--;
 		poidsTotalDesControles -= controle.getPoidsControle();
+			
 		return true;
 	}
 
@@ -154,6 +155,7 @@ public class Ressource extends Enseignement implements Serializable {
 	 * @return true si le contrôle peut être ajouté à la liste des contrôles, false sinon
 	 */
 	private boolean verifierPoidsTotauxDansRessource(Controle controleAVerifier) {
+		System.out.println("poids verif : " + poidsTotalDesControles);
 		poidsTotalDesControles += controleAVerifier.getPoidsControle();
 
 		if(poidsTotalDesControles > 0 && poidsTotalDesControles <= 100) {
@@ -174,5 +176,9 @@ public class Ressource extends Enseignement implements Serializable {
 			resultat += controle.toString();
 		}
 		return resultat;       
+	}
+
+	public int getSommePoidsControle() {
+		return poidsTotalDesControles;
 	}
 }

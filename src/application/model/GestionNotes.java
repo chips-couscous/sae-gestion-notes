@@ -157,7 +157,7 @@ public class GestionNotes {
 
 	/**
 	 * Moyenne d'une compétence souhaitée
-	 * @param identifiant de la compétence dont on veut connaître la moyenne
+	 * @param identifiant de la c ompétence dont on veut connaître la moyenne
 	 * @return la note qui correspond à la moyenne de la compétence renseignée
 	 */
 	public Note moyenneCompetence(String identifiant) {

@@ -397,34 +397,90 @@ public class Controlleur {
 		 * la méthode afficherEnseignements() sera déclenchée
 		 */
 		ligneToutes.setOnMouseClicked(event -> {
+			/* Si la Pane "Toutes" n'était pas sélectionnée avant le clic */
 			if (ligneToutes.getId().equals("Toutes Non Cliquée")) {
+				/* Modification de son ID à 'cliquée' */
 				ligneToutes.setId("Toutes Cliquée");
+				/* Parcours de la liste des competences contenues
+				 * dans la grille des competences de la page Enseignements
+				 */
 				for (Node competence : grilleCompetence.getChildren()) {
+					/* Si il s'agit de la Pane "Toutes" qui est cliquée alors : */
 					if (competence.getId().equals("Toutes Non Cliquée") || competence.getId().equals("Toutes Cliquée")) {
+						/* Suppression de toutes les classes de style dont l'identifiant 
+						 * est "paneCompetenceCliquee" à la pane de cette competence */
 						competence.getStyleClass().removeAll("paneCompetenceCliquee");
+						/* Ajout d'une classe de la classe de style "paneCompetenceNonCliquee" 
+						 * à la pane de cette competence */
 						competence.getStyleClass().add("paneCompetenceNonCliquee");
+						/* Suppression de toutes les classes de style dont l'identifiant 
+						 * est "labelCompetenceCliquee" au label de cette competence */
 						((Label) ((Pane) competence).getChildren().get(0)).getStyleClass().removeAll("labelCompetenceCliquee");
+						/* Ajout de la classe de style dont l'identifiant 
+						 * est "labelCompetenceNonCliquee" au label de cette competence */
 						((Label) ((Pane) competence).getChildren().get(0)).getStyleClass().add("labelCompetenceNonCliquee");
+						/* Modification de l'ID de la pane "Toutes"
+						 * à "Toutes Non Cliquée"
+						 */
 						competence.setId("Toutes Non Cliquée");
 					} else {
+						/* Suppression de toutes les classes de style dont l'identifiant 
+						 * est "paneCompetenceCliquee" à la pane de cette competence */
 						competence.getStyleClass().removeAll("paneCompetenceCliquee");
+						/* Ajout d'une classe de la classe de style "paneCompetenceNonCliquee" 
+						 * à la pane de cette competence */
 						competence.getStyleClass().add("paneCompetenceNonCliquee");
+						/* Suppression de toutes les classes de style dont l'identifiant 
+						 * est "labelCompetenceCliquee" au Text de cette competence */
 						((Text) ((Pane) competence).getChildren().get(0)).getStyleClass().removeAll("labelCompetenceCliquee");
+						/* Ajout de la classe de style dont l'identifiant 
+						 * est "labelCompetenceNonCliquee" au Text de cette competence */
 						((Text) ((Pane) competence).getChildren().get(0)).getStyleClass().add("labelCompetenceNonCliquee");
+						/* Modification de l'ID de la pane de cette compétence
+						 * à "Non Cliquée" car si une pane est sélectionnée
+						 * alors toutes les autres ne le sont pas
+						 */
 						competence.setId("Non Cliquée");
 					}
 				}
+				/* Suppression de toutes les classes de style dont l'identifiant 
+				 * est "paneCompetenceNonCliquee" à la pane "Toutes" */
 				ligneToutes.getStyleClass().removeAll("paneCompetenceNonCliquee");
+				/* Ajout d'une classe de la classe de style "paneCompetenceCliquee" 
+				 * à la pane "Toutes" */
 				ligneToutes.getStyleClass().add("paneCompetenceCliquee");
+				/* Suppression de toutes les classes de style dont l'identifiant 
+				 * est "labelCompetenceNonCliquee" à la pane "Toutes" */
 				labelToutes.getStyleClass().removeAll("labelCompetenceNonCliquee");
+				/* Ajout d'une classe de la classe de style "labelCompetenceCliquee" 
+				 * à la pane "Toutes" */
 				labelToutes.getStyleClass().add("labelCompetenceCliquee");
 			}else {
+				/* Modification de l'ID de la pane "Toutes
+				 * à "Toutes Non Cliquée" car si une pane est sélectionnée
+				 * alors elle ne l'est pas
+				 */
 				ligneToutes.setId("Toutes Non Cliquée");
+				/* Suppression de toutes les classes de style dont l'identifiant 
+				 * est "paneCompetenceCliquee" à la pane "Toutes" */
 				ligneToutes.getStyleClass().removeAll("paneCompetenceCliquee");
+				/* Ajout d'une classe de la classe de style "paneCompetenceNonCliquee" 
+				 * à la pane "Toutes" */
 				ligneToutes.getStyleClass().add("paneCompetenceNonCliquee");
+				/* Suppression de toutes les classes de style dont l'identifiant 
+				 * est "labelCompetenceCliquee" à la pane "Toutes" */
 				labelToutes.getStyleClass().removeAll("labelCompetenceCliquee");
+				/* Ajout d'une classe de la classe de style "labelCompetenceNonCliquee" 
+				 * à la pane "Toutes" */
 				labelToutes.getStyleClass().add("labelCompetenceNonCliquee");
 			}
+			/* Appel à la méthode afficherEnseignements :
+	         * - Le booléen est fixé à false car on souhaite afficher dans la grille
+	         *   de tri de competences dans la page Enseignements
+	         * - grilleEnseignement correspond à la grille des enseignements de la page Enseignements
+	         * - listeEnseignement correspond à la liste des Enseignements de la competence selectionnée
+	         * - grilleEnseignement correspond à la grille des enseignements de la page Enseignements
+	         */
 			afficherEnseignements(false, grilleEnseignement, listeEnseignement , grilleEnseignement);
 		});
 
@@ -476,8 +532,13 @@ public class Controlleur {
 			 * qui affiche les Enseignements appartenant à cette compétence.
 			 */
 			paneCompetence.setOnMouseClicked(event -> {
+				/* Si la Pane de la competence n'était pas sélectionnée avant le clic */
 				if (paneCompetence.getId().equals("Non Cliquée")) {
+					/* Modification de son ID à 'cliquée' */
 					paneCompetence.setId("Cliquée");
+					/* Parcours de la liste des competences contenues
+					 * dans la grille des competences de la page Enseignements
+					 */
 					for (Node competences : grilleCompetence.getChildren()) {
 						if (competences.getId().equals("Toutes Non Cliquée") || competences.getId().equals("Toutes Cliquée")) {
 							competences.getStyleClass().removeAll("paneCompetenceCliquee");
@@ -1339,6 +1400,7 @@ public class Controlleur {
 	 * L'affichage se fait dans un label présent sur toutes nos pages (sauf popUp)
 	 */
 	public void afficherNom() {
+		/*Change le texte contenu dans le Label avec le non de l'utilisateur*/
 		labelNomEtudiant.setText(gn.getUtilisateurGestionNotes());
 	}
 
@@ -1350,7 +1412,6 @@ public class Controlleur {
 	 * @param prenom est le nouveau Prenom
 	 */
 	public void modifierNom(TextField nom, TextField prenom) {
-		String nomPrenomUtilisateurActuel = gn.getUtilisateurGestionNotes();
 		try {
 			gn.setUtilisateurGestionNotes(nom.getText(), prenom.getText());
 			Alert validerUtilisateur = new Alert(AlertType.INFORMATION);
@@ -1367,58 +1428,230 @@ public class Controlleur {
 	}
 
 	/**
-	 * Cette méthode permet de récupérer la scene de la page de paramètre d'importation des données
-	 * Elle la charge puis l'affiche en remplacant la scène précedente
-	 * Si la scène n'est pas trouvée, la méthode lève l'exception IOException
+	 * Cette méthode permet de changer la scène vers la page de paramètre d'importation des données.
+	 * Elle charge la nouvelle scène et l'affiche en remplaçant la scène précédente.
+	 * Si la scène n'est pas trouvée, la méthode lève l'exception IOException.
 	 */
 	@FXML
 	public void changerSceneParametre() {
-		try {
-			/* Récupération du fichier qu'on veut charger */
-			loader.setLocation(getClass().getResource("/application/vue/PageParametreImporter.fxml"));
-			Parent nouvelleScene = loader.load();
-			Scene nouvelleSceneObjet = new Scene(nouvelleScene);
-			Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
-			stage.setScene(nouvelleSceneObjet); //Affichage de la nouvelle scene
-			nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	    try {
+	        /* Récupération du fichier qu'on veut charger */
+	        loader.setLocation(getClass().getResource("/application/vue/PageParametreImporter.fxml"));
+	        /* Chargement de la scène */
+	        Parent nouvelleScene = loader.load();
+	        /* Conversion de la scène chargée en créant un nouvel objet Scene */
+	        Scene nouvelleSceneObjet = new Scene(nouvelleScene);
+	        Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
+	        stage.setScene(nouvelleSceneObjet); // Affichage de la nouvelle scène
+	        /* Attribution d'une feuille de style à la Scene */
+	        nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
+	    } catch (IOException e) {
+	        /* Message d'erreur en cas d'exception */
+	        e.printStackTrace();
+	    }
 	}
 
+	/**
+	 * Cette méthode permet de changer la scène vers la page de moyenne des ressources.
+	 * Elle charge la nouvelle scène, l'affiche et affiche la moyenne par défaut.
+	 * Si la scène n'est pas trouvée, la méthode lève l'exception IOException.
+	 */
 	@FXML
 	public void changerSceneMoyenneRessource() {
-		try {
-			/* Récupération du fichier qu'on veut charger */
-			loader.setLocation(getClass().getResource("/application/vue/PageMoyenneRessource.fxml"));
-			Parent nouvelleScene = loader.load();
-			Scene nouvelleSceneObjet = new Scene(nouvelleScene);
-			Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
-			stage.setScene(nouvelleSceneObjet); //Affichage de la nouvelle scene
-			nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
-			GridPane grilleMoyenneRessource = ((GridPane)((ScrollPane)((Pane)((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(1)).getContent());
-			afficherMoyenneDefaut(grilleMoyenneRessource, true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	    try {
+	        /* Récupération du fichier qu'on veut charger */
+	        loader.setLocation(getClass().getResource("/application/vue/PageMoyenneRessource.fxml"));
+	        /* Chargement de la scène */
+	        Parent nouvelleScene = loader.load();
+	        /* Conversion de la scène chargée en créant un nouvel objet Scene */
+	        Scene nouvelleSceneObjet = new Scene(nouvelleScene);
+	        Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
+	        stage.setScene(nouvelleSceneObjet); // Affichage de la nouvelle scène
+	        /* Attribution d'une feuille de style à la Scene */
+	        nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
+	        /* Récupération de la gridPane contenant les moyennes par Ressource */
+	        GridPane grilleMoyenneRessource = ((GridPane) ((ScrollPane) ((Pane) ((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(1)).getContent());
+	        /* Appel à la méthode afficherMoyenneDefaut :
+	         * - grilleMoyenneRessource correspond à la grille contenant les moyennes par ressource
+	         * - le booléen est fixé à vrai car nous souhaitons afficher les moyennes par ressource
+	         */
+	        afficherMoyenneDefaut(grilleMoyenneRessource, true);
+	    } catch (IOException e) {
+	    	/* Message d'erreur en cas d'exception */
+	        e.printStackTrace();
+	    }
 	}
 
+	/**
+	 * Cette méthode permet de changer la scène vers la page de moyenne des compétences.
+	 * Elle charge la nouvelle scène, l'affiche et affiche la moyenne par défaut.
+	 * Si la scène n'est pas trouvée, la méthode lève l'exception IOException.
+	 */
 	@FXML
 	public void changerSceneMoyenneCompetence() {
-		try {
-			/* Récupération du fichier qu'on veut charger */
-			loader.setLocation(getClass().getResource("/application/vue/PageMoyenneCompetence.fxml"));
-			Parent nouvelleScene = loader.load();
-			Scene nouvelleSceneObjet = new Scene(nouvelleScene);
-			Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
-			stage.setScene(nouvelleSceneObjet); //Affichage de la nouvelle scene
-			nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
-			GridPane grilleMoyenneCompetence = ((GridPane)((ScrollPane)((Pane)((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(1)).getContent());
-			afficherMoyenneDefaut(grilleMoyenneCompetence, false);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	    try {
+	        /* Récupération du fichier qu'on veut charger */
+	        loader.setLocation(getClass().getResource("/application/vue/PageMoyenneCompetence.fxml"));
+	        /* Chargement de la scène */
+	        Parent nouvelleScene = loader.load();
+	        /* Conversion de la scène chargée en créant un nouvel objet Scene */
+	        Scene nouvelleSceneObjet = new Scene(nouvelleScene);
+	        Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
+	        stage.setScene(nouvelleSceneObjet); // Affichage de la nouvelle scène
+	        /* Attribution d'une feuille de style à la Scene */
+	        nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
+	        /* Récupération de la gridPane contenant les moyennes par competence */
+	        GridPane grilleMoyenneCompetence = ((GridPane) ((ScrollPane) ((Pane) ((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(1)).getContent());
+	        /* Appel à la méthode afficherMoyenneDefaut :
+	         * - grilleMoyenneCompetence correspond à la grille contenant les moyennes par competence
+	         * - le booléen est fixé à faux car nous souhaitons afficher les moyennes par compétence
+	         */
+	        afficherMoyenneDefaut(grilleMoyenneCompetence, false);
+	    } catch (IOException e) {
+	    	/* Message d'erreur en cas d'exception */
+	        e.printStackTrace();
+	    }
 	}
+
+	/**
+	 * Cette méthode permet de changer la scène vers la page de paramètre de modification.
+	 * Elle charge la nouvelle scène et l'affiche.
+	 * Si la scène n'est pas trouvée, la méthode lève l'exception IOException.
+	 */
+	@FXML
+	public void changerSceneModifier() {
+	    try {
+	        /* Récupération du fichier qu'on veut charger */
+	        loader.setLocation(getClass().getResource("/application/vue/PageParametreModifier.fxml"));
+	        /* Chargement de la scène */
+	        Parent nouvelleScene = loader.load();
+	        /* Conversion de la scène chargée en créant un nouvel objet Scene */
+	        Scene nouvelleSceneObjet = new Scene(nouvelleScene);
+	        Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
+	        stage.setScene(nouvelleSceneObjet); // Affichage de la nouvelle scène
+	        /* Attribution d'une feuille de style à la Scene */
+	        nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
+	    } catch (IOException e) {
+	    	/* Message d'erreur en cas d'exception */
+	        e.printStackTrace();
+	    }
+	}
+
+	/**
+	 * Cette méthode permet de changer la scène vers la page des notes.
+	 * Elle charge la nouvelle scène, l'affiche et affiche les enseignements et les notes.
+	 * Si la scène n'est pas trouvée, la méthode lève l'exception IOException.
+	 */
+	@FXML
+	public void changerSceneNotes() {
+	    try {
+	        /* Récupération du fichier qu'on veut charger */
+	        loader.setLocation(getClass().getResource("/application/vue/PageNotes.fxml"));
+	        /* Chargement de la scène */
+	        Parent nouvelleScene = loader.load();
+	        /* Conversion de la scène chargée en créant un nouvel objet Scene */
+	        Scene nouvelleSceneObjet = new Scene(nouvelleScene);
+	        Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
+	        stage.setScene(nouvelleSceneObjet); // Affichage de la nouvelle scène
+	        /* Attribution d'une feuille de style à la Scene */
+	        nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
+	        /* Récupération de la gridPane contenant les enseignements sur la Page Notes */
+	        GridPane grilleEnseignements = (GridPane) ((ScrollPane) ((Pane) ((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(3)).getContent();
+	        /* Récupération de la gridPane contenant les notes sur la Page Notes */
+	        GridPane grilleNotes = (GridPane) ((ScrollPane) ((Pane) ((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(1)).getContent();
+	        /* Appel à la méthode afficherEnseignements :
+	         * - Le booléen est fixé à true car on souhaite afficher les enseignements dans la grille de tri
+	         * - grilleEnseignements correspond à la grille de tri sur la page Notes
+	         * - gn.getSemestreGestionNotes().getEnseignementsSemestre() correspond à la liste 
+	         * des Enseignements actuellement dans l'application
+	         * - grilleNotes correspond à la grille contenant les notes sur la page Notes
+	         */
+	        afficherEnseignements(true, grilleEnseignements, gn.getSemestreGestionNotes().getEnseignementsSemestre(), grilleNotes);
+	        /* Appel à la méthode afficherNotes :
+	         * - grilleNotes correspond à la grille contenant les notes sur la page Notes
+	         * - enseignement est fixé à null car on ne souhaite pas trié par un enseignement précis.
+	         * 	 Autrement dit, on souhaite afficher toutes les notes
+	         */
+	        afficherNotes(grilleNotes, null);
+	    } catch (IOException e) {
+	    	/* Message d'erreur en cas d'exception */
+	        e.printStackTrace();
+	    }
+	}
+
+	/**
+	 * Cette méthode permet de changer la scène vers la page de paramètre de partage.
+	 * Elle charge la nouvelle scène et l'affiche.
+	 * Si la scène n'est pas trouvée, la méthode lève l'exception IOException.
+	 */
+	@FXML
+	public void changerSceneParametrePartager() {
+	    try {
+	        /* Récupération du fichier qu'on veut charger */
+	        loader.setLocation(getClass().getResource("/application/vue/PageParametrePartager.fxml"));
+	        /* Chargement de la scène */
+	        Parent nouvelleScene = loader.load();
+	        /* Conversion de la scène chargée en créant un nouvel objet Scene */
+	        Scene nouvelleSceneObjet = new Scene(nouvelleScene);
+	        Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
+	        stage.setScene(nouvelleSceneObjet); // Affichage de la nouvelle scène
+	        /* Attribution d'une feuille de style à la Scene */
+	        nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
+	    } catch (IOException e) {
+	    	/* Message d'erreur en cas d'exception */
+	        e.printStackTrace();
+	    }
+	}
+
+	/**
+	 * Cette méthode permet de changer la scène vers la page de paramètre de réinitialisation.
+	 * Elle charge la nouvelle scène et l'affiche.
+	 * Si la scène n'est pas trouvée, la méthode lève l'exception IOException.
+	 */
+	@FXML
+	public void changerSceneParametreReiniti() {
+	    try {
+	        /* Récupération du fichier qu'on veut charger */
+	        loader.setLocation(getClass().getResource("/application/vue/PageParametreReinitialiser.fxml"));
+	        /* Chargement de la scène */
+	        Parent nouvelleScene = loader.load();
+	        /* Conversion de la scène chargée en créant un nouvel objet Scene */
+	        Scene nouvelleSceneObjet = new Scene(nouvelleScene);
+	        Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
+	        stage.setScene(nouvelleSceneObjet); // Affichage de la nouvelle scène
+	        /* Attribution d'une feuille de style à la Scene */
+	        nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
+	    } catch (IOException e) {
+	    	/* Message d'erreur en cas d'exception */
+	        e.printStackTrace();
+	    }
+	}
+
+	/**
+	 * Cette méthode permet de changer la scène vers la page des enseignements.
+	 * Elle charge la nouvelle scène, ajoute les compétences et l'affiche.
+	 * Si la scène n'est pas trouvée, la méthode lève l'exception IOException.
+	 */
+	@FXML
+	public void changerSceneEnseignements() {
+	    try {
+	        /* Récupération du fichier qu'on veut charger */
+	        loader.setLocation(getClass().getResource("/application/vue/PageEnseignements.fxml"));
+	        /* Chargement de la scène */
+	        Parent nouvelleScene = loader.load();
+	        /* Conversion de la scène chargée en créant un nouvel objet Scene */
+	        Scene nouvelleSceneObjet = new Scene(nouvelleScene);
+	        Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
+	        ajouterCompetence(gn.getSemestreGestionNotes().getCompetencesSemestre(), nouvelleSceneObjet);
+	        stage.setScene(nouvelleSceneObjet); // Affichage de la nouvelle scène
+	        /* Attribution d'une feuille de style à la Scene */
+	        nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
+	    } catch (IOException e) {
+	    	/* Message d'erreur en cas d'exception */
+	        e.printStackTrace();
+	    }
+	}
+
 
 	/**
 	 * Affiche les notes saisie par l'utilisateur lorsque celui-ci se trouve sur
@@ -1551,110 +1784,6 @@ public class Controlleur {
 		}
 	}
 
-
-	/**
-	 * Cette méthode permet de récupérer la scene de la page de paramètre de modification d'identité
-	 * Elle la charge puis l'affiche en remplacant la scène précedente
-	 * Si la scène n'est pas trouvée, la méthode lève l'exception IOException
-	 */
-	@FXML
-	public void changerSceneModifier() {
-		try {
-			/* Récupération du fichier qu'on veut charger */
-			loader.setLocation(getClass().getResource("/application/vue/PageParametreModifier.fxml"));
-			Parent nouvelleScene = loader.load();
-			Scene nouvelleSceneObjet = new Scene(nouvelleScene);
-			Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
-			stage.setScene(nouvelleSceneObjet); //Affichage de la nouvelle scene
-			nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Cette méthode permet de récupérer la scene de la page ou sont présentes les notes
-	 * Elle la charge puis l'affiche en remplacant la scène précedente
-	 * Si la scène n'est pas trouvée, la méthode lève l'exception IOException
-	 */
-	@FXML
-	public void changerSceneNotes() {
-		try {
-			/* Récupération du fichier qu'on veut charger */
-			loader.setLocation(getClass().getResource("/application/vue/PageNotes.fxml"));
-			Parent nouvelleScene = loader.load();
-			Scene nouvelleSceneObjet = new Scene(nouvelleScene);
-			Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
-			stage.setScene(nouvelleSceneObjet); //Affichage de la nouvelle scene
-			nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
-			GridPane grilleRessources = (GridPane)((ScrollPane) ((Pane)((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(3)).getContent();
-			GridPane grilleNotes = (GridPane)((ScrollPane) ((Pane)((BorderPane) nouvelleSceneObjet.getRoot()).getChildren().get(1)).getChildren().get(1)).getContent();
-			afficherEnseignements(true, grilleRessources, gn.getSemestreGestionNotes().getEnseignementsSemestre(), grilleNotes);
-			afficherNotes(grilleNotes, null);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Cette méthode permet de récupérer la scene de la page de partage des paramètres
-	 * Elle la charge puis l'affiche en remplacant la scène précedente
-	 * Si la scène n'est pas trouvée, la méthode lève l'exception IOException
-	 */
-	@FXML
-	public void changerSceneParametrePartager() {
-		try {
-			/* Récupération du fichier qu'on veut charger */
-			loader.setLocation(getClass().getResource("/application/vue/PageParametrePartager.fxml"));
-			Parent nouvelleScene = loader.load();
-			Scene nouvelleSceneObjet = new Scene(nouvelleScene);
-			Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
-			stage.setScene(nouvelleSceneObjet); //Affichage de la nouvelle scene
-			nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Cette méthode permet de récupérer la scene de la page de paramètre de réinitialisation
-	 * Elle la charge puis l'affiche en remplacant la scène précedente
-	 * Si la scène n'est pas trouvée, la méthode lève l'exception IOException
-	 */
-	@FXML
-	public void changerSceneParametreReiniti() {
-		try {
-			/* Récupération du fichier qu'on veut charger */
-			loader.setLocation(getClass().getResource("/application/vue/PageParametreReinitialiser.fxml"));
-			Parent nouvelleScene = loader.load();
-			Scene nouvelleSceneObjet = new Scene(nouvelleScene);
-			Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
-			stage.setScene(nouvelleSceneObjet); //Affichage de la nouvelle scene
-			nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	/**
-	 * Cette méthode permet de récupérer la scene de la page ou seront présentes les ressrouces
-	 * Elle la charge puis l'affiche en remplacant la scène précedente
-	 * Si la scène n'est pas trouvée, la méthode lève l'exception IOException
-	 */
-	@FXML
-	public void changerSceneEnseignements() {
-		try {
-			/* Récupération du fichier qu'on veut charger */
-			loader.setLocation(getClass().getResource("/application/vue/PageEnseignements.fxml"));
-			Parent nouvelleScene = loader.load();
-			Scene nouvelleSceneObjet = new Scene(nouvelleScene);
-			Stage stage = (Stage) rootPane.getScene().getWindow(); // Récupérez la fenêtre actuelle.
-			ajouterCompetence(gn.getSemestreGestionNotes().getCompetencesSemestre(), nouvelleSceneObjet);
-			stage.setScene(nouvelleSceneObjet); //Affichage de la nouvelle scene
-			nouvelleSceneObjet.getStylesheets().add(getClass().getResource("/application/vue/application.css").toExternalForm());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * Cette méthode permet d'afficher un popUp sur lequel on peut saisir plusieurs informations
@@ -1937,7 +2066,6 @@ public class Controlleur {
 			try {
 				gn.supprimerControleAEnseignement(identifiantEnseignement, controleASupprimer);
 			} catch (ControleInvalideException e) {
-				System.out.println("Controle Impossible à supprimer car invalide");
 			}
 		}
 		Integer rowIndex = GridPane.getRowIndex(boutonSupprimer);
@@ -1998,7 +2126,7 @@ public class Controlleur {
 					try {
 						ajouterControle(type.getText(), poids.getText(), date.getText(),choixCombo[0]);
 						List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
-						afficherEnseignements(false, grilleEnseignement,listeEnseignement, null);
+						afficherEnseignements(false, grilleEnseignement,listeEnseignement, grilleEnseignement);
 					} catch (ControleInvalideException e1) {
 						e1.printStackTrace();
 					}
@@ -2039,7 +2167,6 @@ public class Controlleur {
 			TextField recupPoids = (TextField)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(5)).getChildren().get(2);
 			TextField recupDate = (TextField)(((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(3)).getChildren().get(1));
 			//On affiche dans les TextField les informations déja saisies par l'utilisateur
-			supprimerControle(gridPane, boutonValider, false, enseignement, controle);
 			String poidsControleString = poidsControle + "";
 			String enseignementString = enseignement.getIdentifiantEnseignement() + enseignement.getIntituleEnseignement();
 
@@ -2049,6 +2176,7 @@ public class Controlleur {
 			recupRessource.setValue(enseignementString);
 			affichageModifAjoutControle(recupPoids);
 			String[] choixRessource = new String[2];
+			choixRessource[1] = enseignementString.substring(0,5);
 			// Modifier les informations dans la GridPane
 			recupRessource.valueProperty().addListener((observable, oldValue, newValue) -> {
 				choixRessource[0] = ((String) recupRessource.getValue ()).substring(0, 5);
@@ -2063,13 +2191,16 @@ public class Controlleur {
 					String nouvelleDate = recupDate.getText();
 					//modifierNote(gridPane, boutonModifier, nouvelleNote, nouveauCommentaire, nouveauDenominateur, noteAModifier, gridPane);
 					// Fermeture du popUp
-					try {
-						ajouterControle(nouveauType, nouveauPoids, nouvelleDate, choixRessource[1]);
-						List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
-						afficherEnseignements(false, gridPane,listeEnseignement, gridPane);
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					if ((((Ressource)enseignement).getSommePoidsControle() - Integer.parseInt(poidsControleString)) + Integer.parseInt(nouveauPoids)<= 100) {
+						supprimerControle(gridPane, boutonValider, false, enseignement, controle);
+						try {
+							ajouterControle(nouveauType, nouveauPoids, nouvelleDate, choixRessource[1]);
+							List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
+							afficherEnseignements(false, gridPane,listeEnseignement, gridPane);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 					popupStage.close();
 				}
@@ -2081,8 +2212,6 @@ public class Controlleur {
 		}
 	}
 	
-
-
 	private void ajoutRessourcesComboControle() {
 		comboRessourcesControle.getItems().clear();
 		List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
@@ -2193,7 +2322,6 @@ public class Controlleur {
 			String nomFichier = fichierChoisi.getAbsolutePath();
 			if (boutonClique == boutonImporterFichierProgramme) {
 				try {
-					System.out.println("J'importe semestre");
 					gn.importerParametrageSemestre(nomFichier);
 					Alert importationReussi = new Alert(AlertType.INFORMATION);
 					importationReussi.setTitle("Importation réussi");
@@ -2208,7 +2336,6 @@ public class Controlleur {
 			} else if (boutonClique == boutonImporterFichierRessource) {
 				try {
 					gn.importerParametrageEnseignement(nomFichier);
-					System.out.println("J'importe ressources");
 					Alert importationReussi = new Alert(AlertType.INFORMATION);
 					importationReussi.setTitle("Importation réussi");
 					importationReussi.setHeaderText("Importation réussi");

@@ -199,18 +199,12 @@ public class GestionNotes {
      * @param type du contrôle renseigné (exemple : oral, écrit ...)
      * @param date du contrôle renseigné (exemple : 12/10/2023, milieu octobre ...)
      * @param poids du contrôle renseigné (exemple : 12, 35 ...)
-     * @return true si le contrôle a bien été ajouté
      * @throws ControleInvalideException
      */
-    public boolean ajouterControleAEnseignement(String identifiant, String type, String date, int poids) throws ControleInvalideException {
+    public void ajouterControleAEnseignement(String identifiant, String type, String date, int poids) throws ControleInvalideException {
         Ressource enseignement = (Ressource) trouverEnseignement(identifiant);
-        try {
-            Controle controleAAjouter = new Controle(type, date, poids);       
-            enseignement.ajouterControle(controleAAjouter);
-            return true;
-        } catch (ControleInvalideException e) {
-            return false;
-        }
+        Controle controleAAjouter = new Controle(type, date, poids);       
+        enseignement.ajouterControle(controleAAjouter);
     }
 
     /**
@@ -347,7 +341,7 @@ public class GestionNotes {
      * @throws ControleInvalideException
      * @throws EnseignementInvalideException si le fichier ne contient pas de paramètres de ressources
      */
-    public void importerParametrageEnseignement(String chemin) throws ExtensionFichierException, ControleInvalideException, EnseignementInvalideException {
+    public void importerParametrageEnseignement(String chemin) throws ExtensionFichierException, EnseignementInvalideException, ControleInvalideException {
 
         FichierRessource fichier = new FichierRessource(chemin);
 

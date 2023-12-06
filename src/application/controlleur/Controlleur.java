@@ -1871,11 +1871,7 @@ public class Controlleur {
             });
             boutonValider.setOnAction(e -> {
                 if (!type.getText().isEmpty() && !poids.getText().isEmpty()) {
-                    try {
-                        ajouterControle(type.getText(), poids.getText(), date.getText(),choixCombo[0]);
-                    } catch (ControleInvalideException e1) {
-                        e1.printStackTrace();
-                    }
+                    ajouterControle(type.getText(), poids.getText(), date.getText(),choixCombo[0]);
                     popupStage.close();
                 }
             });
@@ -1886,14 +1882,16 @@ public class Controlleur {
         }
     }
 
-    private void ajouterControle(String type, String poids, String date, String ressource) throws ControleInvalideException {
+    private void ajouterControle(String type, String poids, String date, String ressource) {
         int valeurPoids = Integer.parseInt(poids);
-        if(!gn.ajouterControleAEnseignement(ressource, type, date, valeurPoids)) {
+        try {
+            gn.ajouterControleAEnseignement(ressource, type, date, valeurPoids);
+        } catch (ControleInvalideException e) {
             Alert erreurSauvegarde = new Alert(AlertType.ERROR);
             erreurSauvegarde.setTitle("Ajout de controle Impossible");
             erreurSauvegarde.setHeaderText("La somme des poids dépasse 100\nModifier le poids de ce controle\nOu modifier le poids de ceux existants");
             erreurSauvegarde.showAndWait();
-        } 
+        }
     }
 
 

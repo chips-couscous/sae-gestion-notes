@@ -1,3 +1,7 @@
+/*
+ * ControleTest.java                                      23 nov. 2023
+ * IUT Rodez, info2 2023-2024, pas de copyright ni "copyleft" 
+ */
 package application.model.test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,6 +40,12 @@ class ControleTest {
 			new Controle("écrit", "20/11/2023", -5);
 		});
 	}
+	@Test
+        void testControlePoidsTropGrand() {
+                assertThrows(ControleInvalideException.class, () -> {
+                        new Controle("écrit", "20/11/2023", 110);
+                });
+        }
 
 	@Test
 	void testControleNoteValide() throws ControleInvalideException, NoteInvalideException {

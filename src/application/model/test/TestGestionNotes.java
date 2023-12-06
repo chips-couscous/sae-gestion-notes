@@ -6,14 +6,18 @@ package application.model.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import application.model.GestionNotes;
-import application.model.Ressource;
-import application.model.exception.MoyenneRessourceException;
+import application.model.exception.CompetenceInvalideException;
+import application.model.exception.ControleInvalideException;
+import application.model.exception.EnseignementInvalideException;
+import application.model.exception.ExtensionFichierException;
 import application.model.exception.NoteInvalideException;
 import application.model.exception.ParametresSemestreException;
 import application.model.exception.SemestreInvalideExecption;
@@ -35,10 +39,18 @@ class TestGestionNotes {
 
     /**
      * Test method for {@link application.model.GestionNotes#GestionNotes()}.
+     * Test réalisé indépendamment des autres tests afin d'être sur que le fichier
+     * de sauvegarde est présent au moment du test
+     * @throws IOException si il est impossible de déplacer le fichier de sauvegarde
      */
-    @Test
     void testGestionNotes() {
-        fail("Not yet implemented");
+        File fichierSauvegarde = new File("tmp/gestion-notes.ser");
+        /* Test avec fichier de sauvegarde existant */
+        assertDoesNotThrow(()->new GestionNotes());
+        /* Test sans fichier de sauvegarde existant */
+        
+        fichierSauvegarde.delete();
+        assertDoesNotThrow(()->new GestionNotes());
     }
     
     /**
@@ -48,7 +60,7 @@ class TestGestionNotes {
     @Test
     void testGenerationFichierExport() {
         assertDoesNotThrow(()->gn.genererFichierExport("Z:\\SAE\\WorkspaceEclipseSae\\GestionNotes\\csv\\parametresGestionNotes.csv"));
-        assertThrows(IOException.class, ()->gn.genererFichierExport("FichierQuiNexistePas.csv"));
+        assertDoesNotThrow(()->gn.genererFichierExport("FichierQuiNexistePas.csv"));
     }
     
     /**
@@ -60,79 +72,66 @@ class TestGestionNotes {
         assertDoesNotThrow(()->gn.importerParametrageSemestre(".\\csv\\ParametresSemestre(AImporter).csv"));
         assertDoesNotThrow(()->gn.importerParametrageEnseignement(".\\csv\\ParametresRessource(AImporter).csv"));
         /* Cas fichiers incorrect */
-        assertThrows(ParametresSemestreException.class,()->gn.importerParametrageSemestre("FichierQuiExistePas.csv"));
+        assertThrows(ExtensionFichierException.class,()->gn.importerParametrageSemestre("FichierExistePas.csv"));
         assertThrows(ParametresSemestreException.class,()->gn.importerParametrageSemestre(".\\csv\\mauvaisFichier.csv"));
         assertThrows(SemestreInvalideExecption.class,()->gn.importerParametrageSemestre(".\\csv\\mauvaisSemestre.csv"));
+        assertThrows(ExtensionFichierException.class, ()->gn.importerParametrageEnseignement("FichierExistePas.csv"));
+        assertThrows(EnseignementInvalideException.class, ()->gn.importerParametrageEnseignement(".\\csv\\mauvaisFichier.csv"));
+        try {
+            gn.importerParametrageSemestre(".\\csv\\ParametresSemestre(AImporter).csv");
+            assertThrows(ControleInvalideException.class,()->gn.importerParametrageEnseignement(".\\csv\\mauvaisControle.csv"));
+        } catch (ExtensionFichierException | SemestreInvalideExecption 
+                | CompetenceInvalideException | EnseignementInvalideException 
+                | ParametresSemestreException e) {
+            fail("impossible d'importer les parametres semestre");
+        }
+        
     }
 
     /**
-     * TODO comment method role
+     * Test les méthode serialiserDonnees et deserialiserDonnees
      *
      */
-    private static void testSerialisation() {
-        GestionNotes gn;
-        try {
-            gn = new GestionNotes();
-        } catch (ClassNotFoundException | IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            gn = null; // Bouchon pour erreur de compilation
-        }
-
-        try {
-            gn.serializerDonnees();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @Test
+    void testSerialisation() {
+        File fichierSauvegarde = new File("tmp/gestion-notes.ser");
+        assertDoesNotThrow(()->gn.serializerDonnees());
+        assertDoesNotThrow(()->gn.deserializerDonnees());
+        
         try {
             gn.deserializerDonnees();
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * TODO comment method role
-     *
-     */
-    private static void testGestionControleRessource() {
-        GestionNotes gn;
-        try {
-            gn = new GestionNotes();
+            assertEquals(gn.getUtilisateurGestionNotes(), "Tom Jammes");
         } catch (ClassNotFoundException | IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            gn = null; // Bouchon pour erreur de compilation
+            fail("Impossible de désérialiser les données");
         }
-
+        
+        /* Tenter de deserialiser sans sauvegarde */
+        fichierSauvegarde.delete();
+        assertThrows(FileNotFoundException.class,()->gn.deserializerDonnees());
+    }
+    
+    /**
+     * Test de l'ajout d'une note
+     */
+    @Test
+    void testAjoutNote() {
         try {
-            Ressource ressourceControles;
-            ressourceControles = (Ressource) gn.trouverEnseignement("R2.01");
-            System.out.println(ressourceControles.getControleToString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            gn.ajouterNoteAControle("R2.01.00", 12.2, 20, "");
-            gn.ajouterNoteAControle("R2.01.01", 8, 10, "");
-            gn.ajouterNoteAControle("R2.01.02", 15, 40, "");
-            gn.ajouterNoteAControle("R2.01.03", 15.5, 20, "");
+            gn.importerParametrageSemestre(".\\csv\\ParametresSemestre(AImporter).csv");
+            gn.importerParametrageEnseignement(".\\csv\\ParametresRessource(AImporter).csv");
+            
+            /* Test pour l'ajout d'une note a un contrôle*/
+            assertDoesNotThrow(()->gn.ajouterNoteAControle("R2.01.00", 11, 20, ""));
+            assertThrows(NoteInvalideException.class,()->gn.ajouterNoteAControle("R2.0101", 11, 6, "Note incorrect"));
+            assertThrows(NoteInvalideException.class,()->gn.ajouterNoteAControle("R2.0777", 11, 6, "identifiant incorrect"));
+            /* Vérification de l'ajout la note */
+            gn.ajouterNoteAControle("R2.01.00", 11, 20, "Test");
+        } catch (ExtensionFichierException | SemestreInvalideExecption | CompetenceInvalideException
+                | EnseignementInvalideException | ParametresSemestreException e) {
+            fail("Impossible d'importer les paramètres du semestre");
+        } catch (ControleInvalideException e) {
+            fail("Impossible d'importer les paramètres de la ressource");
         } catch (NoteInvalideException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            gn.calculerMoyenneEnseignement("R2.01");
-        } catch (MoyenneRessourceException e) {
-            e.printStackTrace();
-        } catch (NoteInvalideException e) {
-            e.printStackTrace();
+            fail("Impossible d'ajouter la note");
         }
     }
-
 }

@@ -101,7 +101,7 @@ public class Controle implements Serializable {
 	 * @return true si le contrôle renseigné est valide, false sinon
 	 */
 	private static boolean estValide(String type, int poids) {
-		return !type.equals("") && poids > 0; 
+		return !type.equals("") && poids > 0 && poids <= 100; 
 	}
 
 	/**

@@ -284,6 +284,11 @@ public class Controlleur {
 		if (boutonAjouterNote != null) {
 			afficherMessageSurvol(boutonAjouterNote, MESSAGE_AJOUT_NOTE);
 		}
+		if (boutonSauvegarder != null && boutonAide != null) {
+			afficherMessageSurvol(boutonSauvegarder, MESSAGE_SAUVEGARDE);
+			afficherMessageSurvol(boutonAide, MESSAGE_AIDE);
+		}
+
 		/* Vérification de la présence des éléments fxml */
 		if (labelNomEtudiant != null && validerNom != null && texteNom != null && textePrenom != null) {
 			/* Le bouton pour changer le nom appelera la méthode de changement de nom au clic */
@@ -1665,21 +1670,25 @@ public class Controlleur {
 	}
 
 	/**
-	 * Affiche les notes saisie par l'utilisateur lorsque celui-ci se trouve sur
-	 * la page notes
-	 * @param enseignement 
-	 *
+	 *  Cette permet de faire l'affichage des moyennes
+	 * @param grille est la grille qui va afficher les moyennes
+	 * @param parRessource permet de dire si on affiche la moyenne par ressource ou non
 	 */
 	private void afficherMoyenneDefaut(GridPane grille, boolean parRessource) {
+		/* vide la grille */
 		grille.getChildren().clear();
-
+		
+		/* On crée une Pane qui contiendra les informations de la page */
 		Pane paneDefaut = new Pane();
+		/* On crée un label avec un texte qui explique ce qu'il faut faire*/
 		Label messageDefaut = new Label("Veuillez-cliquer surle bouton \"Calculer mes moyennes\"\n"
 				+" çi-dessous pour calculer et afficher vos moyennes");
+		/* Création du bouton du calcul */
 		Button boutonCalculer = new Button("Calculer mes moyennes");
-
+		/* On ajoute à la pane le label et le bouton */
 		paneDefaut.getChildren().addAll(messageDefaut,boutonCalculer);
-
+		
+		/* GEstion des positions des éléments sur la page */
 		paneDefaut.setPrefSize(724,375);
 		messageDefaut.setPrefSize(724,295);
 		boutonCalculer.setPrefSize(200,40);
@@ -1687,38 +1696,60 @@ public class Controlleur {
 		boutonCalculer.setAlignment(Pos.CENTER);
 		boutonCalculer.setTranslateX(524/2);
 		boutonCalculer.setTranslateY(335/2 + 20);
-
+		/* ajout de style depuis une classe CSS */
 		messageDefaut.getStyleClass().add("labelMoyenneNonCalculee");
 		boutonCalculer.getStyleClass().add("boutonMoyenneNonCalculee");
-
+		/* On ajoute à la grille la pane que l'on a créé */
 		grille.add(paneDefaut, 0, 0);
-
+		/* On ajoute l'évèenement déclenché au clic du bouton */
 		boutonCalculer.setOnMouseClicked(event -> {
+			/* On vide de nouveau la grille */
 			grille.getChildren().clear();
+			/* Méthode qui va afficher les moyennes */
 			afficherMoyenne(grille, parRessource);
 		});
 	}
 
+	/**
+	 * Cette méthode va appeler le model qui va calculer les moyennes par UE ou ressources
+	 * Elle fera ensuite l'affichage dans une grille avec les moyennes 
+	 * @param grille dans laquelle on va afficher les moyennes
+	 * @param parRessource permet de savoir si on affiche les moyennes des ressuorces ou UE
+	 */
 	private void afficherMoyenne(GridPane grille, boolean parRessource) {
+		/* Indice d'insertion dans la grille */
 		int indiceGrille = 0;
+		/* On vide la grille */
 		grille.getChildren().clear();
+		/* On enleve les rowConstraints */
 		grille.getRowConstraints().clear();
+		/* On crée et définit une RowConstraints */
 		RowConstraints taille = new RowConstraints();
 		taille.setPrefHeight(50);
+		/* Permet de vérifier si on veut les moyennes de ressources ou pas */
 		if (parRessource) {
+			/* Parcours de la liste des enseignements présentes dans le model */
 			for (Enseignement enseignement : gn.getSemestreGestionNotes().getEnseignementsSemestre()) {
+				/* Si la moyenne est une ressource */
 				if (gn.estUneRessource(enseignement)) {
+					
 					String identifiant = enseignement.getIdentifiantEnseignement();
 					String moyenneString = "";
 					try {
+						/* On demande au model de calculer la moyenne de l'enseignement et de lui attribuer*/
 						gn.calculerMoyenneEnseignement(identifiant);
+						/* On récupère la moyenne de l'enseignement */
 						Note noteMoyenne = gn.moyenneEnseignemnt(identifiant);
+						/* On convertit la moyenne qui était un String en double */
 						double moyenne = noteMoyenne.getValeurNote();
+						/* On fait l'affichage de la moyenne */
 						moyenneString = moyenne + moyenneString;
 					} catch (MoyenneRessourceException e) {
+						/* Si la moyenne n'est pas calculable on affiche qu'elle n'est pas calculable */
 						moyenneString = "Moyenne Incalculable";
 						//e.printStackTrace();
 					} catch (NoteInvalideException e) {
+						/* Si la moyenne n'est pas calculable on affiche qu'elle n'est pas calculable */
 						moyenneString = "Moyenne Incalculable";
 						//e.printStackTrace();
 					}
@@ -1726,7 +1757,8 @@ public class Controlleur {
 					Label labelIdentifiant = new Label(identifiant);
 					Label labelIntitule = new Label(enseignement.getIntituleEnseignement());
 					Label labelMoyenne = new Label(moyenneString);
-
+					
+					/*gestion du style des positions et de l'ajout dans la grille */
 					labelIdentifiant.getStyleClass().add("labelNote");
 					labelIntitule.getStyleClass().add("labelNote");
 					labelMoyenne.getStyleClass().add("labelNote");
@@ -1743,30 +1775,43 @@ public class Controlleur {
 					grille.add(labelIdentifiant, 0, indiceGrille);
 					grille.add(labelIntitule, 1, indiceGrille);
 					grille.add(labelMoyenne, 2, indiceGrille);
+					/* Incrément de l'ajout dans la grille */
 					indiceGrille ++;
 				}
 			}
 		} else {
+			/* parcours la liste des competence présent dans le model */
 			for (Competence competence : gn.getSemestreGestionNotes().getCompetencesSemestre()) {
+				/* parcours la liste des enseignement lié a la competence présent dans le model */
 				for(Enseignement enseignement: (competence.getListeEnseignements()).keySet()) {
 					try {
+						/* On demande au model de calculer et d'attribuer la moyenne de chaque enseignement de la competence */
 						gn.calculerMoyenneEnseignement(enseignement.getIdentifiantEnseignement());
 					} catch (MoyenneRessourceException | NoteInvalideException e) {
 					}
 				}
+				
 				String identifiant = competence.getIdentifiantCompetence();
 				String moyenneString = "";
+				/* Calcul de la moyenne des competences dans le model */
 				Note noteMoyenne = gn.moyenneCompetence(identifiant);
 				try {
+					/* On calcule et met la moyenne à la competence */
 					gn.calculerMoyenneCompetence(identifiant);
+					/* Calcul de la moyenne des competences dans le model */
 					noteMoyenne = gn.moyenneCompetence(identifiant);
+					/* On convertit la moyenne qui était un String en double */
 					double moyenne = noteMoyenne.getValeurNote();
+					/* Affichage de la moyenne */
 					moyenneString = moyenne + moyenneString;
 				} catch (MoyenneCompetenceException e) {
+					/* Si la moyenne n'est pas calculable on affiche qu'elle n'est pas calculable */
 					moyenneString = "Moyenne Incalculable";
 				} catch (MoyenneRessourceException e) {
+					/* Si la moyenne n'est pas calculable on affiche qu'elle n'est pas calculable */
 					moyenneString = "Moyenne Incalculable";
 				} catch (NoteInvalideException e) {
+					/* Si la moyenne n'est pas calculable on affiche qu'elle n'est pas calculable */
 					moyenneString = "Moyenne Incalculable";
 				}	
 				//Création des Label que l'on va afficher dans notre page
@@ -1774,6 +1819,7 @@ public class Controlleur {
 				Label labelIntitule = new Label(competence.getIntituleCompetence());
 				Label labelMoyenne = new Label(moyenneString);
 
+				/*gestion du style des positions et de l'ajout dans la grille */
 				labelIdentifiant.getStyleClass().add("labelNote");
 				labelIntitule.getStyleClass().add("labelNote");
 				labelMoyenne.getStyleClass().add("labelNote");
@@ -1790,6 +1836,7 @@ public class Controlleur {
 				grille.add(labelIdentifiant, 0, indiceGrille);
 				grille.add(labelIntitule, 1, indiceGrille);
 				grille.add(labelMoyenne, 2, indiceGrille);
+				/* Incrément de l'ajout dans la grille */
 				indiceGrille ++;
 			}
 		}
@@ -2048,7 +2095,11 @@ public class Controlleur {
 		}
 	}
 
-
+	/**
+	 * Cette méthode permet de trouver l'intitulé complet d'un enseignement et de le renvoyer
+	 * @param ressource est l'identifiant de la ressource dont on veut l'intitule complet
+	 * @return le nom complet de la ressource
+	 */
 	private String verifierRessource(String ressource) {
 		String touteLaRessource = null;
 		List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
@@ -2120,10 +2171,18 @@ public class Controlleur {
 		if (rowIndex != null) {
 			/* Récupérer la Pane de la première colonne de la ligne d'indice rowIndex */
 			Pane paneLigne = null;
+			/* Parcours des enfants de la grille */
 			for (Node node : gridPane.getChildren()) {
+				/* on recupere la ligne de l'enfant de la grille */
 				Integer row = GridPane.getRowIndex(node);
+				/* on recupere la colonne de l'enfant de la grille */
 				Integer col = GridPane.getColumnIndex(node);
+				/* On vérifie que la ligne, colonne ne sont pas nulle.
+				 * On test aussi que la ligne est la même que celle que l'on cherche
+				 * On vérifie aussi qu'il s'agit d'une pane
+				 */
 				if (row != null && col != null && row.equals(rowIndex) && node instanceof Pane) {
+					/* La paneLigne devient la pane */
 					paneLigne = (Pane) node;
 				}
 			}
@@ -2138,6 +2197,7 @@ public class Controlleur {
 				}
 			}
 		}
+		/* On ffiche la liste complète des notes */
 		afficherNotes(gridPane,null);
 	}
 
@@ -2185,6 +2245,7 @@ public class Controlleur {
 		}
 	}
 
+		
 	private void supprimerControle(GridPane gridPane, Button boutonSupprimer, boolean supprimerLigne, Enseignement enseignement, Controle controleASupprimer) {
 		if (controleASupprimer instanceof Controle) {
 			String identifiantEnseignement = enseignement.getIdentifiantEnseignement();
@@ -2267,7 +2328,16 @@ public class Controlleur {
 	}
 
 
-
+	/**
+	 * Cette méthode permet d'ajouter un controle
+	 * Si cela n'est pas possible elle affiche une alerte d'erreur
+	 * indiquant qu'il n'a pas été possible d'ajouter le controle
+	 * @param type est le nom du controle que l'on ajoute
+	 * @param poids est le poids dans la ressuorce du controle
+	 * @param date à laquelle a été fait le controle
+	 * @param ressource à laquelle on veut ajouter le controle
+	 * @throws ControleInvalideException
+	 */
 	private void ajouterControle(String type, String poids, String date, String ressource) throws ControleInvalideException {
 		int valeurPoids = Integer.parseInt(poids);
 		if(!gn.ajouterControleAEnseignement(ressource, type, date, valeurPoids)) {
@@ -2325,18 +2395,8 @@ public class Controlleur {
 							List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
 							afficherEnseignements(false, gridPane,listeEnseignement, gridPane);
 						} catch (Exception e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-					} else {
-						/*
-						System.out.println("Ici");
-						Alert sommePoidsErreur = new Alert(AlertType.ERROR);
-						sommePoidsErreur.setTitle("Erreur de modification");
-						sommePoidsErreur.setHeaderText("La somme des poids après modification dépasse 100 \n"
-													  +"Veuillez-remodifier en modifiant les valeurs");
-						sommePoidsErreur.showAndWait();
-						 */
 					}
 					popupStage.close();
 				}
@@ -2347,18 +2407,22 @@ public class Controlleur {
 			e.printStackTrace();
 		}
 	}
-
-
-
-
-
-
-
+	
+	/**
+	 * Cette méthode permet d'ajouter les ressources dans la comboBox
+	 * Elle est utile pour l'ajout des controles car elle ajoute dans la comboBox 
+	 * uniquement les ressources et pas les SAE ou Portoflio à qui on ne peut pas ajouter de controle
+	 */
 	private void ajoutRessourcesComboControle() {
+		/* On vide la comboBox si elle contient déja des éléments */
 		comboRessourcesControle.getItems().clear();
+		/* On récupère la liste des enseignements présente dans le model */
 		List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
+		/* Parcours de la liste des enseignements */
 		for (Enseignement enseignement : listeEnseignement) {
+			/* Test si l'enseignement est une ressource */
 			if (enseignement instanceof Ressource) {
+				/* Si c'est une ressource on l'ajoute dans la comboBox avec un certain affichage */
 				comboRessourcesControle.getItems().add(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
 			}
 		}
@@ -2455,8 +2519,11 @@ public class Controlleur {
 	 * @throws ExtensionFichierException
 	 */
 	private void selectionnerFichier(Button boutonClique) {
+		/* Permet d'ouvrir un explorateur de fichier */
 		FileChooser explorateurFichier = new FileChooser();
+		/* On définit le nom de la fenetre de cet explorateur de fichier */
 		explorateurFichier.setTitle("Sélectionner un fichier");
+		/* permet d'afficher uniquement les fichier CSV pour éviter les erreurs d'importations */
 		explorateurFichier.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv"));
 		// Affiche la boîte de dialogue et attend que l'utilisateur sélectionne un fichier
 		Stage stageActuel = (Stage) rootPane.getScene().getWindow();
@@ -2464,36 +2531,57 @@ public class Controlleur {
 		// Si l'utilisateur a sélectionné un fichier, affiche son chemin
 		if (fichierChoisi != null) {
 			String nomFichier = fichierChoisi.getAbsolutePath();
+			/* Si le bouton prit en parametre est celui d'importation du Programme */
 			if (boutonClique == boutonImporterFichierProgramme) {
 				try {
-					System.out.println("J'importe semestre");
+					/* On importe le fichier dans le model pour qu'il trie les informations */
 					gn.importerParametrageSemestre(nomFichier);
+					/* Affichage d'une laerte disant que l'importation a fonctionné */
 					Alert importationReussi = new Alert(AlertType.INFORMATION);
+					/* titre de la fenetre d'alerte */
 					importationReussi.setTitle("Importation réussi");
+					/* texte présent dans la fenetre d'alerte */
 					importationReussi.setHeaderText("Importation réussi");
+					/* On attend la fermture de la fenetre */
 					importationReussi.showAndWait();
+					/* On active tous les boutons de la page si le fichier a été importé */
 					activerAutresBoutons();
 				} catch (Exception e) {
+					/* Alerte pour prévenir l'utilisateur si l'importation a échoué */
 					Alert importationErreur = new Alert(AlertType.ERROR);
+					/* Titre de la fenetre d'alerte */
 					importationErreur.setTitle("Erreur d'importation");
+					/* Le message présent dans l'alerte est celui renvoyé par l'exception */
 					importationErreur.setHeaderText(e.getMessage());
+					/* On attend la fermture de la fenetre */
 					importationErreur.showAndWait();
 				}
+			/* Si le bouton cliqué est celui d'importation des ressources */
 			} else if (boutonClique == boutonImporterFichierRessource) {
 				try {
+					/* On importe les données dans le model pour qu'il fasse le tri */
 					gn.importerParametrageEnseignement(nomFichier);
-					System.out.println("J'importe ressources");
+					/* Alerte pour prévenir l'utilisateur que l'importation a réussi */
 					Alert importationReussi = new Alert(AlertType.INFORMATION);
+					/* Titre de la page d'alerte */
 					importationReussi.setTitle("Importation réussi");
+					/* Texte présent dans la fenetre d'importation */
 					importationReussi.setHeaderText("Importation réussi");
+					/* Attente de la fermeture de la fenetre d'alerte */
 					importationReussi.showAndWait();
 				} catch (Exception e) {
+					/* Alerte pour prévenir l'utilisateur si l'importation a échoué */
 					Alert importationErreur = new Alert(AlertType.ERROR);
+					/* Titre de la fenetre d'alerte */
 					importationErreur.setTitle("Erreur d'importation");
+					/* Le message présent dans l'alerte est celui renvoyé par l'exception */
 					importationErreur.setHeaderText(e.getMessage());
+					/* On attend la fermture de la fenetre */
 					importationErreur.showAndWait();
 				}
+			/* Si le bouton cliqué est celui d'importation de partage */
 			} else if (boutonClique == boutonSelectionFichierPartager) {
+				/* On affiche dans le label le fichier qui a été selectionné */
 				cheminFichierExport.setText("Fichier : " + nomFichier);
 			}
 
@@ -2502,34 +2590,49 @@ public class Controlleur {
 
 	/** 
 	 * Réinitialise toutes les données de l'application
-	 * 
 	 */
 	private void reinitialiserDonnees() {
 		try {
+			/* Fenetre d'alerte de confirmation si l'utilisateur est sur de réinitiliaser l'application */
 			Alert donneesEffacees = new Alert(AlertType.CONFIRMATION);
+			/* titre de la page d'alerte */
 			donneesEffacees.setTitle("Réinitialisation");
+			/* Contenu de l'alerte */
 			donneesEffacees.setContentText("Etes-vous sûr(e) de vouloir réinitialiser l'application ?");
+			/* Ajout de 2 boutons pour que l'utilisateur face un choix */
 			donneesEffacees.getButtonTypes().setAll(ButtonType.YES,ButtonType.NO);
+			/* on attend la fermeture de l'alerte */
 			donneesEffacees.showAndWait();
+			/* Test pour savoir si l'utilisateur a cliqué sur oui*/
 			if (donneesEffacees.getResult() == ButtonType.YES) {
+				/* On réinitialise les données dans le model */
 				gn.reinitialiserGestionNotes();
+				/* On récupère la nouvelle instance */
 				gn = GestionNotes.getInstance();
+				/* On affiche le nom de base de l'application */
 				afficherNom();
+				/* Un message d'alerte pour prevenir l'utilisateur que la réinitialisation a fonctionné */
 				Alert reinitialisationReussi = new Alert(AlertType.INFORMATION);
+				/* titre de la nouvelle alerte */
 				reinitialisationReussi.setTitle("Données réinitialisées");
+				/* Texte présent dans l'alerte */
 				reinitialisationReussi.setHeaderText("Les données ont bien été réinitialisé");
+				/* On attend que l'alerte soit fermée */
 				reinitialisationReussi.showAndWait();
 				gn.setFichierImporte(false);
 				changerSceneParametre();
 			}
+			
 		} catch (ClassNotFoundException | UtilisateurInvalideException | IOException e) {
+			/* Message d'alerte pour prévenir que la réinitialisation a échoué */
 			Alert erreurReinitialisation = new Alert(AlertType.ERROR);
 			erreurReinitialisation.setTitle("Données non réinitialisées");
 			erreurReinitialisation.setHeaderText("Les données n'ont pas pu être réinitialisé");
 			erreurReinitialisation.showAndWait();
 		}
 	}
-
+	
+	/* Permet d'afficher un message quand l'utilisateur laisse la souris sur un bouton */
 	private void afficherMessageSurvol(Button bouton, String message) {
 		javafx.scene.control.Tooltip tooltip = new javafx.scene.control.Tooltip(message);
 		javafx.scene.control.Tooltip.install(bouton, tooltip);

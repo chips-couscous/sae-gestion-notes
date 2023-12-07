@@ -10,7 +10,11 @@ import application.model.exception.UtilisateurInvalideException;
 
 /**
  * Représentation d'un utilisateur
+ * @author thomas.izard
+ * @author tom.jammes
+ * @author tony.lapeyre
  * @author thomas.lemaire
+ * @author constant.nguyen
  * @version 1.0
  */
 public class Utilisateur implements Serializable {

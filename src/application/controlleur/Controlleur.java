@@ -67,10 +67,12 @@ import javafx.stage.Stage;
  * Classe permettant le controle de la vue et le lien entre le model et la vue
  * @author thomas.izard
  * @author constant.nguyen
+ * @author tom.jammes
  */
 public class Controlleur {
+	 /* Récupération des ID FXMl */
 	@FXML
-	BorderPane rootPane; //Récupération de l'ID de la BorderPane principale de la page
+	BorderPane rootPane;
 	@FXML
 	TextField note;
 	@FXML
@@ -97,6 +99,8 @@ public class Controlleur {
 	TextField texteNom;
 	@FXML
 	TextField textePrenom;
+	@FXML
+	TextField poidsControle;
 	@FXML
 	Button boutonImporterFichierProgramme;
 	@FXML
@@ -164,7 +168,7 @@ public class Controlleur {
 
 	//int indice = 0;
 	int indiceEnseignement = 0;
-	
+
 	/* Nombre Maximum de caracteres dans une ligne de commentaire */ 
 	private static final int LONGUEUR_MAX_LIGNE = 50;
 	private static final int LONGUEUR_MAX = 200;
@@ -173,7 +177,7 @@ public class Controlleur {
 	private static GestionNotes gn = GestionNotes.getInstance();
 
 	FXMLLoader loader = new FXMLLoader(); // FXML loader permettant de charger un fichier FXML et de changer de scene
-	
+
 	/* Messages qui apparaissent lors du survol en fonction du bouton */
 	final String MESSAGE_AIDE = "Aide";
 	final String MESSAGE_SAUVEGARDE = "Sauvegarder";
@@ -187,24 +191,24 @@ public class Controlleur {
 	 * directement au lancement de l'application
 	 */
 	public void initialize() {
-		
+
 		/* Vérification de la présence du bouton de réalisation sur la page */
 		if (boutonReinitialisation != null) {
 			/* Si le bouton est présent, on lui attribut le fait de réinitialiser les données */
 			boutonReinitialisation.setOnAction(event -> reinitialiserDonnees());
 		}
-		
+
 		/* vérification de la présence du bouton d'importation sur la page */
 		if (boutonImporterFichierProgramme != null) {
-			
+
 			/* Test permettant de savoir si un fichier Semestre a déja été importé ou non */
 			if (!fichierImporter()) {
-				
+
 				/* Si il n'est pas importé, on fait appel à une méthode qui désactive les autres boutons */
 				desactiverAutresBoutons();
 			}
 		}
-		
+
 		/* Vérification de la présence du Label qui affiche si une erreur de saisie à lieu */
 		if (erreurChamps != null) {
 			/* Permet de ne pas afficher l'erreur tant que l'utilisateur n'a rien saisi */
@@ -213,7 +217,7 @@ public class Controlleur {
 
 		/* Vérification de la présence de la grille contenant la liste des notes */
 		if (listeNotes != null) {
-			
+
 			/* Récupération de la Grille ou sont affichées toutes les ressources */
 			GridPane grilleRessources = (GridPane)((ScrollPane) ((Pane)(rootPane).getChildren().get(1)).getChildren().get(3)).getContent();
 			/* Récupération de la Grille ou sont affichées toutes les notes */
@@ -223,7 +227,7 @@ public class Controlleur {
 			/* Affichage de toutes les notes dans la grilleNote si la grille est affichée */
 			afficherNotes(grilleNotes,null);
 		}
-		
+
 		/* vérification de la présence de la ComboBox ou sont affichées les ressources */
 		if (ressourcesCombo != null) {
 			/* Ajout de toutes les ressources dans la ComboBox */
@@ -231,7 +235,7 @@ public class Controlleur {
 			/* Méthode permettant de vérifier en permanence le choix saisi dans la ComboBox */
 			choixComboRessources(ressourcesCombo);
 		}
-		
+
 		/* vérification de la présence du bouton de sauvegarde des données */
 		if (boutonSauvegarder != null) {
 			/* On affecte au bouton le fait de sauvegarder les données de l'application et du model */
@@ -274,7 +278,7 @@ public class Controlleur {
 			boutonAide.setText(""); // Désactive le texte du bouton
 			boutonAide.getStyleClass().add("boutonSauvegarderAide");
 		}
-		
+
 		/* Vérification de la présence de la ComboBox où sont affichés les controles */
 		if (comboRessourcesControle != null) {
 			/* On ajoute les controles dans la ComboBox */
@@ -284,6 +288,11 @@ public class Controlleur {
 		if (boutonAjouterNote != null) {
 			afficherMessageSurvol(boutonAjouterNote, MESSAGE_AJOUT_NOTE);
 		}
+		if (boutonSauvegarder != null && boutonAide != null) {
+			afficherMessageSurvol(boutonSauvegarder, MESSAGE_SAUVEGARDE);
+			afficherMessageSurvol(boutonAide, MESSAGE_AIDE);
+		}
+
 		/* Vérification de la présence des éléments fxml */
 		if (labelNomEtudiant != null && validerNom != null && texteNom != null && textePrenom != null) {
 			/* Le bouton pour changer le nom appelera la méthode de changement de nom au clic */
@@ -303,6 +312,10 @@ public class Controlleur {
 		/* Vérification de la présence des éléments fxml */
 		if (labelNomEtudiant != null) {
 			afficherNom(); // Affichage du nom
+		}
+		
+		if (poidsControle != null) {
+			poidsControle.setTextFormatter(pattern("^100$|^\\d{1,2}?$"));
 		}
 		// Vérification de la présence des éléments fxml
 		if (note != null && commentaire != null && denominateur != null) {
@@ -454,7 +467,7 @@ public class Controlleur {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Méthode permettant d'afficher l'aide à l'utilisateur
 	 * Elle est appelée quand le bouton d'aide est cliqué
@@ -763,41 +776,65 @@ public class Controlleur {
 	 * 		  de tri par ressource de la page Notes
 	 */
 	private void afficherEnseignements(boolean triRessources, GridPane grilleEnseignement, List<Enseignement> listeEnseignement, GridPane grilleNotes) {
+		/* Création d'un indice */
 		int indiceEnseignement = 0;
+		/* Nombre maximum de caractere sur une ligne */
 		int maxCaractere = 25;
+		/* Récupération de la scene */
 		Scene scene = grilleNotes.getScene();
-
-		//Permet de mettre une taille à une ligne quand on l'ajoute
+		
+		/* Ecart de 10 pixels entre chaque ligne de la grille */
 		grilleEnseignement.setVgap(10);
+		/* Remise à zéro du contenu de la grille */
 		grilleEnseignement.getChildren().clear();
+		/* Remise à zéro des contraintes de ligne */
 		grilleEnseignement.getRowConstraints().clear();
+		/* Création d'une contrainte de ligne
+		 * limitant la hauteur à 50 pixels
+		 */
 		RowConstraints tailleEnseignement = new RowConstraints();
 		tailleEnseignement.setPrefHeight(50);
-
+		/* Si on souhaite afficher dans la liste de tri
+		 * de la page Notes
+		 */
 		if (triRessources) {
+			/* Création d'un label pour l'option "Toutes" */
 			Label labelToutes = new Label("Toutes");
 			labelToutes.setPrefSize(175,40);
 			labelToutes.getStyleClass().add("labelCompetence");
 			labelToutes.setPadding(new Insets(0,5,0,5));
+			/* Création de la pane de l'option "Toutes" */
 			Pane ligneToutes = new Pane();
 			ligneToutes.setPrefSize(185,40);
+			/* Attribution d'un ID par defaut */
 			ligneToutes.setId("Toutes Non Cliquée");
+			/* Style de la pane */
 			ligneToutes.getStyleClass().add("paneCompetence");
 			ligneToutes.getStyleClass().add("paneCompetenceNonCliquee");
+			/* Ajout du label à la pane */
 			ligneToutes.getChildren().add(labelToutes);
+			/* Ajout de la pane à la grille */
 			grilleEnseignement.add(ligneToutes,0,0);
 			indiceEnseignement = 1;
+			/* Evenement déclenche si la ligne "Toutes" est cliquée */
 			ligneToutes.setOnMouseClicked(event -> {
+				/* Si il n'était pas séléctionné avant le clic */
 				if (ligneToutes.getId().equals("Toutes Non Cliquée")) {
+					/* Modification de l'ID de la ligne "Toutes" */
 					ligneToutes.setId("Toutes Cliquée");
+					/* Parcours des enseignements de la grille de la page Notes */
 					for (Node enseignement : grilleEnseignement.getChildren()) {
+						/* Si c'est la ligne "Toutes" */
 						if (enseignement.getId().equals("Toutes Non Cliquée") || enseignement.getId().equals("Toutes Cliquée")) {
+							/* Style de la ligne "Toutes" et de ses éléments */
 							enseignement.getStyleClass().removeAll("paneCompetenceCliquee");
 							enseignement.getStyleClass().add("paneCompetenceNonCliquee");
 							((Label) ((Pane) enseignement).getChildren().get(0)).getStyleClass().removeAll("labelCompetenceCliquee");
 							((Label) ((Pane) enseignement).getChildren().get(0)).getStyleClass().add("labelCompetenceNonCliquee");
 							enseignement.setId("Toutes Non Cliquée");
+						/* Si c'est un enseignement quelconque */	
 						} else {
+							/* Style de la pane de l'enseignement et de ses éléments */
 							enseignement.getStyleClass().removeAll("paneCompetenceCliquee");
 							enseignement.getStyleClass().add("paneCompetenceNonCliquee");
 							((Text) ((Pane) enseignement).getChildren().get(0)).getStyleClass().removeAll("labelCompetenceCliquee");
@@ -805,17 +842,24 @@ public class Controlleur {
 							enseignement.setId("Non Cliquée");
 						}
 					}
+					/* Style de la ligne "Toutes" avec clic */
 					ligneToutes.getStyleClass().removeAll("paneCompetenceNonCliquee");
 					ligneToutes.getStyleClass().add("paneCompetenceCliquee");
 					labelToutes.getStyleClass().removeAll("labelCompetenceNonCliquee");
 					labelToutes.getStyleClass().add("labelCompetenceCliquee");
 				}else {
+					/* Style de la ligne "Toutes" avec clic */
 					ligneToutes.setId("Toutes Non Cliquée");
 					ligneToutes.getStyleClass().removeAll("paneCompetenceCliquee");
 					ligneToutes.getStyleClass().add("paneCompetenceNonCliquee");
 					labelToutes.getStyleClass().removeAll("labelCompetenceCliquee");
 					labelToutes.getStyleClass().add("labelCompetenceNonCliquee");
 				}
+				/* Appel à la méthode afficherNotes :
+		         * - grilleNotes correspond à la grille contenant les notes sur la page Notes
+		         * - enseignement est fixé à null car on ne souhaite pas trié par un enseignement précis.
+		         * 	 Autrement dit, on souhaite afficher toutes les notes
+		         */
 				afficherNotes(grilleNotes, null);
 			});
 
@@ -847,18 +891,27 @@ public class Controlleur {
 				paneEnseignement.getStyleClass().add("paneCompetence");
 				paneEnseignement.getStyleClass().add("paneCompetenceNonCliquee");
 				grilleEnseignement.add(paneEnseignement, 0, indiceEnseignement);
+				/* Attribution ID par défaut */
 				paneEnseignement.setId("Non Cliqué");
+				/* Evenemement déclenché lorsque l'enseignement est cliqué */
 				paneEnseignement.setOnMouseClicked(event -> {
+					/* Si l'enseignement n'était pas sélectionné avant le clic */
 					if (paneEnseignement.getId().equals("Non Cliquée")) {
+						/* Modification de l'ID */
 						paneEnseignement.setId("Cliquée");
+						/* Parcours des enseignements de la grille de tri de la page Notes */
 						for (Node enseignements : grilleEnseignement.getChildren()) {
+							/* Si il s'agit de la ligne "Toutes" */
 							if (enseignements.getId().equals("Toutes Non Cliquée") || enseignements.getId().equals("Toutes Cliquée")) {
+								/* Modification du style de la ligne "Toutes" */
 								enseignements.getStyleClass().removeAll("paneCompetenceCliquee");
 								enseignements.getStyleClass().add("paneCompetenceNonCliquee");
 								((Label) ((Pane) enseignements).getChildren().get(0)).getStyleClass().removeAll("labelCompetenceCliquee");
 								((Label) ((Pane) enseignements).getChildren().get(0)).getStyleClass().add("labelCompetenceNonCliquee");
 								enseignements.setId("Toutes Non Cliquée");
+							/* Si il s'agit d'un enseignement quelconque */
 							} else {
+								/* Modification du style de l'enseignement actuel */
 								enseignements.getStyleClass().removeAll("paneCompetenceCliquee");
 								enseignements.getStyleClass().add("paneCompetenceNonCliquee");
 								((Text) ((Pane) enseignements).getChildren().get(0)).getStyleClass().removeAll("labelCompetenceCliquee");
@@ -866,19 +919,27 @@ public class Controlleur {
 								enseignements.setId("Non Cliquée");
 							}
 						}
+						/* Modification du style de la ligne cliquée */
 						paneEnseignement.getStyleClass().removeAll("paneCompetenceNonCliquee");
 						paneEnseignement.getStyleClass().add("paneCompetenceCliquee");
 						texte.getStyleClass().removeAll("labelCompetenceNonCliquee");
 						texte.getStyleClass().add("labelCompetenceCliquee");
 					}else {
+						/* Modification du style de la ligne cliquée */
 						paneEnseignement.setId("Non Cliquée");
 						paneEnseignement.getStyleClass().removeAll("paneCompetenceCliquee");
 						paneEnseignement.getStyleClass().add("paneCompetenceNonCliquee");
 						texte.getStyleClass().removeAll("labelCompetenceCliquee");
 						texte.getStyleClass().add("labelCompetenceNonCliquee");
 					}
+					/* Appel à la méthode afficherNotes :
+			         * - grilleNotes correspond à la grille contenant les notes sur la page Notes
+			         * - enseignement correspond à l'enseignement par lequel
+			         *   on souhaite trier
+			         */
 					afficherNotes(grilleNotes, enseignement);
 				});
+				/* Incrément de l'indice */
 				indiceEnseignement++;
 			}
 		} else {
@@ -1047,67 +1108,101 @@ public class Controlleur {
 	/**
 	 * Méthode permettant d'ajouter toutes les ressources à la ComboBox
 	 * On y retrouve des ressources, SAE ou Portoflio
+	 * Elle permet également de vérifier si un enseignements possède une note.
+	 * Si elle possède une note. Elle ne sera pas ajoutée à la comboBox pour ne pas lui remettre de note 
 	 */
 	private void ajoutRessourcesCombo() {
 		/* Supression de tous les éléments déja présents dans la comboBox */
 		ressourcesCombo.getItems().clear();
 		/* On récupère la liste des enseignements du semestre */
 		List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
+		/* Parcours de la liste d'enseignement */
 		for (Enseignement enseignement : listeEnseignement) {
+			/* On test si l'enseignements est une SAE */
 			if (gn.estUneSae(enseignement)) {
+				/* On change l'enseignement en SAE */
 				Sae sae = (Sae) enseignement;
+				/* Test si la SAE possède une note */
 				if(sae.getNoteSae() == null) {
+					/* Ajout de la SAE dans la comboBox avec un certain format si elle ne possède pas de note */
 					ressourcesCombo.getItems().add(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
 				}
+				/* Test pour vérifier si l'enseignement est un Portfolio */
 			} else if (gn.estUnPortfolio(enseignement)) {
+				/* On change l'enseignement en Portfolio */
 				Portfolio portfolio = (Portfolio) enseignement;
+				/* Test si le Portfolio possède une note */
 				if(portfolio.getNotePortfolio() == null) {
+					/* Ajout du Portfolio dans la comboBox avec un certain format si elle ne possède pas de note */
 					ressourcesCombo.getItems().add(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
 				}
 			} else {
+				/* Si c'est ni une SAE ni un Portfolio, on ajoute dans la comboBox */
 				ressourcesCombo.getItems().add(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
 			}
 		}
 	}
 
 	/**
-	 * 
-	 * @param combo
+	 * Permet d'écouter en permanence la comboBox prise en parametre
+	 * Elle permet d'afficher la comboBox des controles en fonction de la ressource sélectionnée
+	 * Si le choix est une ressource, on affiche la liste des controles
+	 * Sinon, on ne l'affiche pas
+	 * @param combo est la comboBox que l'on veut écouter en permanence
 	 */
 	private void choixComboRessources(ComboBox<String> combo) {
+		/* Listener qui permet d'écouter la comboBox en temps réel */
 		combo.valueProperty().addListener((observable, oldValue, newValue) -> {
+			/* On récupère le choix de l'utilisateur pour ne garder que les 5 premiers caracteres.
+			 * Ils permettent de n'avoir que la partie 
+			 * permettant de déterminer si c'est une SAE, ressource ou Portfolio
+			 */
 			String choix = combo.getValue().substring(0,5);
+			/* Test permettant de savoir si le choix de l'utilisateur en temps réel n'est pas une ressource */
 			if (!gn.estUneRessource(gn.trouverEnseignement(choix))) {
+				/* On enlève tous les éléments liés aux controles */
 				controleCombo.setVisible(false);
 				etoile.setVisible(false);
 				controle.setVisible(false);
 			} else {
+				/* Si c'est une ressource, on affiche les éléments liés aux controles */
 				controleCombo.setVisible(true);
 				etoile.setVisible(true);
 				controle.setVisible(true);
+				/* On rajoute les controles dans la comboBox des controles */
 				ajoutComboControle(controleCombo, choix);
 			}
 		});
 	}
 
 	/**
-	 * 
-	 * @param combo
-	 * @param ressources
+	 * Méthode permettant d'ajouter les oontroles dans ne comboBox
+	 * Elle affiche la liste des controles liés à un ressource
+	 * @param combo est la comboBox à laquelle on veut ajouter les controles
+	 * @param ressources permettant de n'afficher que la liste des controles liés à la ressource
 	 */
 	private void ajoutComboControle(ComboBox<String> combo, String ressources) {
+		/* On vide la comboBx */
 		combo.getItems().clear();
+		/* On cherche dans le modele la ressource correspondante */
 		Enseignement enseignement = gn.trouverEnseignement(ressources);
+		/* L'enseignement devient un objet ressource */
 		Ressource ressource = (Ressource) enseignement;
+		/* Liste contenant tous les controles d'une ressource */
 		List<Controle> listeControles = ressource.getControlesRessource();
+		/* Parcours de la liste des controles de la ressource */
 		for (Controle controle: listeControles) {
+			/* Test si le controle à une note ou non */
 			if (controle.getNoteControle() == null) {
+				/* Si il n'a pas de note, mise en forme de l'affichage pour la comboBox */
 				String affichageComboControle = controle.getIndentifiantControle().substring(controle.getIndentifiantControle().length() - 2);
 				affichageComboControle += " " + controle.getTypeControle() + " " + controle.getDateControle();
+				/* Ajout dans la comboBox avec l'affichage choisi */
 				combo.getItems().add(affichageComboControle);
 			}
 		}
 	}
+
 	/**
 	 * Selectionne un dossier où recevoir le fichier exporté par un autre utilisateur
 	 * Demande également à l'utilisateur le nom du fichier souhaité
@@ -1229,6 +1324,8 @@ public class Controlleur {
 			ipUtilisateur.setText("IP inconnue");
 		}
 	}
+
+
 	/**
 	 * Cette méthode permet d'afficher la liste des controles 
 	 * d'un enseignement sélectionné
@@ -1641,7 +1738,7 @@ public class Controlleur {
 			afficherNotesSelectionne(notesFiltrées,indiceGrille,grille);
 		}
 	}
-	
+
 	/**
 	 * Affiche les notes saisie par l'utilisateur 
 	 * selon l'enseignement séléctionné
@@ -1830,10 +1927,19 @@ public class Controlleur {
 			}
 		}
 	}
-	
+
+	/**
+	 * Méthode utilisée quand une éléments est un Controle
+	 * Il renvoie un tableau d'object avec l'affichage comme on le souhaite de chaque éléments
+	 * @param note représente un controle dont on veut la note
+	 * @return un tableau d'object contenant l'affichage
+	 */
 	private Object[] noteControle(Object note) {
+		/* On crée un tableau d'object */
 		Object[] tabNote = new Object[8];
+		/* Notre object en paramere devient un controle */
 		Controle controle = (Controle) note;
+		/* Ajout de l'affichage de la note avec son type, poids, commentaire dans le tableau */
 		tabNote[0] = controle.getNoteControle().getValeurNote() + " / " + controle.getNoteControle().getDenominateurNote();
 		tabNote[1] = controle.getPoidsControle() + "";
 		tabNote[2] = controle.getTypeControle();
@@ -1844,13 +1950,24 @@ public class Controlleur {
 		tabNote[5] = controle.getNoteControle().getCommentaire();
 		tabNote[6] = note;
 		tabNote[7] = note;
-
+		/* On renvoie la tableau une fois que la mise en forme finie */
 		return tabNote;
 	}
+
+	/**
+	 * Méthode utilisée quand une éléments est un Controle
+	 * Il renvoie un tableau d'object avec l'affichage comme on le souhaite de chaque éléments
+	 * @param note représente la SAE dont on veut la note
+	 * @return un tableau d'object contenant l'affichage
+	 */
 	private Object[] noteSae(Object note) {
+		/* On crée un tableau d'object */
 		Object[] tabNote = new Object[8];
+		/* Notre object en paramere devient une SAE */
 		Sae controle = (Sae) note;
+		/* On récupère la note de notre SAE */
 		Note noteControle = controle.getNoteSae();
+		/* Ajout de l'affichage de la note avec son type, poids, commentaire dans le tableau */
 		tabNote[0] = noteControle.getValeurNote() + " / " + noteControle.getDenominateurNote();
 		tabNote[1] = "100";
 		tabNote[2] = "SAE";
@@ -1859,13 +1976,25 @@ public class Controlleur {
 		tabNote[5] = noteControle.getCommentaire();
 		tabNote[6] = note;
 		tabNote[7] = note;
+		/* On renvoie la tableau une fois que la mise en forme finie */
 		return tabNote;
 
 	}
+
+	/**
+	 * Méthode utilisée quand une éléments est un Controle
+	 * Il renvoie un tableau d'object avec l'affichage comme on le souhaite de chaque éléments
+	 * @param note représente le Portoflio dont on veut la note
+	 * @return un tableau d'object contenant l'affichage
+	 */
 	private Object[] notePortfolio(Object note) {
+		/* On crée un tableau d'object */
 		Object[] tabNote = new Object[8];
+		/* Notre object en paramere devient un Portoflio */
 		Portfolio controle = (Portfolio) note;
+		/* On récupère la note de notre Portoflio */
 		Note noteControle = controle.getNotePortfolio();
+		/* Ajout de l'affichage de la note avec son type, poids, commentaire dans le tableau */
 		tabNote[0] = noteControle.getValeurNote() + " / " + noteControle.getDenominateurNote();
 		tabNote[1] = "100";
 		tabNote[2] = controle.getIntituleEnseignement();
@@ -1874,6 +2003,7 @@ public class Controlleur {
 		tabNote[5] = noteControle.getCommentaire();
 		tabNote[6] = note;
 		tabNote[7] = note;
+		/* On renvoie la tableau une fois que la mise en forme finie */
 		return tabNote;
 	}
 
@@ -1882,6 +2012,7 @@ public class Controlleur {
 	 * L'affichage se fait dans un label présent sur toutes nos pages (sauf popUp)
 	 */
 	public void afficherNom() {
+		/* Ajoute au label contenant le nom et prénom, le nouveau nom depuis le model*/
 		labelNomEtudiant.setText(gn.getUtilisateurGestionNotes());
 	}
 
@@ -1894,16 +2025,22 @@ public class Controlleur {
 	 */
 	public void modifierNom(TextField nom, TextField prenom) {
 		try {
+			/* On essaye de modifier le nom du model */
 			gn.setUtilisateurGestionNotes(nom.getText(), prenom.getText());
+			/* Création d'une alerte pour prévenir l'utilisateur que le changement a fonctionné */
 			Alert validerUtilisateur = new Alert(AlertType.INFORMATION);
 			validerUtilisateur.setTitle("Changement utilisateur");
 			validerUtilisateur.setHeaderText("L'utilisateur a bien été changé");
+			/* On affiche le nouveau nom */
 			afficherNom();
+			/* Attend la fermeture de l'alerte */
 			validerUtilisateur.showAndWait();
 		} catch (UtilisateurInvalideException e) {
+			/* Si le changement n'a pas été possible on affiche une alerte qui explique que cela n'a pas été possible */
 			Alert erreurNomPrenom = new Alert(AlertType.ERROR);
 			erreurNomPrenom.setTitle("Utilisateur invalide");
 			erreurNomPrenom.setHeaderText(e.getMessage());
+			/* On attend la fermeture de l'alerte */
 			erreurNomPrenom.showAndWait();
 		}
 	}
@@ -2134,21 +2271,25 @@ public class Controlleur {
 	}
 
 	/**
-	 * Affiche les notes saisie par l'utilisateur lorsque celui-ci se trouve sur
-	 * la page notes
-	 * @param enseignement 
-	 *
+	 *  Cette permet de faire l'affichage des moyennes
+	 * @param grille est la grille qui va afficher les moyennes
+	 * @param parRessource permet de dire si on affiche la moyenne par ressource ou non
 	 */
 	private void afficherMoyenneDefaut(GridPane grille, boolean parRessource) {
+		/* vide la grille */
 		grille.getChildren().clear();
-
+		
+		/* On crée une Pane qui contiendra les informations de la page */
 		Pane paneDefaut = new Pane();
+		/* On crée un label avec un texte qui explique ce qu'il faut faire*/
 		Label messageDefaut = new Label("Veuillez-cliquer surle bouton \"Calculer mes moyennes\"\n"
 				+" çi-dessous pour calculer et afficher vos moyennes");
+		/* Création du bouton du calcul */
 		Button boutonCalculer = new Button("Calculer mes moyennes");
-
+		/* On ajoute à la pane le label et le bouton */
 		paneDefaut.getChildren().addAll(messageDefaut,boutonCalculer);
-
+		
+		/* GEstion des positions des éléments sur la page */
 		paneDefaut.setPrefSize(724,375);
 		messageDefaut.setPrefSize(724,295);
 		boutonCalculer.setPrefSize(200,40);
@@ -2156,38 +2297,60 @@ public class Controlleur {
 		boutonCalculer.setAlignment(Pos.CENTER);
 		boutonCalculer.setTranslateX(524/2);
 		boutonCalculer.setTranslateY(335/2 + 20);
-
+		/* ajout de style depuis une classe CSS */
 		messageDefaut.getStyleClass().add("labelMoyenneNonCalculee");
 		boutonCalculer.getStyleClass().add("boutonMoyenneNonCalculee");
-
+		/* On ajoute à la grille la pane que l'on a créé */
 		grille.add(paneDefaut, 0, 0);
-
+		/* On ajoute l'évèenement déclenché au clic du bouton */
 		boutonCalculer.setOnMouseClicked(event -> {
+			/* On vide de nouveau la grille */
 			grille.getChildren().clear();
+			/* Méthode qui va afficher les moyennes */
 			afficherMoyenne(grille, parRessource);
 		});
 	}
 
+	/**
+	 * Cette méthode va appeler le model qui va calculer les moyennes par UE ou ressources
+	 * Elle fera ensuite l'affichage dans une grille avec les moyennes 
+	 * @param grille dans laquelle on va afficher les moyennes
+	 * @param parRessource permet de savoir si on affiche les moyennes des ressuorces ou UE
+	 */
 	private void afficherMoyenne(GridPane grille, boolean parRessource) {
+		/* Indice d'insertion dans la grille */
 		int indiceGrille = 0;
+		/* On vide la grille */
 		grille.getChildren().clear();
+		/* On enleve les rowConstraints */
 		grille.getRowConstraints().clear();
+		/* On crée et définit une RowConstraints */
 		RowConstraints taille = new RowConstraints();
 		taille.setPrefHeight(50);
+		/* Permet de vérifier si on veut les moyennes de ressources ou pas */
 		if (parRessource) {
+			/* Parcours de la liste des enseignements présentes dans le model */
 			for (Enseignement enseignement : gn.getSemestreGestionNotes().getEnseignementsSemestre()) {
+				/* Si la moyenne est une ressource */
 				if (gn.estUneRessource(enseignement)) {
+					
 					String identifiant = enseignement.getIdentifiantEnseignement();
 					String moyenneString = "";
 					try {
+						/* On demande au model de calculer la moyenne de l'enseignement et de lui attribuer*/
 						gn.calculerMoyenneEnseignement(identifiant);
+						/* On récupère la moyenne de l'enseignement */
 						Note noteMoyenne = gn.moyenneEnseignemnt(identifiant);
+						/* On convertit la moyenne qui était un String en double */
 						double moyenne = noteMoyenne.getValeurNote();
+						/* On fait l'affichage de la moyenne */
 						moyenneString = moyenne + moyenneString;
 					} catch (MoyenneRessourceException e) {
+						/* Si la moyenne n'est pas calculable on affiche qu'elle n'est pas calculable */
 						moyenneString = "Moyenne Incalculable";
 						//e.printStackTrace();
 					} catch (NoteInvalideException e) {
+						/* Si la moyenne n'est pas calculable on affiche qu'elle n'est pas calculable */
 						moyenneString = "Moyenne Incalculable";
 						//e.printStackTrace();
 					}
@@ -2195,7 +2358,8 @@ public class Controlleur {
 					Label labelIdentifiant = new Label(identifiant);
 					Label labelIntitule = new Label(enseignement.getIntituleEnseignement());
 					Label labelMoyenne = new Label(moyenneString);
-
+					
+					/*gestion du style des positions et de l'ajout dans la grille */
 					labelIdentifiant.getStyleClass().add("labelNote");
 					labelIntitule.getStyleClass().add("labelNote");
 					labelMoyenne.getStyleClass().add("labelNote");
@@ -2212,30 +2376,43 @@ public class Controlleur {
 					grille.add(labelIdentifiant, 0, indiceGrille);
 					grille.add(labelIntitule, 1, indiceGrille);
 					grille.add(labelMoyenne, 2, indiceGrille);
+					/* Incrément de l'ajout dans la grille */
 					indiceGrille ++;
 				}
 			}
 		} else {
+			/* parcours la liste des competence présent dans le model */
 			for (Competence competence : gn.getSemestreGestionNotes().getCompetencesSemestre()) {
+				/* parcours la liste des enseignement lié a la competence présent dans le model */
 				for(Enseignement enseignement: (competence.getListeEnseignements()).keySet()) {
 					try {
+						/* On demande au model de calculer et d'attribuer la moyenne de chaque enseignement de la competence */
 						gn.calculerMoyenneEnseignement(enseignement.getIdentifiantEnseignement());
 					} catch (MoyenneRessourceException | NoteInvalideException e) {
 					}
 				}
+				
 				String identifiant = competence.getIdentifiantCompetence();
 				String moyenneString = "";
+				/* Calcul de la moyenne des competences dans le model */
 				Note noteMoyenne = gn.moyenneCompetence(identifiant);
 				try {
+					/* On calcule et met la moyenne à la competence */
 					gn.calculerMoyenneCompetence(identifiant);
+					/* Calcul de la moyenne des competences dans le model */
 					noteMoyenne = gn.moyenneCompetence(identifiant);
+					/* On convertit la moyenne qui était un String en double */
 					double moyenne = noteMoyenne.getValeurNote();
+					/* Affichage de la moyenne */
 					moyenneString = moyenne + moyenneString;
 				} catch (MoyenneCompetenceException e) {
+					/* Si la moyenne n'est pas calculable on affiche qu'elle n'est pas calculable */
 					moyenneString = "Moyenne Incalculable";
 				} catch (MoyenneRessourceException e) {
+					/* Si la moyenne n'est pas calculable on affiche qu'elle n'est pas calculable */
 					moyenneString = "Moyenne Incalculable";
 				} catch (NoteInvalideException e) {
+					/* Si la moyenne n'est pas calculable on affiche qu'elle n'est pas calculable */
 					moyenneString = "Moyenne Incalculable";
 				}	
 				//Création des Label que l'on va afficher dans notre page
@@ -2243,6 +2420,7 @@ public class Controlleur {
 				Label labelIntitule = new Label(competence.getIntituleCompetence());
 				Label labelMoyenne = new Label(moyenneString);
 
+				/*gestion du style des positions et de l'ajout dans la grille */
 				labelIdentifiant.getStyleClass().add("labelNote");
 				labelIntitule.getStyleClass().add("labelNote");
 				labelMoyenne.getStyleClass().add("labelNote");
@@ -2259,6 +2437,7 @@ public class Controlleur {
 				grille.add(labelIdentifiant, 0, indiceGrille);
 				grille.add(labelIntitule, 1, indiceGrille);
 				grille.add(labelMoyenne, 2, indiceGrille);
+				/* Incrément de l'ajout dans la grille */
 				indiceGrille ++;
 			}
 		}
@@ -2273,12 +2452,14 @@ public class Controlleur {
 	@FXML
 	public void sceneAjouterNote() {
 		try {
-			Scene scenePrincipale = rootPane.getScene();
 			/* Récupération du fichier qu'on veut charger */
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/vue/PageAjouterNote.fxml"));
+			/* On charge la scene que l'on vient de récupérer */
 			Parent root = loader.load();
+			/* Création d'un popUp */
 			Stage popupStage = new Stage();
 			popupStage.initModality(Modality.APPLICATION_MODAL);
+			/* Nom du pop */
 			popupStage.setTitle("Ajouter Note");
 			Scene popupScene = new Scene(root);
 			popupStage.setScene(popupScene);
@@ -2289,12 +2470,19 @@ public class Controlleur {
 			ComboBox<String> ressource = (ComboBox<String>) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(2)).getChildren().get(0));
 			ComboBox<String> controle = (ComboBox<String>) (((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(5)).getChildren().get(0));
 			TextField denominateur = (TextField)(((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(1)).getChildren().get(2));
+			Label erreur = (Label)((Pane) ((GridPane) (popupScene.getRoot().getChildrenUnmodifiable()).get(0)).getChildren().get(0)).getChildren().get(1);
+			/* On appelle la méthode qui oblige un certain type de saisie à l'utilisateur */
 			affichageModifAjoutNote(note, denominateur, commentaire);
+			/* On affecte au bouton de validation le fait d'ajouter une note */
 			boutonValider.setOnAction(e -> {
 				try {
+					/* On appelle la méthode qui ajoute une note */
 					ajouterNote(note.getText(), commentaire.getText(), denominateur.getText(), ressource.getValue(), controle.getValue());
+					/* On ferme le popUp */
 					popupStage.close();
 				} catch (Exception e1) {
+					/* Si une erreur de saisie ou alors une case manquante, on affiche l'erreur */
+					erreur.setVisible(true);
 					System.err.println("Impossible d'ajouter la note, veuillez remplir tous les champs");
 				}
 			});
@@ -2304,6 +2492,7 @@ public class Controlleur {
 			e.printStackTrace();
 		}
 	}
+
 
 	/**
 	 * Cette méthode permet d'afficher un popUp sur lequel on peut modifier une note
@@ -2393,7 +2582,11 @@ public class Controlleur {
 		}
 	}
 
-
+	/**
+	 * Cette méthode permet de trouver l'intitulé complet d'un enseignement et de le renvoyer
+	 * @param ressource est l'identifiant de la ressource dont on veut l'intitule complet
+	 * @return le nom complet de la ressource
+	 */
 	private String verifierRessource(String ressource) {
 		String touteLaRessource = null;
 		List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
@@ -2575,6 +2768,7 @@ public class Controlleur {
 		}
 	}
 
+		
 	/**
 	 * Cette méthode supprime l'affichage d'un controle
 	 * sur l'application et appelle des méthodes qui vont
@@ -2710,7 +2904,16 @@ public class Controlleur {
 	}
 
 
-
+	/**
+	 * Cette méthode permet d'ajouter un controle
+	 * Si cela n'est pas possible elle affiche une alerte d'erreur
+	 * indiquant qu'il n'a pas été possible d'ajouter le controle
+	 * @param type est le nom du controle que l'on ajoute
+	 * @param poids est le poids dans la ressuorce du controle
+	 * @param date à laquelle a été fait le controle
+	 * @param ressource à laquelle on veut ajouter le controle
+	 * @throws ControleInvalideException
+	 */
 	private void ajouterControle(String type, String poids, String date, String ressource) throws ControleInvalideException {
 		int valeurPoids = Integer.parseInt(poids);
 		if(!gn.ajouterControleAEnseignement(ressource, type, date, valeurPoids)) {
@@ -2812,17 +3015,22 @@ public class Controlleur {
 		}
 	}
 
-
-
-
-
-
-
+	
+	/**
+	 * Cette méthode permet d'ajouter les ressources dans la comboBox
+	 * Elle est utile pour l'ajout des controles car elle ajoute dans la comboBox 
+	 * uniquement les ressources et pas les SAE ou Portoflio à qui on ne peut pas ajouter de controle
+	 */
 	private void ajoutRessourcesComboControle() {
+		/* On vide la comboBox si elle contient déja des éléments */
 		comboRessourcesControle.getItems().clear();
+		/* On récupère la liste des enseignements présente dans le model */
 		List<Enseignement> listeEnseignement = gn.getSemestreGestionNotes().getEnseignementsSemestre();
+		/* Parcours de la liste des enseignements */
 		for (Enseignement enseignement : listeEnseignement) {
+			/* Test si l'enseignement est une ressource */
 			if (enseignement instanceof Ressource) {
+				/* Si c'est une ressource on l'ajoute dans la comboBox avec un certain affichage */
 				comboRessourcesControle.getItems().add(enseignement.getIdentifiantEnseignement() + " " + enseignement.getIntituleEnseignement());
 			}
 		}
@@ -2949,8 +3157,11 @@ public class Controlleur {
 	 * @throws ExtensionFichierException
 	 */
 	private void selectionnerFichier(Button boutonClique) {
+		/* Permet d'ouvrir un explorateur de fichier */
 		FileChooser explorateurFichier = new FileChooser();
+		/* On définit le nom de la fenetre de cet explorateur de fichier */
 		explorateurFichier.setTitle("Sélectionner un fichier");
+		/* permet d'afficher uniquement les fichier CSV pour éviter les erreurs d'importations */
 		explorateurFichier.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv"));
 		// Affiche la boîte de dialogue et attend que l'utilisateur sélectionne un fichier
 		Stage stageActuel = (Stage) rootPane.getScene().getWindow();
@@ -2958,36 +3169,57 @@ public class Controlleur {
 		// Si l'utilisateur a sélectionné un fichier, affiche son chemin
 		if (fichierChoisi != null) {
 			String nomFichier = fichierChoisi.getAbsolutePath();
+			/* Si le bouton prit en parametre est celui d'importation du Programme */
 			if (boutonClique == boutonImporterFichierProgramme) {
 				try {
-					System.out.println("J'importe semestre");
+					/* On importe le fichier dans le model pour qu'il trie les informations */
 					gn.importerParametrageSemestre(nomFichier);
+					/* Affichage d'une laerte disant que l'importation a fonctionné */
 					Alert importationReussi = new Alert(AlertType.INFORMATION);
+					/* titre de la fenetre d'alerte */
 					importationReussi.setTitle("Importation réussi");
+					/* texte présent dans la fenetre d'alerte */
 					importationReussi.setHeaderText("Importation réussi");
+					/* On attend la fermture de la fenetre */
 					importationReussi.showAndWait();
+					/* On active tous les boutons de la page si le fichier a été importé */
 					activerAutresBoutons();
 				} catch (Exception e) {
+					/* Alerte pour prévenir l'utilisateur si l'importation a échoué */
 					Alert importationErreur = new Alert(AlertType.ERROR);
+					/* Titre de la fenetre d'alerte */
 					importationErreur.setTitle("Erreur d'importation");
+					/* Le message présent dans l'alerte est celui renvoyé par l'exception */
 					importationErreur.setHeaderText(e.getMessage());
+					/* On attend la fermture de la fenetre */
 					importationErreur.showAndWait();
 				}
+			/* Si le bouton cliqué est celui d'importation des ressources */
 			} else if (boutonClique == boutonImporterFichierRessource) {
 				try {
+					/* On importe les données dans le model pour qu'il fasse le tri */
 					gn.importerParametrageEnseignement(nomFichier);
-					System.out.println("J'importe ressources");
+					/* Alerte pour prévenir l'utilisateur que l'importation a réussi */
 					Alert importationReussi = new Alert(AlertType.INFORMATION);
+					/* Titre de la page d'alerte */
 					importationReussi.setTitle("Importation réussi");
+					/* Texte présent dans la fenetre d'importation */
 					importationReussi.setHeaderText("Importation réussi");
+					/* Attente de la fermeture de la fenetre d'alerte */
 					importationReussi.showAndWait();
 				} catch (Exception e) {
+					/* Alerte pour prévenir l'utilisateur si l'importation a échoué */
 					Alert importationErreur = new Alert(AlertType.ERROR);
+					/* Titre de la fenetre d'alerte */
 					importationErreur.setTitle("Erreur d'importation");
+					/* Le message présent dans l'alerte est celui renvoyé par l'exception */
 					importationErreur.setHeaderText(e.getMessage());
+					/* On attend la fermture de la fenetre */
 					importationErreur.showAndWait();
 				}
+			/* Si le bouton cliqué est celui d'importation de partage */
 			} else if (boutonClique == boutonSelectionFichierPartager) {
+				/* On affiche dans le label le fichier qui a été selectionné */
 				cheminFichierExport.setText("Fichier : " + nomFichier);
 			}
 
@@ -2996,34 +3228,49 @@ public class Controlleur {
 
 	/** 
 	 * Réinitialise toutes les données de l'application
-	 * 
 	 */
 	private void reinitialiserDonnees() {
 		try {
+			/* Fenetre d'alerte de confirmation si l'utilisateur est sur de réinitiliaser l'application */
 			Alert donneesEffacees = new Alert(AlertType.CONFIRMATION);
+			/* titre de la page d'alerte */
 			donneesEffacees.setTitle("Réinitialisation");
+			/* Contenu de l'alerte */
 			donneesEffacees.setContentText("Etes-vous sûr(e) de vouloir réinitialiser l'application ?");
+			/* Ajout de 2 boutons pour que l'utilisateur face un choix */
 			donneesEffacees.getButtonTypes().setAll(ButtonType.YES,ButtonType.NO);
+			/* on attend la fermeture de l'alerte */
 			donneesEffacees.showAndWait();
+			/* Test pour savoir si l'utilisateur a cliqué sur oui*/
 			if (donneesEffacees.getResult() == ButtonType.YES) {
+				/* On réinitialise les données dans le model */
 				gn.reinitialiserGestionNotes();
+				/* On récupère la nouvelle instance */
 				gn = GestionNotes.getInstance();
+				/* On affiche le nom de base de l'application */
 				afficherNom();
+				/* Un message d'alerte pour prevenir l'utilisateur que la réinitialisation a fonctionné */
 				Alert reinitialisationReussi = new Alert(AlertType.INFORMATION);
+				/* titre de la nouvelle alerte */
 				reinitialisationReussi.setTitle("Données réinitialisées");
+				/* Texte présent dans l'alerte */
 				reinitialisationReussi.setHeaderText("Les données ont bien été réinitialisé");
+				/* On attend que l'alerte soit fermée */
 				reinitialisationReussi.showAndWait();
 				gn.setFichierImporte(false);
 				changerSceneParametre();
 			}
+			
 		} catch (ClassNotFoundException | UtilisateurInvalideException | IOException e) {
+			/* Message d'alerte pour prévenir que la réinitialisation a échoué */
 			Alert erreurReinitialisation = new Alert(AlertType.ERROR);
 			erreurReinitialisation.setTitle("Données non réinitialisées");
 			erreurReinitialisation.setHeaderText("Les données n'ont pas pu être réinitialisé");
 			erreurReinitialisation.showAndWait();
 		}
 	}
-
+	
+	/* Permet d'afficher un message quand l'utilisateur laisse la souris sur un bouton */
 	private void afficherMessageSurvol(Button bouton, String message) {
 		javafx.scene.control.Tooltip tooltip = new javafx.scene.control.Tooltip(message);
 		javafx.scene.control.Tooltip.install(bouton, tooltip);

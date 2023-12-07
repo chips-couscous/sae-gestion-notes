@@ -15,9 +15,11 @@ import java.util.List;
 
 /** 
  * Représentation d'une Ressource en tant qu'Enseignement
+ * @author thomas.izard
  * @author tom.jammes
  * @author tony.lapeyre
  * @author thomas.lemaire
+ * @author constant.nguyen
  * @version 2.0
  */
 public class Ressource extends Enseignement implements Serializable {

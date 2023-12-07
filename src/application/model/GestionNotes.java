@@ -30,9 +30,11 @@ import application.model.exception.cheminFichierException;
 
 /**
  * Représentation du model de l'application gestion de notes
+ * @author thomas.izard
  * @author tom.jammes
  * @author tony.lapeyre
  * @author thomas.lemaire
+ * @author constant.nguyen
  * @version 2.0
  */
 public class GestionNotes {

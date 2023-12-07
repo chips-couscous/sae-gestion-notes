@@ -69,8 +69,9 @@ import javafx.stage.Stage;
  * @author constant.nguyen
  */
 public class Controlleur {
+	 /* Récupération des ID FXMl */
 	@FXML
-	BorderPane rootPane; //Récupération de l'ID de la BorderPane principale de la page
+	BorderPane rootPane;
 	@FXML
 	TextField note;
 	@FXML
@@ -97,6 +98,8 @@ public class Controlleur {
 	TextField texteNom;
 	@FXML
 	TextField textePrenom;
+	@FXML
+	TextField poidsControle;
 	@FXML
 	Button boutonImporterFichierProgramme;
 	@FXML
@@ -308,6 +311,10 @@ public class Controlleur {
 		/* Vérification de la présence des éléments fxml */
 		if (labelNomEtudiant != null) {
 			afficherNom(); // Affichage du nom
+		}
+		
+		if (poidsControle != null) {
+			poidsControle.setTextFormatter(pattern("^100$|^\\d{1,2}?$"));
 		}
 		// Vérification de la présence des éléments fxml
 		if (note != null && commentaire != null && denominateur != null) {
@@ -2386,8 +2393,6 @@ public class Controlleur {
 					String nouveauType = recupType.getText();
 					String nouveauPoids = recupPoids.getText();
 					String nouvelleDate = recupDate.getText();
-					//modifierNote(gridPane, boutonModifier, nouvelleNote, nouveauCommentaire, nouveauDenominateur, noteAModifier, gridPane);
-					// Fermeture du popUp
 					if ((((Ressource)enseignement).getSommePoidsControle() - Integer.parseInt(poidsControleString)) + Integer.parseInt(nouveauPoids)<= 100) {
 						supprimerControle(gridPane, boutonValider, false, enseignement, controle);
 						try {

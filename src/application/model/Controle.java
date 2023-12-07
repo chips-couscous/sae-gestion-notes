@@ -105,7 +105,7 @@ public class Controle implements Serializable {
 	}
 
 	/**
-	 * Méthode de test
+	 * Méthode qui renvoie les informations d'un controle sous forme de String
 	 */
 	public String toString() {
 		return getIndentifiantControle() + " " + getTypeControle() + " " + getDateControle() + " " + getPoidsControle() + "\n";

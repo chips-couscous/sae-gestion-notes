@@ -51,7 +51,7 @@ public class GestionNotes {
      * @throws ClassNotFoundException si les objets à charger sont inconnu
      */
     public GestionNotes() throws ClassNotFoundException, IOException {
-        fichierSerialize = new File("tmp/gestion-notes.ser");
+        fichierSerialize = new File("sauvegarde/gestion-notes.ser");
 
         /* Récupération des données enregistré si il y a eu une sauvegarde */
         if (fichierSerialize.exists()) {

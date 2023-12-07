@@ -13,7 +13,9 @@ import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import application.model.Controle;
 import application.model.GestionNotes;
+import application.model.Sae;
 import application.model.exception.CompetenceInvalideException;
 import application.model.exception.ControleInvalideException;
 import application.model.exception.EnseignementInvalideException;
@@ -121,10 +123,19 @@ class TestGestionNotes {
             
             /* Test pour l'ajout d'une note a un contrôle*/
             assertDoesNotThrow(()->gn.ajouterNoteAControle("R2.01.00", 11, 20, ""));
-            assertThrows(NoteInvalideException.class,()->gn.ajouterNoteAControle("R2.0101", 11, 6, "Note incorrect"));
+            assertThrows(NoteInvalideException.class,()->gn.ajouterNoteAControle("R2.0101", 11, 6, "Note incorrecte"));
             assertThrows(NoteInvalideException.class,()->gn.ajouterNoteAControle("R2.0777", 11, 6, "identifiant incorrect"));
             /* Vérification de l'ajout la note */
             gn.ajouterNoteAControle("R2.01.00", 11, 20, "Test");
+            assertEquals(11,((Controle)gn.getNotes().get(0)).getNoteControle().getValeurNote());
+            
+            /* Test de l'ajout d'une note à une SAE */
+            assertDoesNotThrow(()->gn.ajouterNoteASaePortfolio(gn.trouverEnseignement("S2.02"), 15, 30, ""));
+            assertThrows(NoteInvalideException.class,()->gn.ajouterNoteASaePortfolio(gn.trouverEnseignement("S2.02"), 36, 30, "NoteIncorrecte"));
+            assertThrows(NoteInvalideException.class,()->gn.ajouterNoteASaePortfolio(gn.trouverEnseignement("S2.00"), 10, 30, "IdentifiantIncorect"));
+            /* Verification de l'ajout de la note */
+            gn.ajouterNoteASaePortfolio(gn.trouverEnseignement("S2.02"), 15, 30, "");
+            assertEquals(15,((Sae)gn.getNotes().get(1)).getNoteSae().getValeurNote());
         } catch (ExtensionFichierException | SemestreInvalideExecption | CompetenceInvalideException
                 | EnseignementInvalideException | ParametresSemestreException e) {
             fail("Impossible d'importer les paramètres du semestre");

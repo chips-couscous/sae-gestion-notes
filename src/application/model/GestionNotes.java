@@ -17,6 +17,7 @@ import application.model.exception.CompetenceInvalideException;
 import application.model.exception.ControleInvalideException;
 import application.model.exception.EnseignementInvalideException;
 import application.model.exception.ExtensionFichierException;
+import application.model.exception.ImportationException;
 import application.model.exception.IpException;
 import application.model.exception.MoyenneCompetenceException;
 import application.model.exception.MoyenneRessourceException;
@@ -45,6 +46,8 @@ public class GestionNotes {
 
 	/* Fichier contenant la sauvegarde des paramètres et des notes */
 	private File fichierSerialize;
+	
+	private boolean fichierImporte;
 
 	/** Constructeur de la gestion des notes 
 	 * @throws IOException si le fichier a chargé n'existe pas
@@ -98,6 +101,19 @@ public class GestionNotes {
 		}
 
 		return competenceATrouver;
+	}
+	
+	/**
+	 * Supprime un contrôle à une ressource
+	 * @param identifiant de l'enseignement
+	 * @param controle à supprimer
+	 * @return true si le contrôle a bien été ajouté
+	 * @throws ControleInvalideException
+	 */
+	public boolean supprimerControleAEnseignement(String identifiant, Controle controleASupprimer) throws ControleInvalideException {
+		Ressource enseignement = (Ressource) trouverEnseignement(identifiant);      
+		enseignement.supprimerControle(controleASupprimer);
+		return true;
 	}
 
 
@@ -157,7 +173,7 @@ public class GestionNotes {
 
 	/**
 	 * Moyenne d'une compétence souhaitée
-	 * @param identifiant de la c ompétence dont on veut connaître la moyenne
+	 * @param identifiant de la compétence dont on veut connaître la moyenne
 	 * @return la note qui correspond à la moyenne de la compétence renseignée
 	 */
 	public Note moyenneCompetence(String identifiant) {
@@ -211,19 +227,6 @@ public class GestionNotes {
 		} catch (ControleInvalideException e) {
 			return false;
 		}
-	}
-	
-	/**
-	 * Supprime un contrôle à une ressource
-	 * @param identifiant de l'enseignement
-	 * @param controle à supprimer
-	 * @return true si le contrôle a bien été ajouté
-	 * @throws ControleInvalideException
-	 */
-	public boolean supprimerControleAEnseignement(String identifiant, Controle controleASupprimer) throws ControleInvalideException {
-		Ressource enseignement = (Ressource) trouverEnseignement(identifiant);      
-		enseignement.supprimerControle(controleASupprimer);
-		return true;
 	}
 
 	/**
@@ -312,7 +315,6 @@ public class GestionNotes {
 		}
 	}
 
-
 	/**
 	 * Import d'un fichier csv contenant le parametrage d'un semestre
 	 * @param chemin du fichier à importer
@@ -349,6 +351,15 @@ public class GestionNotes {
 				competence.ajouterEnseignement(trouverEnseignement(identifiantEnseignement), poidsEnseignement);
 			}
 		}
+		fichierImporte = true;
+	}
+	
+	public boolean getFichierImporte() {
+		return fichierImporte;
+	}
+	
+	public void setFichierImporte(boolean fichier) {
+		fichierImporte = fichier;
 	}
 
 	/**
@@ -357,9 +368,12 @@ public class GestionNotes {
 	 * @throws ExtensionFichierException
 	 * @throws ControleInvalideException
 	 * @throws EnseignementInvalideException si le fichier ne contient pas de paramètres de ressources
+	 * @throws ImportationException 
 	 */
-	public void importerParametrageEnseignement(String chemin) throws ExtensionFichierException, ControleInvalideException, EnseignementInvalideException {
-
+	public void importerParametrageEnseignement(String chemin) throws ExtensionFichierException, ControleInvalideException, EnseignementInvalideException, ImportationException {
+		if (!fichierImporte) {
+			throw new ImportationException("Le fichier du semestre n'a pas été importé");
+		}
 		FichierRessource fichier = new FichierRessource(chemin);
 
 		fichier.setDelimiteurFichier(";");
@@ -466,6 +480,7 @@ public class GestionNotes {
 			// sérialization des objets
 			oos.writeObject(semestreGestionNotes);
 			oos.writeObject(utilisateurGestionNotes);
+			oos.writeObject(fichierImporte);
 		}
 	}
 
@@ -481,6 +496,7 @@ public class GestionNotes {
 			// désérialization de l'objet
 			semestreGestionNotes = (Semestre) ois.readObject();
 			utilisateurGestionNotes = (Utilisateur) ois.readObject();
+			fichierImporte = (boolean) ois.readObject();
 
 		}
 	}
@@ -654,3 +670,8 @@ public class GestionNotes {
 	//        System.out.println(gn.moyenneEnseignemnt("R2.01").getValeurNote());
 	//    }
 }
+
+	
+	
+
+	

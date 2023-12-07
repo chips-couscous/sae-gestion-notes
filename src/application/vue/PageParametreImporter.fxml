@@ -20,7 +20,7 @@
 	fx:controller="application.controlleur.Controlleur">
 	<top>
 		<GridPane style="-fx-background-color: #e6e9f0;"
-			BorderPane.alignment="CENTER">
+			BorderPane.alignment="CENTER" fx:id="grilleBoutons">
 			<columnConstraints>
 				<ColumnConstraints hgrow="SOMETIMES"
 					minWidth="10.0" prefWidth="100.0" />

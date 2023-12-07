@@ -74,7 +74,7 @@ public class Ressource extends Enseignement implements Serializable {
 		}
 		throw new ControleInvalideException();
 	}
-	
+
 	/** 
 	 * Supprime un contrôle de l'enseignement
 	 * @param controle à supprimer à la ressource 
@@ -85,9 +85,9 @@ public class Ressource extends Enseignement implements Serializable {
 		controlesRessource.remove(controle);
 		numeroControle--;
 		poidsTotalDesControles -= controle.getPoidsControle();
-			
+
 		return true;
-	}
+	} 	
 
 	/**
 	 * Calcul la moyenne d'une ressource si celle ci peut être calculer
@@ -155,7 +155,6 @@ public class Ressource extends Enseignement implements Serializable {
 	 * @return true si le contrôle peut être ajouté à la liste des contrôles, false sinon
 	 */
 	private boolean verifierPoidsTotauxDansRessource(Controle controleAVerifier) {
-		System.out.println("poids verif : " + poidsTotalDesControles);
 		poidsTotalDesControles += controleAVerifier.getPoidsControle();
 
 		if(poidsTotalDesControles > 0 && poidsTotalDesControles <= 100) {

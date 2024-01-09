@@ -38,7 +38,7 @@
 			<children>
 				<Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="2">
 					<children>
-						<Label alignment="CENTER" contentDisplay="CENTER" layoutX="141.0" layoutY="28.0" prefHeight="37.0" prefWidth="189.0" text="Ajouter un controle" textFill="#354b85">
+						<Label alignment="CENTER" contentDisplay="CENTER" layoutX="141.0" layoutY="28.0" prefHeight="37.0" prefWidth="189.0" text="Modifier un controle" textFill="#354b85">
 							<font>
 								<Font name="System Bold" size="18.0" />
 							</font>

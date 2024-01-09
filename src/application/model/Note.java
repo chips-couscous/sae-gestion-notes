@@ -10,9 +10,11 @@ import application.model.exception.NoteInvalideException;
 
 /** 
  * Représentation d'une note obtenue à un contrôle, au portfolio ou lors d'une saé.
+ * @author thomas.izard
  * @author tom.jammes
  * @author tony.lapeyre
  * @author thomas.lemaire
+ * @author constant.nguyen
  * @version 2.0
  */
 public class Note implements Serializable {

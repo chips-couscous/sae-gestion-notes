@@ -15,9 +15,11 @@ import application.model.exception.NoteInvalideException;
 
 /** 
  * Représentation d'une Compétence d'un Semestre
+ * @author thomas.izard
  * @author tom.jammes
  * @author tony.lapeyre
  * @author thomas.lemaire
+ * @author constant.nguyen
  * @version 2.0
  */
 public class Competence implements Serializable {

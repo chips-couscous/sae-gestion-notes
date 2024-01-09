@@ -2,6 +2,10 @@
 
 <!-- grid.fxml -->
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
@@ -12,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1030.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17.0.9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controlleur.Controlleur">
+<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1030.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controlleur.Controlleur">
 	<top>
 		<GridPane BorderPane.alignment="CENTER">
 			<columnConstraints>
@@ -99,7 +103,7 @@
 				<TextField fx:id="saisieIpServeur" layoutX="240.0" layoutY="157.0" />
 				<Label layoutX="133.0" layoutY="161.0" text="IP du receveur : " />
 				<Label layoutX="664.0" layoutY="161.0" text="Mon IP :" />
-				<Label fx:id="ipUtilisateur" layoutX="762.0" layoutY="153.0" prefHeight="33.0" prefWidth="119.0" text="0.0.0.0" textAlignment="CENTER">
+				<Label fx:id="ipUtilisateur" layoutX="762.0" layoutY="153.0" prefHeight="33.0" prefWidth="119.0" text="IP introuvable" textAlignment="CENTER">
 					<font>
 						<Font size="16.0" />
 					</font>

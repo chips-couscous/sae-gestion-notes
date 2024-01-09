@@ -20,6 +20,7 @@ import application.model.exception.CompetenceInvalideException;
 import application.model.exception.ControleInvalideException;
 import application.model.exception.EnseignementInvalideException;
 import application.model.exception.ExtensionFichierException;
+import application.model.exception.ImportationException;
 import application.model.exception.NoteInvalideException;
 import application.model.exception.ParametresSemestreException;
 import application.model.exception.SemestreInvalideExecption;
@@ -143,6 +144,9 @@ class TestGestionNotes {
             fail("Impossible d'importer les paramètres de la ressource");
         } catch (NoteInvalideException e) {
             fail("Impossible d'ajouter la note");
+        } catch (ImportationException e) {
+            fail("Impossible d'ajouter les ressources, les paramètres du semestre"
+                    + " n'ont pas été ajouté");
         }
     }
 }

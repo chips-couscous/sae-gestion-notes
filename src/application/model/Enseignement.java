@@ -12,9 +12,11 @@ import application.model.exception.NoteInvalideException;
 
 /** 
  * Représentation d'un enseignement, Ressource, Portfolio ou Sae pour des Compétences
+ * @author thomas.izard
  * @author tom.jammes
  * @author tony.lapeyre
  * @author thomas.lemaire
+ * @author constant.nguyen
  * @version 2.0
  */
 public abstract class Enseignement implements Serializable {

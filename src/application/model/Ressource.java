@@ -15,9 +15,11 @@ import java.util.List;
 
 /** 
  * Représentation d'une Ressource en tant qu'Enseignement
+ * @author thomas.izard
  * @author tom.jammes
  * @author tony.lapeyre
  * @author thomas.lemaire
+ * @author constant.nguyen
  * @version 2.0
  */
 public class Ressource extends Enseignement implements Serializable {
@@ -74,6 +76,20 @@ public class Ressource extends Enseignement implements Serializable {
 		}
 		throw new ControleInvalideException();
 	}
+
+	/** 
+	 * Supprime un contrôle de l'enseignement
+	 * @param controle à supprimer à la ressource 
+	 * @return true si le controle a pu être supprimé, false sinon
+	 * @throws ControleInvalideException 
+	 */
+	public boolean supprimerControle(Controle controle) throws ControleInvalideException {
+		controlesRessource.remove(controle);
+		numeroControle--;
+		poidsTotalDesControles -= controle.getPoidsControle();
+
+		return true;
+	} 	
 
 	/**
 	 * Calcul la moyenne d'une ressource si celle ci peut être calculer
@@ -161,5 +177,10 @@ public class Ressource extends Enseignement implements Serializable {
 			resultat += controle.toString();
 		}
 		return resultat;       
+	}
+
+	/** @return le poids total des contrôle de la ressource */
+	public int getSommePoidsControle() {
+		return poidsTotalDesControles;
 	}
 }

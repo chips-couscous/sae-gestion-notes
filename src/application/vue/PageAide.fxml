@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- grid.fxml -->
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="945.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controlleur.Controlleur">
+	<center>
+		<Pane prefHeight="720.0" prefWidth="878.0" BorderPane.alignment="CENTER">
+         <children>
+      				<Button fx:id="boutonOk" layoutX="387.0" layoutY="649.0" mnemonicParsing="false" prefHeight="43.0" prefWidth="185.0" style="-fx-background-color: #354B85;" text="OK" textFill="WHITE" />
+            <Pane prefHeight="48.0" prefWidth="945.0" style="-fx-background-color: #354B85;">
+               <children>
+                  <Label alignment="CENTER" layoutX="271.0" layoutY="-10.0" prefHeight="69.0" prefWidth="403.0" text="Aide" textFill="WHITE">
+                     <font>
+                        <Font size="27.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Label alignment="CENTER" layoutY="48.0" prefHeight="41.0" prefWidth="945.0" text="Aide rapide, pour plus d'aide veuillez vous référer au manuel utilisateur fourni avec l'application" />
+            <Label layoutX="91.0" layoutY="137.0" text="Format du fichier contenant les paramètres du semestre :">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="438.0" layoutY="102.0" text="BUT Informatique - Modalité Contrôle de connaissances (programme national);;;" />
+            <Label layoutX="438.0" layoutY="119.0" text="Semestre;numéro du semestre;;" />
+            <Label layoutX="397.0" layoutY="334.0" text="Parcours;parcours étudié;" />
+            <Label layoutX="438.0" layoutY="153.0" text=";;;" />
+            <Label layoutX="438.0" layoutY="170.0" text="Compétence;identifiant de la compétence (ex: U2.1);Nom de la compétence;" />
+            <Label layoutX="439.0" layoutY="187.0" text="Type évaluation;Identifiant;Libellé;Poids" />
+            <Label layoutX="439.0" layoutY="204.0" text="Ressource;identifiant de la ressource (ex: R2.02);Nom de la ressource;poid de la ressource" />
+            <Label layoutX="439.0" layoutY="221.0" text="éventuellement d’autres ressources">
+               <font>
+                  <Font name="System Italic" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="439.0" layoutY="238.0" text="Portfolio;identifiant du portfolio (ex: P2.01);Nom du portfolio;poid du portfolio" />
+            <Label layoutX="439.0" layoutY="255.0" text="SAE;identifiant de la SAE(ex: S2.02);Nom de la SAE;poid de la SAE" />
+            <Label layoutX="439.0" layoutY="272.0" text=";;;" />
+            <Label layoutX="37.0" layoutY="317.0" text="Format du fichier contenant les paramètres des ressources :">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="396.0" layoutY="300.0" text="BUT Informatique -  Modalité Contrôle de connaissances ressources semestre numéro du semestre;;" />
+            <Label layoutX="396.0" layoutY="317.0" text="Semestre;numéro du semestre;" />
+            <Label layoutX="439.0" layoutY="137.0" text="Parcours;parcours étudié;;" />
+            <Label layoutX="396.0" layoutY="351.0" text=";;" />
+            <Label layoutX="397.0" layoutY="368.0" text="Ressource;identifiant de la ressource (ex: R2.02);Nom de la ressource" />
+            <Label layoutX="394.0" layoutY="385.0" text="Type évaluation;Date;Poids" />
+            <Label layoutX="397.0" layoutY="402.0" text="Type de l’évalution (ex QCM);date du contrôle;poid du contrôle" />
+            <Label layoutX="397.0" layoutY="419.0" text="éventuellement d’autres contrôles">
+               <font>
+                  <Font name="System Italic" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="397.0" layoutY="436.0" text=";;" />
+            <Label layoutX="397.0" layoutY="453.0" text="éventuellement d’autres ressources">
+               <font>
+                  <Font name="System Italic" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="149.0" layoutY="522.0" text="Exportation des paramètres :">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Text layoutX="326.0" layoutY="511.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pour exporter vos paramètres vous devez indiquer l'adresse IP de la machine qui doit reçevoir vos paramètres. Vous devez également générer le fichier contenant tous vos paramètres de ressources actuel en cliquant sur le bouton (c’est ce fichier qui sera envoyé). Avant de cliquer sur envoyer, assurez-vous que l’autre utilisateur attend bien une connexion." textAlignment="JUSTIFY" wrappingWidth="555.13671875" />
+            <Text layoutX="325.0" layoutY="584.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pour recevoir un fichier vous devez au préalable définir le dossier où sera reçu le fichier exporté. Ensuite cliquez sur le bouton pour vous mettre en attente d’une connexion. Durant cette attente de 10 secondes, l’application sera inutilisable." wrappingWidth="556.853515625" />
+            <Separator layoutX="3.0" layoutY="483.0" prefHeight="6.0" prefWidth="937.0" />
+            <Separator layoutX="2.0" layoutY="289.0" prefHeight="11.0" prefWidth="938.0" />
+         </children>
+		</Pane>
+	</center>
+</BorderPane>

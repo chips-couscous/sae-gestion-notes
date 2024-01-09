@@ -18,6 +18,7 @@ import application.model.exception.CompetenceInvalideException;
 import application.model.exception.ControleInvalideException;
 import application.model.exception.EnseignementInvalideException;
 import application.model.exception.ExtensionFichierException;
+import application.model.exception.ImportationException;
 import application.model.exception.IpException;
 import application.model.exception.MoyenneCompetenceException;
 import application.model.exception.MoyenneRessourceException;
@@ -29,9 +30,11 @@ import application.model.exception.cheminFichierException;
 
 /**
  * Représentation du model de l'application gestion de notes
+ * @author thomas.izard
  * @author tom.jammes
  * @author tony.lapeyre
  * @author thomas.lemaire
+ * @author constant.nguyen
  * @version 2.0
  */
 public class GestionNotes {
@@ -46,12 +49,14 @@ public class GestionNotes {
     /* Fichier contenant la sauvegarde des paramètres et des notes */
     private File fichierSerialize;
 
+    private boolean fichierImporte;
+
     /** Constructeur de la gestion des notes 
      * @throws IOException si le fichier a chargé n'existe pas
      * @throws ClassNotFoundException si les objets à charger sont inconnu
      */
     public GestionNotes() throws ClassNotFoundException, IOException {
-        fichierSerialize = new File("sauvegarde/gestion-notes.ser");
+        fichierSerialize = new File(".\\sauvegarde\\gestion-notes.ser");
 
         /* Récupération des données enregistré si il y a eu une sauvegarde */
         if (fichierSerialize.exists()) {
@@ -98,6 +103,19 @@ public class GestionNotes {
         }
 
         return competenceATrouver;
+    }
+
+    /**
+     * Supprime un contrôle à une ressource
+     * @param identifiant identifiant de l'enseignement
+     * @param controleASupprimer controle à supprimer
+     * @return true si le contrôle a bien été ajouté
+     * @throws ControleInvalideException
+     */
+    public boolean supprimerControleAEnseignement(String identifiant, Controle controleASupprimer) throws ControleInvalideException {
+        Ressource enseignement = (Ressource) trouverEnseignement(identifiant);      
+        enseignement.supprimerControle(controleASupprimer);
+        return true;
     }
 
 
@@ -199,12 +217,18 @@ public class GestionNotes {
      * @param type du contrôle renseigné (exemple : oral, écrit ...)
      * @param date du contrôle renseigné (exemple : 12/10/2023, milieu octobre ...)
      * @param poids du contrôle renseigné (exemple : 12, 35 ...)
+     * @return true si le contrôle a bien été ajouté
      * @throws ControleInvalideException
      */
-    public void ajouterControleAEnseignement(String identifiant, String type, String date, int poids) throws ControleInvalideException {
+    public boolean ajouterControleAEnseignement(String identifiant, String type, String date, int poids) throws ControleInvalideException {
         Ressource enseignement = (Ressource) trouverEnseignement(identifiant);
-        Controle controleAAjouter = new Controle(type, date, poids);       
-        enseignement.ajouterControle(controleAAjouter);
+        try {
+            Controle controleAAjouter = new Controle(type, date, poids);       
+            enseignement.ajouterControle(controleAAjouter);
+            return true;
+        } catch (ControleInvalideException e) {
+            return false;
+        }
     }
 
     /**
@@ -260,10 +284,10 @@ public class GestionNotes {
 
     /**
      * Modifie la note d'un contrôle, d'une SAE ou d'un Portfolio
-     * @param noteAModifier 
-     * @param note 
-     * @param denominateur 
-     * @param commentaire 
+     * @param noteAModifier controle,sae, ou portfolio dont on veut modifier la note
+     * @param note nouvelle note
+     * @param denominateur nouveau dénominateur
+     * @param commentaire nouveau commentaire
      */
     public void modifierNote(Object noteAModifier, Double note, int denominateur, String commentaire) {
         if (noteAModifier instanceof Sae) {
@@ -332,6 +356,17 @@ public class GestionNotes {
                 competence.ajouterEnseignement(trouverEnseignement(identifiantEnseignement), poidsEnseignement);
             }
         }
+        fichierImporte = true;
+    }
+
+    /** @return true si le fichier a été importé */
+    public boolean getFichierImporte() {
+        return fichierImporte;
+    }
+
+    /** @param fichier boolean indiquant si le fichier a été importé  */
+    public void setFichierImporte(boolean fichier) {
+        fichierImporte = fichier;
     }
 
     /**
@@ -340,9 +375,12 @@ public class GestionNotes {
      * @throws ExtensionFichierException
      * @throws ControleInvalideException
      * @throws EnseignementInvalideException si le fichier ne contient pas de paramètres de ressources
+     * @throws ImportationException 
      */
-    public void importerParametrageEnseignement(String chemin) throws ExtensionFichierException, EnseignementInvalideException, ControleInvalideException {
-
+    public void importerParametrageEnseignement(String chemin) throws ExtensionFichierException, ControleInvalideException, EnseignementInvalideException, ImportationException {
+        if (!fichierImporte) {
+            throw new ImportationException("Le fichier du semestre n'a pas été importé");
+        }
         FichierRessource fichier = new FichierRessource(chemin);
 
         fichier.setDelimiteurFichier(";");
@@ -431,8 +469,7 @@ public class GestionNotes {
      * @throws IOException 
      * @throws ClassNotFoundException 
      */
-    public void reinitialiserGestionNotes() throws UtilisateurInvalideException, 
-                                                   ClassNotFoundException, IOException {
+    public void reinitialiserGestionNotes() throws UtilisateurInvalideException, ClassNotFoundException, IOException {
         fichierSerialize.delete();
         instance = null;
     }
@@ -448,6 +485,7 @@ public class GestionNotes {
             // sérialization des objets
             oos.writeObject(semestreGestionNotes);
             oos.writeObject(utilisateurGestionNotes);
+            oos.writeObject(fichierImporte);
         }
     }
 
@@ -463,6 +501,7 @@ public class GestionNotes {
             // désérialization de l'objet
             semestreGestionNotes = (Semestre) ois.readObject();
             utilisateurGestionNotes = (Utilisateur) ois.readObject();
+            fichierImporte = (boolean) ois.readObject();
 
         }
     }
@@ -521,6 +560,48 @@ public class GestionNotes {
         Reseau.envoyer(ipServeur, cheminFichier);
     }
 
+    /** Génère un fichier au format csv contenant tous les paramètres actuels 
+     * de l'application
+     * @param chemin chemin où sera générer le fichier
+     * @throws IOException si le chemin est incorrect
+     */
+    public void genererFichierExport(String chemin) throws IOException {
+        File fichierExport = new File(chemin);
+        fichierExport.createNewFile(); // Créer le fichier si il n'existe pas
+        PrintWriter sortieFichier = new PrintWriter(fichierExport);
+
+        /*Ecriture de l'entête du fichier */
+        sortieFichier.printf("BUT Informatique - Modalité Contrôle de connaissances ressources semestre %d;;\n"
+                ,semestreGestionNotes.getNumeroSemestre());
+        sortieFichier.printf("Semestre;%d;\n"
+                ,semestreGestionNotes.getNumeroSemestre());
+        String parcourSemestre = semestreGestionNotes.getParcoursSemestre()+"";
+        if (parcourSemestre.equals("T")) {
+            parcourSemestre = "Tous";
+        }
+        sortieFichier.printf("Parcours;%s;\n"
+                ,parcourSemestre);
+        sortieFichier.println(";;");
+
+        /* Ecrit toutes les ressources et les controles présents dans les ressources */
+        for (Enseignement enseignement : semestreGestionNotes.getEnseignementsSemestre()) {
+            if (enseignement instanceof Ressource) {
+                /* Ecriture de l'entête de la ressource */
+                sortieFichier.printf("Ressource;%s;%s\n"
+                        ,enseignement.getIdentifiantEnseignement()
+                        , enseignement.getIntituleEnseignement());
+                sortieFichier.println("Type évaluation;Date;Poids");
+                /* Ecriture des différents contrôles */
+                for (Controle controle : ((Ressource)enseignement).getControlesRessource()) {
+                    sortieFichier.printf("%s;%s;%s\n",controle.getTypeControle(),
+                            controle.getDateControle(),controle.getPoidsControle());
+                }
+                sortieFichier.println(";;");
+            }
+        }
+        sortieFichier.close();
+    }   
+
     /** 
      * @return la liste des contrôles, ou SAE, ou Portfolio ayant une note
      */
@@ -566,46 +647,8 @@ public class GestionNotes {
             throw new NoteInvalideException("La note est invalide");
         }
     }
-
-    /** Génère un fichier au format csv contenant tous les paramètres actuels 
-     * de l'application
-     * @param chemin chemin où sera générer le fichier
-     * @throws IOException si le chemin est incorrect
-     */
-    public void genererFichierExport(String chemin) throws IOException {
-        File fichierExport = new File(chemin);
-        fichierExport.createNewFile(); // Créer le fichier si il n'existe pas
-        PrintWriter sortieFichier = new PrintWriter(fichierExport);
-
-        /*Ecriture de l'entête du fichier */
-        sortieFichier.printf("BUT Informatique - Modalité Contrôle de connaissances ressources semestre %d;;\n"
-                ,semestreGestionNotes.getNumeroSemestre());
-        sortieFichier.printf("Semestre;%d;\n"
-                ,semestreGestionNotes.getNumeroSemestre());
-        String parcourSemestre = semestreGestionNotes.getParcoursSemestre()+"";
-        if (parcourSemestre.equals("T")) {
-            parcourSemestre = "Tous";
-        }
-        sortieFichier.printf("Parcours;%s;\n"
-                ,parcourSemestre);
-        sortieFichier.println(";;");
-
-        /* Ecrit toutes les ressources et les controles présents dans les ressources */
-        for (Enseignement enseignement : semestreGestionNotes.getEnseignementsSemestre()) {
-            if (enseignement instanceof Ressource) {
-                /* Ecriture de l'entête de la ressource */
-                sortieFichier.printf("Ressource;%s;%s\n"
-                        ,enseignement.getIdentifiantEnseignement()
-                        , enseignement.getIntituleEnseignement());
-                sortieFichier.println("Type évaluation;Date;Poids");
-                /* Ecriture des différents contrôles */
-                for (Controle controle : ((Ressource)enseignement).getControlesRessource()) {
-                    sortieFichier.printf("%s;%s;%s\n",controle.getTypeControle(),
-                            controle.getDateControle(),controle.getPoidsControle());
-                }
-                sortieFichier.println(";;");
-            }
-        }
-        sortieFichier.close();
-    }   
 }
+
+
+
+

@@ -6,9 +6,11 @@ import application.model.exception.ControleInvalideException;
 
 /** 
  * Représentation d'un contrôle pour une ressource
+ * @author thomas.izard
  * @author tom.jammes
  * @author tony.lapeyre
  * @author thomas.lemaire
+ * @author constant.nguyen
  * @version 2.0
  */
 public class Controle implements Serializable {
@@ -105,7 +107,7 @@ public class Controle implements Serializable {
 	}
 
 	/**
-	 * Méthode de test
+	 * Méthode qui renvoie les informations d'un controle sous forme de String
 	 */
 	public String toString() {
 		return getIndentifiantControle() + " " + getTypeControle() + " " + getDateControle() + " " + getPoidsControle() + "\n";
